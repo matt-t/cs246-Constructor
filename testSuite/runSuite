@@ -1,0 +1,46 @@
+#!/bin/bash
+if [ ${#} -ne 2 ]; then
+        echo "incorrect number of args: ${#}" 1>&2
+        exit 1
+fi
+for word in $(cat ${1}); do
+	if [ ! -f "${word}.out" ]; then
+		echo "no out file" 1>&2
+		exit 1
+	fi
+	if [ ! -r "${word}.out" ]; then
+		echo "out unreadable" 1>&2
+		exit 1
+	fi
+	
+	tmpOut=$(mktemp)
+        if [ -f "${word}.args" ]; then
+                if [ -f "${word}.in" -a -r "${word}.in" ]; then
+                        ${2} $(cat ${word}.args) < ${word}.in > ${tmpOut}
+                else
+                        ${2} $(cat ${word}.args) > ${tmpOut}
+		fi
+        elif [ -f "${word}.in" -a -r "${word}.in" ]; then
+                        ${2} < ${word}.in > ${tmpOut}
+        else
+                ${2} > ${tmpOut}
+        fi
+
+	diff "${word}.out" "${tmpOut}" > /dev/null
+	if [ $? -ne 0 ]; then
+		echo Test failed: ${word}
+		echo Args:
+		if [ -f "${word}.args" -a -r "${word}.args" ]; then
+			cat ${word}.args
+		fi
+		echo Input:
+		if [ -f "${word}.in" -a -r "${word}.in" ]; then
+			cat ${word}.in
+		fi
+		echo Expected:
+		cat ${word}.out
+		echo Actual:
+		cat ${tmpOut}
+	fi
+	rm ${tmpOut}
+done

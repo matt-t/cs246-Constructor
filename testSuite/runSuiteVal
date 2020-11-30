@@ -1,0 +1,60 @@
+#!/bin/bash
+if [ ${#} -ne 2 ]; then
+        echo "incorrect number of args: ${#}" 1>&2
+        exit 1
+fi
+for word in $(cat ${1}); do
+	if [ ! -f "${word}.out" ]; then
+		echo "no out file" 1>&2
+		exit 1
+	fi
+	if [ ! -r "${word}.out" ]; then
+		echo "out unreadable" 1>&2
+		exit 1
+	fi
+	
+	tmpOut=$(mktemp)
+	valgrdOut=$(mktemp)
+        if [ -f "${word}.args" ]; then
+                if [ -f "${word}.in" -a -r "${word}.in" ]; then
+                        ${2} $(cat ${word}.args) < ${word}.in > ${tmpOut}
+						valgrind --leak-check=full --error-exitcode=1 ${2} $(cat ${word}.args) < ${word}.in > ${valgrdOut} 2>&1
+						valret=$?
+                else
+                        ${2} $(cat ${word}.args) > ${tmpOut}
+						valgrind --leak-check=full --error-exitcode=1 ${2} $(cat ${word}.args) > ${valgrdOut} 2>&1
+						valret=$?
+		fi
+        elif [ -f "${word}.in" -a -r "${word}.in" ]; then
+                        ${2} < ${word}.in > ${tmpOut}
+						valgrind --leak-check=full --error-exitcode=1 ${2} < ${word}.in > ${valgrdOut} 2>&1
+						valret=$?
+        else
+                ${2} > ${tmpOut}
+				valgrind --leak-check=full --error-exitcode=1 ${2} > ${valgrdOut} 2>&1
+				valret=$?
+        fi
+
+	diff "${word}.out" "${tmpOut}" > /dev/null
+	if [ $? -ne 0 ]; then
+		echo Test failed: ${word}
+		echo Args:
+		if [ -f "${word}.args" -a -r "${word}.args" ]; then
+			cat ${word}.args
+		fi
+		echo Input:
+		if [ -f "${word}.in" -a -r "${word}.in" ]; then
+			cat ${word}.in
+		fi
+		echo Expected:
+		cat ${word}.out
+		echo Actual:
+		cat ${tmpOut}
+	fi
+	rm ${tmpOut}
+	if [ ${valret} -ne 0 ]; then
+		echo Valgrind Error: 
+		cat ${valgrdOut}
+	fi
+	rm ${valgrdOut}
+done

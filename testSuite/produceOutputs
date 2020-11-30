@@ -1,0 +1,20 @@
+#!/bin/bash
+if [ ${#} -ne 2 ]; then
+	echo "incorrect number of args: ${#}" >&2
+	exit 1
+fi
+for word in $(cat ${1}); do
+	if [ -f "${word}.args" ]; then
+		if [ -f "${word}.in" -a -r "${word}.in" ]; then
+			${2} $(cat ${word}.args) < ${word}.in > ${word}.out
+		else
+			${2} $(cat ${word}.args) > ${word}.out
+		fi	
+	else
+		if [ -f "${word}.in" -a -r "${word}.in" ]; then
+			${2} < ${word}.in > ${word}.out
+		else
+			${2} > ${word}.out
+		fi
+	fi
+done
