@@ -1,12 +1,14 @@
 #include <iostream>
 #include <string>
-#include<memory>
-#include<fstream>
-#include<sstream>
-#include  <stdexcept>
+#include <memory>
+#include <fstream>
+#include <sstream>
+#include <stdexcept>
+
 using namespace std;
 
 int main(int argc, char* argv[]){
+	
 	//processing of command line arguments
 	int seed = 0;
 	string game_file;
@@ -15,6 +17,7 @@ int main(int argc, char* argv[]){
 	bool board_loaded = false;
 	bool board_randomized = false;
 	bool seed_set = false;
+
 	//init Game here;
 	for (int i = 1 ; i < argc; ++i) {
 		string s = argv[i];
@@ -110,5 +113,22 @@ int main(int argc, char* argv[]){
 			return 1;
 		}
 	}
+
+	// Loop for actual gameplay:
+	// game.playGame( bool needtoSEtbasement);
+
+	// Check to play again
+	/*
+	string playAgain;
+	cout << "Would you like to play again?" << endl;
+	cin >> playAgain;
+	if (playAgain == "yes") {
+			// can we wrap everything in whie loop? 
+			// only thing is that the aboec stuff checks cmd line args 
+			// but we probs wanna restart the game from scrath and there is no input
+			// so we start the game from random board?!?
+	}
+	*/
+
 	return 0;
 }
