@@ -3,6 +3,8 @@
 
 using namespace std;
 
+// need to set up constructor
+
 void Game::save() {
 
 }
@@ -38,21 +40,22 @@ void Game::next() {
 }
 
 void Game::handleRollPhase() {
-    cout << "Builder <colour>’s turn" << end;
+    cout << "Builder <colour>’s turn" << endl;
     string move;
     while(cin >> move) {
         try {
             if (move == "roll") {
-                cout << "roll" < endl;
+                cout << "roll" << endl;
                 break;
             } else if (move == "load") {
-                cout << "load" < endl;
+                cout << "load" << endl;
             } else if (move == "fair") {
-                cout <<  "fair" < endl;
+                cout <<  "fair" << endl;
+            } else {
+                cout << "Invalid command." << endl;
             }
         } catch (invalid_argument & e) {
-            cerr << "Invalid command." << endl;
-            // should it be cout?
+            cerr << e.what() << endl;       // return exception thrown by function called
         }
     }
 }
@@ -69,13 +72,21 @@ void Game::handleActionPhase() {
             } else if (move == "residences") {
                 cout << "residences" << endl;
             } else if (move == "build-road") {
-                int edge;
-                cin >> edge;
-                cout << "build-road" << endl;
+                try {
+                    int edge;
+                    cin >> edge;
+                    cout << "build-road" << endl;
+                } catch (invalid_argument & e) {
+                    //whatever function error gives
+                }
             } else if (move == "build-res") {
-                int vertex;
-                cin >> vertex;
-                cout << "build-res" << endl;
+                try {
+                    int vertex;
+                    cin >> vertex;
+                    cout << "build-res" << endl;
+                } catch (invalid_argument & e) {
+                    //whatever function error gives
+                }
             } else if (move == "improve") {
                 int vertex;
                 cin >> vertex;
@@ -99,10 +110,10 @@ void Game::handleActionPhase() {
                 help();
                 cout << "help" << endl;
             } else {
-                cerr << "Invalid command." << endl;
+                cout << "Invalid command." << endl;
             }
         } catch (invalid_argument & e) {
-
+            cerr << e.what() << endl;       // return exception thrown by function called
         }
     }
 }
@@ -114,11 +125,13 @@ void Game::playGame() {
     
     // setting up of basements  --> take arg to determine if u need to set up basement or not
 
+    // NEED MORE THOUGHT/INPUT OF CATCHING EOF FOR INPUT AND WHEN TO SAVE
+
     while(winner == -1) {
         try {
-            handleRollPhase(players[turn]);
-            handleActionPhase(players[turn]);
-        } catch (ios::failure &) { save(); } // Any I/O failure quits
+            //handleRollPhase(players[turn]);
+            //handleActionPhase(players[turn]);
+        } catch (ios::failure &) { save(); } 
     } 
 } 
 
