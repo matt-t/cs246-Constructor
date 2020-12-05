@@ -3,7 +3,7 @@
 
 Vertex::Vertex(int location):
 	location{ location }, owner { Color::None }
-{}
+{} // maybe we should do pass in vector of roads here
 
 //retrieves
 Color Vertex::getOwner() const noexcept {

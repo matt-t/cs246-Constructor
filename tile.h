@@ -17,8 +17,11 @@ class Tile {
 
 	public:
 	bool geese = false; //this is made public because we would need to check the geese/change th geese
+
+	Tile(int locationNum, int rollNum, Resource resource); //should add vertices and roads here
 	std::map<Color, int> produceResources() noexcept;
-	void setGeese();//this deals with the consequences of losses of resources when a geese is set on a tile
+	Resource getResource() const noexcept;//this gets the resource type produced at this tile
+	std::vector<Color> getLocationPlayers() const noexcept; //returns a list of players who have residence surrounding the tile
 };
 
 #endif
