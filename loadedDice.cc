@@ -1,6 +1,6 @@
 #include "loadedDice.h"
 
-int LoadedDice::rollDice(diceType dice) const override {
+int LoadedDice::rollDice() const {
     if (loadedNumber == 0) {
         throw UnloadedException();
     }

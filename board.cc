@@ -1,7 +1,7 @@
 #include "board.h"
 
-Board::Board(){
-
+Board::Board() {
+    
 }
 
 void Board::buildResidence(Color color, int location){
