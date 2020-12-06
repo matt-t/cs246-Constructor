@@ -7,12 +7,13 @@
 class Road;
 
 class Vertex {
+	friend class Road;
 	int location;
 	Residence typeOfBuilding;
 	Color owner;
+	std::vector<std::weak_ptr<Road>> roads;
 	
 	public:
-	std::vector<std::weak_ptr<Road>> roads;
 	Vertex(int location);
 	Color getOwner() const noexcept;
 	Residence getResidence() const noexcept;

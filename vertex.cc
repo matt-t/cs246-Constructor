@@ -10,6 +10,10 @@ Color Vertex::getOwner() const noexcept {
 	return owner;
 }
 
+Residence Vertex::getResidence() const noexcept {
+	return typeOfBuilding;
+}
+
 //builds residence
 void Vertex::build(Color player, bool gameStart ) {
 	//is already built

@@ -7,11 +7,12 @@
 class Vertex;
 
 class Road {
+	friend class Vertex;
 	int location;
 	Color owner;
+	std::vector<std::weak_ptr<Vertex>> vertices;
 	
 	public:
-	std::vector<std::weak_ptr<Vertex>> vertices;
 	Road(int location);
 	Color getOwner() const noexcept;
 	void build(Color player);
