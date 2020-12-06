@@ -31,3 +31,12 @@ std::map<Color, std::map<Resource, int>> Board::getRollResources(int rollNumber)
 std::vector<Color> Board::getLocationPlayers(int location){
     
 }
+
+std::ostream &operator<<(std::ostream &out, const Board &board) {
+
+}
+
+
+
+
+

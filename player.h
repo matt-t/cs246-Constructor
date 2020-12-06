@@ -7,7 +7,7 @@
 
 class Player {
     public:
-        void changeDice(diceType dice);
+        void changeDice(DiceType dice);
         std::map<Residence, std::vector<int>> getResidences() const;
         void addResources(resource: Resource, amount: int);
         void takeResources(resource: Resource, amount: int);

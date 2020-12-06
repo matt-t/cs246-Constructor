@@ -1,7 +1,7 @@
 #include "player.h"
 
-void player::changeDice(diceType newDice) {
-    dice = newDice == diceType::fair ? fairDice{} : loadedDice{};
+void player::changeDice(DiceType newDice) {
+    dice = newDice == DiceType::Fair ? fairDice{} : loadedDice{};
 }
 
 std::map<Residence, std::vector<int>> player::getResidences() const {
