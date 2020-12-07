@@ -4,31 +4,35 @@
 #include <map>
 #include <vector>
 #include "enums.h"
+#include <memory>
+
+class Dice;
 
 class Player {
     public:
-        void changeDice(diceType dice);
-        std::map<Residence, std::vector<int>> getResidences() const;
-        void addResources(resource: Resource, amount: int);
-        void takeResources(resource: Resource, amount: int);
+        void changeDice(DiceType dice);
+        std::map<int, Residence> getResidences() const;
+        void addResources(Resource resource, int amount);
+        void takeResources(Resource resource, int amount);
         void generateRandomResource();
         int totalResource() const;
-        void buildResidence(color: Color, location: int);
-        void buildRoad(location: int);
+        void buildResidence(int location);
+        void upgradeResidence(int location);
+        void buildRoad(int location);
         int rollDice();
         int handleGooseRoll();
-        void transfer(to: Color, resource: Resource);
 
     private:
         Color color;
         int points;
         std::map<Resource, int> resources;
-        std::map<Residence, std::vector<int>> residences;
+        std::map<int, Residence> residences;
         std::vector<int> roads;
-        Dice diceType;
+        std::unique_ptr<Dice> playerDice;
         
 };
 
-class InsufficientResourceException {};
+class InsufficientResourceException{};
+class PlayerResidenceTypeException{};
 
 #endif
