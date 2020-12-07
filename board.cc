@@ -13,7 +13,15 @@ Board::Board(vector<pair<Resource, int>> boardInfo){
     }
     for (int i = 0; i <= 71; ++i){
         auto p = std::make_shared<Road>(i);
+        for (int j =0; j < RoadsVertices.size(); ++j){
+            p->addVertex(vertices[RoadsVertices[i][j]]);
+        }
         roads.push_back(p);
+    }
+    for (int i = 0; i <= 53; ++i){
+        for (int j = 0; j < VerticesRoads.size(); ++j){
+            vertices[i]->addRoad(roads[VerticesRoads[i][j]]);
+        }
     }
     for (int i = 0; i <= 18; ++i){
         std::vector<std::weak_ptr<Vertex>>tileVertices;
@@ -29,31 +37,7 @@ Board::Board(vector<pair<Resource, int>> boardInfo){
         auto p = std::make_shared<Tile>(i, boardInfo[i].first, boardInfo[i].second, tileVertices, tileRoads);
         tiles.push_back(p);
     }
-    string fileName = "VerticesAndRoads.txt";
-    string line;
-    ifstream file(fileName);
-    int vertex, road, tile;
-    if (file.is_open()){
-        getline(file, line);
-        while (getline(file, line)){
-            if (line == "attach vertices") { break; }
-            istringstream num(line);
-            num >> vertex;
-            while (num >> road) {
-                vertices[vertex]->addRoad(roads[road]);
-            }
-        }
-        while (getline(file, line)){
-            istringstream num(line);
-            num >> road;
-            while (num >> vertex) {
-                roads[road]->addVertex(vertices[vertex]);
-            }
-        }
-    }
 }
-
-
 
 void Board::buildResidence(Color color, int location){
     vertices[location]->build(color);//error check
@@ -69,7 +53,7 @@ void Board::buildRoad(Color color, int location){
 
 void Board::changeGeese(int location){
     if (location == geese) {
-        throw; //geese cannot be placed on the same
+        throw GeeseExistsHereException(); //geese cannot be placed on the same
     }
     tiles[geese]->geese = false;
     tiles[location]->geese = true;

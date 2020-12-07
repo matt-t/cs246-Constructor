@@ -22,6 +22,9 @@ const std::string COLOR_ORANGE_STRING = "Orange";
 const std::string COLOR_YELLOW_STRING = "Yellow";
 const std::string COLOR_NONE_STRING = "None";
 
+const std::vector<std::vector<int>> VerticesRoads = {}; //to be implemented to map the vertices to a vector of their roads
+const std::vector<std::vector<int>> RoadsVertices = {}; //to be implemented to map the roads to a vector of their vertices
+
 const std::vector<std::vector<int>> TilesVertices = {};
 const std::vector<std::vector<int>> TilesRoads = {};
 

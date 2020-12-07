@@ -33,7 +33,7 @@ std::map<Color, int> Tile::produceResources() noexcept{
 Resource Tile::getResource() const noexcept{
     return resource;
 }
-std::vector<Color> Tile::getLocationPlayers() const noexcept {
+std::vector<Color> Tile::getLocationPlayers() const noexcept { //can have duplicates
     std::vector<Color> list;
     for (int i = 0; i < vertices.size(); ++i) {
         auto getVertex = vertices[i].lock();
