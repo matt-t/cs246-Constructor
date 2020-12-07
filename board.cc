@@ -4,7 +4,6 @@
 #include <sstream>
 using namespace std;
 
-<<<<<<< HEAD
 Board::Board(){
     for  (int i = 0; i <= 53; ++i){
         auto p = std::make_shared<Vertex>(i);
@@ -54,10 +53,6 @@ Board::Board(){
             }
         }
     }
-=======
-Board::Board() {
-    
->>>>>>> f03cbbb89f2d8da1ad1fd7b786df3d3ec50dd384
 }
 
 
