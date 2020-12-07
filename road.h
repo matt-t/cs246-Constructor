@@ -16,5 +16,6 @@ class Road {
 	Road(int location);
 	Color getOwner() const noexcept;
 	void build(Color player);
+	void addVertex(std::shared_ptr<Vertex> vertex) noexcept;
 };
 #endif

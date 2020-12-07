@@ -1,8 +1,8 @@
 #include "tile.h"
 #include "vertex.h" //this coupling is kinda bad
 
-Tile::Tile(int locationNum, int rollNum, Resource resource):
-    locationNum{ locationNum }, rollNum{ rollNum }, resource{ resource }, geese{ false }
+Tile::Tile(int locationNum):
+    locationNum{ locationNum }, geese{ false }
 {}
 
 std::map<Color, int> Tile::produceResources() noexcept{
@@ -41,4 +41,14 @@ std::vector<Color> Tile::getLocationPlayers() const noexcept {
         }
     }
     return list;
+}
+
+void Tile::addRoad(std::shared_ptr<Road> road) noexcept{
+	std::weak_ptr<Road> wp = road;
+	roads.push_back(wp);
+}
+
+void Tile::addVertex(std::shared_ptr<Vertex> vertex) noexcept{
+	std::weak_ptr<Vertex> wp = vertex;
+	vertices.push_back(wp);
 }

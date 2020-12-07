@@ -61,3 +61,8 @@ void Vertex::upgrade(Color player){
 		typeOfBuilding= Residence::Tower;
 	}
 }
+
+void Vertex::addRoad(std::shared_ptr<Road> road) noexcept{
+	std::weak_ptr<Road> wp = road;
+	roads.push_back(wp);
+}

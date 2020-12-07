@@ -35,3 +35,8 @@ void Road::build(Color player) {
 	}
 	owner = player;
 }
+
+void Road::addVertex(std::shared_ptr<Vertex> vertex) noexcept{
+	std::weak_ptr<Vertex> wp = vertex;
+	vertices.push_back(wp);
+}
