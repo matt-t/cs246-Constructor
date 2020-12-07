@@ -21,4 +21,9 @@ class Vertex {
 	void upgrade(Color player);
 	void addRoad(std::shared_ptr<Road> road) noexcept;
 };
+
+class BuildingExistsException{};
+class InvalidLocationException{};
+class BuidingNotOwnedException{};
+class AlreadyTowerException{};
 #endif

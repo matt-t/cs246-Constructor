@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include "constants.h"
 
 using namespace std;
 
@@ -15,7 +16,17 @@ Board::Board(vector<pair<Resource, int>> boardInfo){
         roads.push_back(p);
     }
     for (int i = 0; i <= 18; ++i){
-        auto p = std::make_shared<Tile>(i, boardInfo[i].first, boardInfo[i].second);
+        std::vector<std::weak_ptr<Vertex>>tileVertices;
+        std::vector<std::weak_ptr<Road>> tileRoads;
+        for (int j = 0; j < TilesVertices[i].size(); ++j){
+            std::weak_ptr<Vertex> wp = vertices[TilesVertices[i][j]];
+	        tileVertices.push_back(wp);
+        }
+        for (int j = 0; j < TilesRoads[i].size(); ++j){
+            std::weak_ptr<Road> wp = roads[TilesRoads[i][j]];
+	        tileRoads.push_back(wp);
+        }
+        auto p = std::make_shared<Tile>(i, boardInfo[i].first, boardInfo[i].second, tileVertices, tileRoads);
         tiles.push_back(p);
     }
     string fileName = "VerticesAndRoads.txt";
@@ -37,20 +48,6 @@ Board::Board(vector<pair<Resource, int>> boardInfo){
             num >> road;
             while (num >> vertex) {
                 roads[road]->addVertex(vertices[vertex]);
-            }
-        }
-    }
-    fileName = "AttachTiles.txt";
-    ifstream tileFile(fileName);
-    if (tileFile.is_open()){
-        while (getline(tileFile, line)){
-            istringstream num(line);
-            num >> tile;
-            while (num >> vertex){
-                tiles[tile]->addVertex(vertices[vertex]);
-            }
-            while (num >> road) {
-                tiles[tile]->addRoad(roads[road]);
             }
         }
     }

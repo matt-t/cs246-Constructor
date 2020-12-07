@@ -1,7 +1,8 @@
-#ifndef __BOARD_H_
+#ifndef __BOARD_H_ //should this be CONSTANTS_H
 #define __BOARD_H_
 
 #include <string>
+#include <vector>
 
 const std::string RESIDENCE_BASEMENT_STRING = "Basement";
 const std::string RESIDENCE_HOUSE_STRING = "House";
@@ -20,5 +21,8 @@ const std::string COLOR_RED_STRING = "Red";
 const std::string COLOR_ORANGE_STRING = "Orange";
 const std::string COLOR_YELLOW_STRING = "Yellow";
 const std::string COLOR_NONE_STRING = "None";
+
+const std::vector<std::vector<int>> TilesVertices = {};
+const std::vector<std::vector<int>> TilesRoads = {};
 
 #endif

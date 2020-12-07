@@ -18,7 +18,7 @@ Residence Vertex::getResidence() const noexcept {
 void Vertex::build(Color player, bool gameStart ) {
 	//is already built
 	if (owner != Color::None) {	
-		throw;//already a building here
+		throw BuildingExistsException(); //already a building here
 	}
 	//has adjacent building connected to it
 	for (int i = 0; i < roads.size(); ++i) {
@@ -26,7 +26,7 @@ void Vertex::build(Color player, bool gameStart ) {
 		for (int j = 0; j < getRoad->vertices.size(); ++j) {
 			auto getVertex = getRoad->vertices[j].lock();
 			if (getVertex->location != location && getVertex->owner != Color::None) {
-				throw;//there's a building adjacent to it
+				throw InvalidLocationException();//there's a building adjacent to it
 			}
 		}
 	}
@@ -47,14 +47,14 @@ void Vertex::build(Color player, bool gameStart ) {
 		owner = player;
 		typeOfBuilding = Residence::Basement;
 	} else {
-		throw;//not connected by a road of their own
+		throw InvalidLocationException();//not connected by a road of their own
 	}
 }
 void Vertex::upgrade(Color player){
 	if (owner != player) {
-		throw;// aha u don't live here
+		throw BuidingNotOwnedException();// aha u don't live here
 	} else if (typeOfBuilding== Residence::Tower) {
-		throw;//aha the house is already boojee enough
+		throw AlreadyTowerException();//aha the house is already boojee enough
 	} else if (typeOfBuilding== Residence::Basement) {
 		typeOfBuilding= Residence::House;
 	} else if (typeOfBuilding== Residence::House) {
