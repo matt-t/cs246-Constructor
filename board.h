@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include <utility>
 
 class Board{
     std::vector<std::shared_ptr<Tile>> tiles;
@@ -15,7 +16,7 @@ class Board{
     int geese;
 
     public:
-    Board();
+    Board(std::vector<std::pair<Resource, int>> boardInfo);
     void buildResidence(Color color, int location);
     void upgradeResidence(Color color, int location);
     void buildRoad(Color color, int location);

@@ -4,6 +4,10 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <utility>
+#include <vector>
+#include "enums.h"
+#include "game.h"
 
 using namespace std;
 
@@ -17,8 +21,8 @@ int main(int argc, char* argv[]){
 	bool board_loaded = false;
 	bool board_randomized = false;
 	bool seed_set = false;
+	std::vector<std::pair<Resource, int>> boardInfo;
 
-	//init Game here;
 	for (int i = 1 ; i < argc; ++i) {
 		string s = argv[i];
 		stringstream ss;
@@ -90,9 +94,30 @@ int main(int argc, char* argv[]){
                                         cerr << "ERROR: Invalid file " << game_file << endl;
                                         return 1;
                                 }
+				if (f.is_open()){
+					string line;
+					getline(f, line);
+					istringstream read(line);
+					int resourceNum, rollNum;
+					Resource resource;
+					while(read >> resourceNum){
+						switch(resourceNum){
+							case 0: resource = Resource::Brick; break;
+							case 1: resource = Resource::Energy; break;
+							case 2: resource = Resource::Glass; break;
+							case 3: resource = Resource::Heat; break;
+							case 4: resource = Resource::Wifi; break;
+							case 5: resource = Resource::Park; break;
+						}
+						read >> rollNum;
+						boardInfo.push_back(std::make_pair(resource, rollNum));
+					}
+				} else {
+					cerr << "ERROR: Cannot open file " << game_file << endl;
+                    return 1;
+				}
 				board_loaded = true;
 				cout << "The board from " << board_file << "is loaded." << endl;
-				//do something with f
 			}
 		} else if (s == "-random-board"){
 			if (board_loaded == true){
@@ -113,6 +138,17 @@ int main(int argc, char* argv[]){
 			return 1;
 		}
 	}
+
+	if (board_loaded == false && game_loaded == false){
+		//generate boardInfo vector for the randomized board
+	} 
+	if (game_loaded == true){
+		//feed in boardInfo AND gameInfo;
+	} else {
+		//feed in boardInfo
+		Game game{boardInfo};
+	}
+	
 
 	// Loop for actual gameplay:
 	// game.playGame( bool needtoSEtbasement);

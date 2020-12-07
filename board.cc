@@ -2,9 +2,10 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+
 using namespace std;
 
-Board::Board(){
+Board::Board(vector<pair<Resource, int>> boardInfo){
     for  (int i = 0; i <= 53; ++i){
         auto p = std::make_shared<Vertex>(i);
         vertices.push_back(p);
@@ -14,7 +15,7 @@ Board::Board(){
         roads.push_back(p);
     }
     for (int i = 0; i <= 18; ++i){
-        auto p = std::make_shared<Tile>(i);
+        auto p = std::make_shared<Tile>(i, boardInfo[i].first, boardInfo[i].second);
         tiles.push_back(p);
     }
     string fileName = "VerticesAndRoads.txt";

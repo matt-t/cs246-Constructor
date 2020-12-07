@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <utility>
 #include "player.h"
 #include "board.h"
 
@@ -24,7 +25,7 @@ class Game {
     public:
     
     // Constructor
-    Game();
+    Game(std::vector<std::pair<Resource, int>> board);
 
     //
     void save();

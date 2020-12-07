@@ -31,7 +31,7 @@ void Road::build(Color player) {
 		}
 	}
 	if (validBuild == false) {
-		throw; //another custome message
+		throw; //another custom message
 	}
 	owner = player;
 }
