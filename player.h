@@ -5,8 +5,8 @@
 #include <vector>
 #include "enums.h"
 #include <memory>
-
-class Dice;
+#include "dice.h"
+//class Dice;
 
 class Player {
     public:

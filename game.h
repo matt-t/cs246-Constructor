@@ -3,31 +3,37 @@
 
 #include <memory>
 #include <vector>
-//#include "player.h"
-//#include "board.h"
+#include "player.h"
+#include "board.h"
 
 class Game {
     /* Private Variables */
-    //std::vector<std::unique_ptr<Player>> players;
-    //Board board;
-    int turn = 0;
-    int winner = -1;
+    std::vector<std::unique_ptr<Player>> players;
+    Board board;
+    int turn;
+    int winner;
 
     /* Private methods */
     
     //
-    void handleRollPhase();
+    void handleRollPhase(Player &player);
     
     //
-    void handleActionPhase();
+    void handleActionPhase(Player &player);
 
     public:
     
+    // Constructor
+    Game();
+
     //
     void save();
     
     //
-    void status();
+    void status(Player &player);
+
+    //
+    void residences(Player &player);
     
     //
     void help() noexcept;
@@ -36,7 +42,7 @@ class Game {
     void printBoard();
     
     //
-    void next();
+    void next() noexcept;
     
     //
     void playGame();   

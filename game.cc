@@ -1,16 +1,27 @@
 #include <iostream>
 #include "game.h"
+#include "enums.h"
 
 using namespace std;
 
-// need to set up constructor
+Game::Game(): players{}, turn{0}, winner{-1} {}
 
 void Game::save() {
 
 }
 
-void Game::status() {
+void Game::status(Player &player) {
+    // player.printStatus();
+    // cout << player.getColor() << " has " << player.getPoints() << " building points, ";
+    // <numBrick> brick, <numEnergy> energy, <numGlass> glass, ;
+    // <numHeat> heat, and <numWifi> wifi << endl;
+}
 
+void Game::residences(Player &player) {
+    auto residences = player.getResidences();
+    for (auto &res: residences) {
+        cout << res.first << res.second << endl;
+    }
 }
     
 void Game::help() noexcept {
@@ -31,7 +42,7 @@ void Game::printBoard() {
 
 }
 
-void Game::next() {
+void Game::next() noexcept {
     if (turn == 3) {
         turn = 0;
     } else {
@@ -39,7 +50,7 @@ void Game::next() {
     }
 }
 
-void Game::handleRollPhase() {
+void Game::handleRollPhase(Player &player) {
     cout << "Builder <colour>’s turn" << endl;
     string move;
     while(cin >> move) {
@@ -61,7 +72,7 @@ void Game::handleRollPhase() {
 }
     
 
-void Game::handleActionPhase() {
+void Game::handleActionPhase(Player &player) {
     string move;
     while(cin >> move) {
         try {
@@ -118,8 +129,6 @@ void Game::handleActionPhase() {
     }
 }
 
-
-
 void Game::playGame() {
     cin.exceptions(ios::eofbit|ios::failbit);
     
@@ -129,8 +138,8 @@ void Game::playGame() {
 
     while(winner == -1) {
         try {
-            //handleRollPhase(players[turn]);
-            //handleActionPhase(players[turn]);
+            handleRollPhase(*players[turn]);
+            handleActionPhase(*players[turn]);
         } catch (ios::failure &) { save(); } 
     } 
 } 
