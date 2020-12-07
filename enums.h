@@ -9,4 +9,6 @@ enum class Resource { Brick, Energy, Glass, Heat, Wifi };
 
 enum class Color { Blue, Red, Orange, Yellow, None };
 
+enum class DiceType { Fair, Loaded };
+
 #endif

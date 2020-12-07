@@ -22,7 +22,10 @@ class Board{
     void changeGeese(int location);
     std::map<Color, std::map<Resource, int>> getRollResources(int rollNumber) noexcept;
     std::vector<Color> getLocationPlayers(int location);
-// print board
+
+    friend std::ostream &operator<<(std::ostream &out, const Board &board);    
 };
+
+std::ostream &operator<<(std::ostream &out, const Board &board);
 
 #endif

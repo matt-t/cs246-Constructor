@@ -1,11 +1,11 @@
-#ifndef __DICE_H__
-#define __DICE_H__
+#ifndef __FAIRDICE_H__
+#define __FAIRDICE_H__
 
-#include "enums.h"
+#include "dice.h"
 
 class FairDice: public Dice {
     public:
-        int rollDice(diceType dice) const override;
+        int rollDice() const override;
 };
 
 #endif
