@@ -1,0 +1,10 @@
+attach roads
+0
+1
+2
+3
+4
+5
+//... roads attached to a vertex
+attach vertices
+//... vertices attached to a road
