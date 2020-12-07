@@ -11,12 +11,13 @@ class Dice;
 class Player {
     public:
         void changeDice(DiceType dice);
-        std::map<Residence, std::vector<int>> getResidences() const;
+        std::map<int, Residence> getResidences() const;
         void addResources(Resource resource, int amount);
         void takeResources(Resource resource, int amount);
         void generateRandomResource();
         int totalResource() const;
-        void buildResidence(Color color, int location);
+        void buildResidence(int location);
+        void upgradeResidence(int location);
         void buildRoad(int location);
         int rollDice();
         int handleGooseRoll();
@@ -25,12 +26,13 @@ class Player {
         Color color;
         int points;
         std::map<Resource, int> resources;
-        std::map<Residence, std::vector<int>> residences;
+        std::map<int, Residence> residences;
         std::vector<int> roads;
         std::unique_ptr<Dice> playerDice;
         
 };
 
-class InsufficientResourceException {};
+class InsufficientResourceException{};
+class PlayerResidenceTypeException{};
 
 #endif

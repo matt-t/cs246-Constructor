@@ -10,7 +10,7 @@ void Player::changeDice(DiceType newDice) {
     }
 }
 
-std::map<Residence, std::vector<int>> Player::getResidences() const {
+std::map<int, Residence> Player::getResidences() const {
     return residences;
 }
 
@@ -36,9 +36,23 @@ int Player::totalResource() const {
     return sum;
 }
 
-void Player::buildResidence(Color color, int location) {
-    residences[Residence::Basement].emplace_back(location);
+void Player::buildResidence(int location) {
+    if (residences.count(location) != 0) {
+        throw PlayerResidenceTypeException();
+    }
+    residences[location] = Residence::Basement;
 }
+
+void Player::upgradeResidence(int location) {
+    if (residences.count(location) == 0) {
+        throw PlayerResidenceTypeException();
+    }
+    if (residences[location] == Residence::Tower) {
+        throw PlayerResidenceTypeException();
+    }
+    residences[location] = residences[location] == Residence::Basement ? Residence::House : Residence::Tower;
+}
+
 
 void Player::buildRoad(int location) {
     roads.emplace_back(location);
