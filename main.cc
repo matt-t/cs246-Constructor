@@ -145,7 +145,7 @@ int main(int argc, char* argv[]){
 	if (game_loaded == true){
 		//feed in boardInfo AND gameInfo;
 	} else {
-		//feed in boardInfo
+		cout << "The game constructor is run." << endl;
 		Game game{boardInfo};
 	}
 	

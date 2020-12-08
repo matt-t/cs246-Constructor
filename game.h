@@ -10,7 +10,7 @@
 class Game {
     /* Private Variables */
     std::vector<std::unique_ptr<Player>> players;
-    Board board;
+    std::unique_ptr<Board> board;
     int turn;
     int winner;
 

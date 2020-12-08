@@ -13,13 +13,13 @@ Board::Board(vector<pair<Resource, int>> boardInfo){
     }
     for (int i = 0; i <= 71; ++i){
         auto p = std::make_shared<Road>(i);
-        for (int j =0; j < RoadsVertices.size(); ++j){
+        for (int j =0; j < RoadsVertices[i].size(); ++j){
             p->addVertex(vertices[RoadsVertices[i][j]]);
         }
         roads.push_back(p);
     }
     for (int i = 0; i <= 53; ++i){
-        for (int j = 0; j < VerticesRoads.size(); ++j){
+        for (int j = 0; j < VerticesRoads[i].size(); ++j){
             vertices[i]->addRoad(roads[VerticesRoads[i][j]]);
         }
     }

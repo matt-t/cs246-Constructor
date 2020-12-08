@@ -4,7 +4,8 @@
 
 using namespace std;
 
-Game::Game(std::vector<std::pair<Resource, int>> board): players{}, turn{0}, winner{-1}, board{board} {}
+Game::Game(std::vector<std::pair<Resource, int>> board): players{}, turn{0}, winner{-1}, board{make_unique<Board>(board)} {
+}
 
 void Game::save() {
 
