@@ -39,6 +39,7 @@ Board::Board(vector<pair<Resource, int>> boardInfo){
     }
 }
 
+
 void Board::buildResidence(Color color, int location){
     vertices[location]->build(color);//error check
 }

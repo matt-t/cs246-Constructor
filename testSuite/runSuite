@@ -32,7 +32,7 @@ for word in $(cat ${1}); do
 		echo Args:
 		if [ -f "${word}.args" -a -r "${word}.args" ]; then
 			cat ${word}.args
-		fi
+		fi 
 		echo Input:
 		if [ -f "${word}.in" -a -r "${word}.in" ]; then
 			cat ${word}.in

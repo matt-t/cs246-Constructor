@@ -25,7 +25,10 @@ class Game {
     public:
     
     // Constructor
-    Game(std::vector<std::pair<Resource, int>> board);
+    Game(std::vector<std::pair<Resource, int>> tileProperties);
+
+    Game(std::vector<std::pair<Resource, int>> tileProperties,);
+
 
     //
     void save();
