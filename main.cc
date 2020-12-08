@@ -177,23 +177,21 @@ int main(int argc, char* argv[]){
 		}
 	}
 
-	
-	if (game_loaded == true){
+	if (game_loaded == true) {
 		cout << "The game constructor is run with loaded game." << endl;
 		//feed in boardInfo AND gameInfo;
 		Game game{boardInfo, turn, geese, roadInfo, buildInfo};
-	} else if (board_loaded == true){
+		game.playGame();
+	} else if (board_loaded == true) {
 		cout << "The game constructor is run with loaded board." << endl;
 		Game game{boardInfo};
 	} else {
 		//generate boardInfo vector for the randomized board
 	} 
 
+	// Handles gameplay:
+	// game.playGame();
 	
-	
-
-	// Loop for actual gameplay:
-	// game.playGame( bool needtoSEtbasement);
 
 	// Check to play again
 	/*

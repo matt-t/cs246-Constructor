@@ -82,7 +82,7 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
             cin >> edge;
             cout << "build-road" << endl;
         } catch (invalid_argument & e) {
-            //whatever function error gives
+            cerr << e.what() << endl;       //whatever function error gives
         }
     } else if (move == "build-res") {
         try {
@@ -93,22 +93,25 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
             cerr << e.what() << endl;       //whatever function error gives
         }
     } else if (move == "improve") {
-        int vertex;
-        cin >> vertex;
-        cout << "improve" << endl;
+        try {
+            int vertex;
+            cin >> vertex;
+            cout << "improve" << endl;
+        } catch (invalid_argument & e) {
+            cerr << e.what() << endl;       //whatever function error gives
+        }
     } else if (move == "trade") {
         try {
             string color, resourceGive, resourceTake;
             cin >> color >> resourceGive >> resourceTake;
+            cout << "trade" << endl;
             //function to call trade
         } catch (invalid_argument & e) {
             //whatever function error gives
         }
-        cout << "trade" << endl;
     } else if (move == "next") {
         next();
         --movePhase;
-        cout << "Builder <colour>’s turn" << endl;      // sketchy solution
     } else if (move == "save") {
         cout << "save" << endl;
     } else if (move == "help") {
@@ -120,19 +123,27 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
 }
 
 void Game::playGame() {
-    cin.exceptions(ios::eofbit|ios::failbit);
+    //cin.exceptions(ios::eofbit|ios::failbit);
     
     // setting up of basements  --> take arg to determine if u need to set up basement or not
+    cout << "IN PLAY GAME" << endl;
 
-    // NEED MORE THOUGHT/INPUT OF CATCHING EOF FOR INPUT AND WHEN TO SAVE
     int movePhase = 0;
     string move;
     while(cin >> move && winner == -1) {
         if (movePhase == 0) {
-            handleRollPhase(*players[turn], move, movePhase);
+            cout << "0" << endl;
+            movePhase++;
+            //handleRollPhase(*players[turn], move, movePhase);
         } else {
-            handleActionPhase(*players[turn], move, movePhase);
+            cout << "1" << endl;
+            movePhase--;
+            //handleActionPhase(*players[turn], move, movePhase);
         }
+    }
+
+    if (winner == -1) {         // if while loop ended cause EOF auto save game
+        save();
     } 
 } 
 

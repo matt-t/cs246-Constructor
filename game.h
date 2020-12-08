@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 #include <utility>
 #include "player.h"
 #include "board.h"
@@ -17,16 +18,17 @@ class Game {
     /* Private methods */
     
     //
-    void handleRollPhase(Player &player, string move, int &movePhase);
+    void handleRollPhase(Player &player, std::string move, int &movePhase);
     
     //
-    void handleActionPhase(Player &player, string move, int &movePhase);
+    void handleActionPhase(Player &player, std::string move, int &movePhase);
 
     public:
     
     // Constructor
     Game(std::vector<std::pair<Resource, int>> tileInfo);
     Game(std::vector<std::pair<Resource, int>> tileInfo, int turn, int geese, std::vector<Color> roadInfo, std::vector<std::pair<Color, Residence>> buildInfo);
+    
     //
     void save();
     
