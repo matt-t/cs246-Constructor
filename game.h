@@ -17,10 +17,10 @@ class Game {
     /* Private methods */
     
     //
-    void handleRollPhase(Player &player);
+    void handleRollPhase(Player &player, string move, int &movePhase);
     
     //
-    void handleActionPhase(Player &player);
+    void handleActionPhase(Player &player, string move, int &movePhase);
 
     public:
     
