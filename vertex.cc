@@ -1,9 +1,14 @@
 #include "vertex.h"
 #include "road.h"
 
+//constructors
 Vertex::Vertex(int location):
-	location{ location }, owner { Color::None }
+	location{ location }, owner { Color::None }, typeOfBuilding{ Residence::None }
 {} // maybe we should do pass in vector of roads here
+
+Vertex::Vertex(int location, Color owner, Residence typeOfBuilding):
+	location{ location }, owner { owner }, typeOfBuilding{ typeOfBuilding }
+{}
 
 //retrieves
 Color Vertex::getOwner() const noexcept {

@@ -4,18 +4,12 @@
 
 using namespace std;
 
-Game::Game(std::vector<std::pair<Resource, int>> tileProperties): players{}, turn{0}, winner{-1}, board{nullptr} {
-    players.emplace_back(push)
-    board = make_unique<Board>(tileProperties)
-}
+Game::Game(std::vector<std::pair<Resource, int>> tileInfo): players{}, board{ make_unique<Board>(tileInfo)}, turn{0}, winner{-1} 
+{}
 
-Game::Game(std::vector<std::pair<Resource, int>> tileProperties): players{}, turn{0}, winner{-1}, board{nullptr} {
-    boardSaveInfo = getboardInfo(saveFile);
-    playerSaveInfo = getPlayerInfo(saveFile);
-    for (playerInfo)
-    players.emplace_back()
-    board = make_unique<Board>(tileProperties, boardSaveInfo)
-}
+Game::Game(std::vector<std::pair<Resource, int>> tileInfo, int turn, int geese, std::vector<Color> roadInfo, std::vector<std::pair<Color, Residence>> buildInfo):
+    players{}, board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
+{}
 
 void Game::save() {
 
