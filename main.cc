@@ -21,7 +21,12 @@ int main(int argc, char* argv[]){
 	bool board_loaded = false;
 	bool board_randomized = false;
 	bool seed_set = false;
-	std::vector<std::pair<Resource, int>> boardInfo;
+	vector<pair<Resource, int>> boardInfo;
+	int r = 72;
+	int v = 54;
+	vector<Color> roadInfo(r, Color::None);
+	vector<pair<Color, Residence>> buildInfo(v, {Color::None, Residence::None});
+	int geese, turn;
 
 	for (int i = 1 ; i < argc; ++i) {
 		string s = argv[i];
@@ -67,33 +72,66 @@ int main(int argc, char* argv[]){
 					cerr << "ERROR: Invalid file " << game_file << endl;
 					return 1;
 				}
+				if (f.is_open()){
+					string line;
+					getline(f, line);
+					istringstream read(line);
+					read >> turn;
+					for (int i = 0; i < 4; ++i){
+						getline(f, line);
+					}
+					getline(f, line);
+					read.clear();
+					read.str(line); // sus about how this syntax works
+					int resourceNum, rollNum;
+					Resource resource;
+					while(read >> resourceNum){
+						switch(resourceNum){
+							case 0: resource = Resource::Brick; break;
+							case 1: resource = Resource::Energy; break;
+							case 2: resource = Resource::Glass; break;
+							case 3: resource = Resource::Heat; break;
+							case 4: resource = Resource::Wifi; break;
+							case 5: resource = Resource::Park; break;
+						}
+						read >> rollNum;
+						boardInfo.push_back(std::make_pair(resource, rollNum));
+					}
+					getline(f, line);
+					read.clear();
+					read.str(line);
+					read >> geese;
+				} else {
+					cerr << "ERROR: Cannot open file " << game_file << endl;
+					return 1;
+				}
 				game_loaded = true;
 				cout << "The game from " << game_file << "is loaded." << endl;
 				//do something with f;
 			}		
 		} else if (s == "-board") {
 			if (board_randomized == true){
-                                cerr << "ERROR: already specified -random, can't also specify -board" << endl;
-                                return 1;
-                        } else if (game_loaded == true){
-                                cerr << "ERROR: already specified -load, can't also specify -board" << endl;
-                                return 1;
-                        } else if (board_loaded == true) {
-                                cerr << "ERROR: already specified -board once before" << endl;
-                                return 1;
-                        }
-                        ++i;
-                        if (i >= argc) {
-                                cerr << "ERROR: -board missing filename argument" << endl;
-                                return 1;
-                        } else {
-                                ss << argv[i];
-                                ss >> board_file;
-                                ifstream f(board_file);
-                                if (f.fail()) {
-                                        cerr << "ERROR: Invalid file " << game_file << endl;
-                                        return 1;
-                                }
+				cerr << "ERROR: already specified -random, can't also specify -board" << endl;
+				return 1;
+			} else if (game_loaded == true){
+					cerr << "ERROR: already specified -load, can't also specify -board" << endl;
+					return 1;
+			} else if (board_loaded == true) {
+					cerr << "ERROR: already specified -board once before" << endl;
+					return 1;
+			}
+			++i;
+			if (i >= argc) {
+				cerr << "ERROR: -board missing filename argument" << endl;
+					return 1;
+			} else {
+				ss << argv[i];
+				ss >> board_file;
+				ifstream f(board_file);
+				if (f.fail()) {
+						cerr << "ERROR: Invalid file " << game_file << endl;
+						return 1;
+				}
 				if (f.is_open()){
 					string line;
 					getline(f, line);
@@ -114,7 +152,7 @@ int main(int argc, char* argv[]){
 					}
 				} else {
 					cerr << "ERROR: Cannot open file " << game_file << endl;
-                    return 1;
+					return 1;
 				}
 				board_loaded = true;
 				cout << "The board from " << board_file << "is loaded." << endl;
@@ -139,15 +177,19 @@ int main(int argc, char* argv[]){
 		}
 	}
 
-	if (board_loaded == false && game_loaded == false){
+	
+	if (game_loaded == true){
+		cout << "The game constructor is run with loaded game." << endl;
+		//feed in boardInfo AND gameInfo;
+		Game game{boardInfo, turn, geese, roadInfo, buildInfo};
+	} else if (board_loaded == true){
+		cout << "The game constructor is run with loaded board." << endl;
+		Game game{boardInfo};
+	} else {
 		//generate boardInfo vector for the randomized board
 	} 
-	if (game_loaded == true){
-		//feed in boardInfo AND gameInfo;
-	} else {
-		//feed in boardInfo
-		Game game{boardInfo};
-	}
+
+	
 	
 
 	// Loop for actual gameplay:

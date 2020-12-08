@@ -1,11 +1,16 @@
 #include "road.h"
 #include "vertex.h" //high coupling?! vetex needs road and road needs vertex
 
-
+//constructors
 Road::Road(int location):
 	location{ location }, owner{ Color::None }
-{}//should we establish vertices at initialization
+{}
 
+Road::Road(int location, Color owner):
+	location{ location }, owner{ owner }
+{}
+
+//getters
 //retrieves the owner
 Color Road::getOwner() const noexcept {
 	return owner;

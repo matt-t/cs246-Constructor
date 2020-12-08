@@ -15,6 +15,7 @@ class Vertex {
 	
 	public:
 	Vertex(int location);
+	Vertex(int location, Color owner, Residence typeOfBuilding);
 	Color getOwner() const noexcept;
 	Residence getResidence() const noexcept;
 	void build(Color player, bool gameStart = false); //if true is passed in, player can build anywhere without adjacent buiding (beginning of a turn). elsee, by default regular rules of building apply

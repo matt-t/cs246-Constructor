@@ -10,7 +10,7 @@
 class Game {
     /* Private Variables */
     std::vector<std::unique_ptr<Player>> players;
-    Board board;
+    std::unique_ptr<Board> board;
     int turn;
     int winner;
 
@@ -25,8 +25,8 @@ class Game {
     public:
     
     // Constructor
-    Game(std::vector<std::pair<Resource, int>> board);
-
+    Game(std::vector<std::pair<Resource, int>> tileInfo);
+    Game(std::vector<std::pair<Resource, int>> tileInfo, int turn, int geese, std::vector<Color> roadInfo, std::vector<std::pair<Color, Residence>> buildInfo);
     //
     void save();
     
