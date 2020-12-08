@@ -4,7 +4,7 @@
 #include <iostream>
 
 // possible states of a vertex
-enum class Residence { Basement, House, Tower };
+enum class Residence { Basement, House, Tower, None };
 
 // five resources in the game, obtaineed by the players and allocated by their tiles
 enum class Resource { Brick, Energy, Glass, Heat, Wifi, Park };
