@@ -22,6 +22,7 @@ class Tile {
 	std::map<Color, int> produceResources() noexcept;
 	Resource getResource() const noexcept;//this gets the resource type produced at this tile
 	std::vector<Color> getLocationPlayers() const noexcept; //returns a list of players who have residence surrounding the tile
+	int getRollNum() const noexcept;
 	void addRoad(std::shared_ptr<Road> road) noexcept;
 	void addVertex(std::shared_ptr<Vertex> vertex) noexcept;
 };

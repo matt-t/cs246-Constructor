@@ -16,6 +16,11 @@ Color Road::getOwner() const noexcept {
 	return owner;
 }
 
+int Road::getLocation() const noexcept {
+	return location;
+}
+
+
 void Road::build(Color player) {
 	if (owner != Color::None) {
 		throw;//with custom message

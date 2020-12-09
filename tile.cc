@@ -33,6 +33,11 @@ std::map<Color, int> Tile::produceResources() noexcept{
 Resource Tile::getResource() const noexcept{
     return resource;
 }
+
+int Tile::getRollNum() const noexcept{
+    return rollNum;
+}
+
 std::vector<Color> Tile::getLocationPlayers() const noexcept { //can have duplicates
     std::vector<Color> list;
     for (int i = 0; i < vertices.size(); ++i) {
