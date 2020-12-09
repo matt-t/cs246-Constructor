@@ -47,6 +47,7 @@ void Player::buildResidence(int location) {
         throw PlayerResidenceTypeException();
     }
     residences[location] = Residence::Basement;
+    ++points;
 }
 
 void Player::upgradeResidence(int location) {
@@ -57,6 +58,7 @@ void Player::upgradeResidence(int location) {
         throw PlayerResidenceTypeException();
     }
     residences[location] = residences[location] == Residence::Basement ? Residence::House : Residence::Tower;
+    ++points;
 }
 
 
@@ -66,4 +68,8 @@ void Player::buildRoad(int location) {
 
 int Player::rollDice() {
     return playerDice->rollDice();
+}
+
+int Player::getPoints() {
+    return points;
 }
