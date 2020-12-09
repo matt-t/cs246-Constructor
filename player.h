@@ -29,7 +29,6 @@ class Player {
         std::map<int, Residence> residences;
         std::vector<int> roads;
         std::unique_ptr<Dice> playerDice;
-        
 };
 
 class InsufficientResourceException{};

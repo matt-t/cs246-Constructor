@@ -185,6 +185,7 @@ int main(int argc, char* argv[]){
 	} else if (board_loaded == true) {
 		cout << "The game constructor is run with loaded board." << endl;
 		Game game{boardInfo};
+		game.playGame();
 	} else {
 		//generate boardInfo vector for the randomized board
 	} 
