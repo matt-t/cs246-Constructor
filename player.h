@@ -22,7 +22,8 @@ class Player {
         void buildRoad(int location);
         int rollDice();
         int handleGooseRoll();
-        int getPoints();
+        int getPoints() const;
+        std::map<Resource, int> getResources() const;
 
     private:
         Color color;

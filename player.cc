@@ -70,6 +70,10 @@ int Player::rollDice() {
     return playerDice->rollDice();
 }
 
-int Player::getPoints() {
+int Player::getPoints() const {
     return points;
+}
+
+std::map<Resource, int> Player::getResources() const {
+    return resources;
 }
