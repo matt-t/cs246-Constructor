@@ -55,97 +55,95 @@ void Game::next() noexcept {
     }
 }
 
-void Game::handleRollPhase(Player &player) {
-    cout << "Builder <colour>’s turn" << endl;
-    string move;
-    while(cin >> move) {
-        try {
-            if (move == "roll") {
-                cout << "roll" << endl;
-                break;
-            } else if (move == "load") {
-                cout << "load" << endl;
-            } else if (move == "fair") {
-                cout <<  "fair" << endl;
-            } else {
-                cout << "Invalid command." << endl;
-            }
-        } catch (invalid_argument & e) {
-            cerr << e.what() << endl;       // return exception thrown by function called
-        }
+void Game::handleRollPhase(Player &player, string move, int &movePhase) {
+    if (move == "roll") {
+        cout << "roll" << endl;
+        ++movePhase;
+    } else if (move == "load") {
+        cout << "load" << endl;
+    } else if (move == "fair") {
+        cout <<  "fair" << endl;
+    } else {
+        cout << "Invalid command." << endl;
     }
 }
     
 
-void Game::handleActionPhase(Player &player) {
-    string move;
-    while(cin >> move) {
+void Game::handleActionPhase(Player &player, string move, int &movePhase) {
+    if (move == "board") {
+        cout << "board" << endl;
+    } else if (move == "status") {
+        cout << "status" << endl;
+    } else if (move == "residences") {
+        cout << "residences" << endl;
+    } else if (move == "build-road") {
         try {
-            if (move == "board") {
-                cout << "board" << endl;
-            } else if (move == "status") {
-                cout << "status" << endl;
-            } else if (move == "residences") {
-                cout << "residences" << endl;
-            } else if (move == "build-road") {
-                try {
-                    int edge;
-                    cin >> edge;
-                    cout << "build-road" << endl;
-                } catch (invalid_argument & e) {
-                    //whatever function error gives
-                }
-            } else if (move == "build-res") {
-                try {
-                    int vertex;
-                    cin >> vertex;
-                    cout << "build-res" << endl;
-                } catch (invalid_argument & e) {
-                    //whatever function error gives
-                }
-            } else if (move == "improve") {
-                int vertex;
-                cin >> vertex;
-                cout << "improve" << endl;
-            } else if (move == "trade") {
-                try {
-                    string color, resourceGive, resourceTake;
-                    cin >> color >> resourceGive >> resourceTake;
-                    //function to call trade
-                } catch (invalid_argument & e) {
-                    //whatever function error gives
-                }
-                cout << "trade" << endl;
-            } else if (move == "next") {
-                next();
-                cout << "next" << endl;
-                break;
-            } else if (move == "save") {
-                cout << "save" << endl;
-            } else if (move == "help") {
-                help();
-                cout << "help" << endl;
-            } else {
-                cout << "Invalid command." << endl;
-            }
+            int edge;
+            cin >> edge;
+            cout << "build-road" << endl;
         } catch (invalid_argument & e) {
-            cerr << e.what() << endl;       // return exception thrown by function called
+            cerr << e.what() << endl;       //whatever function error gives
         }
+    } else if (move == "build-res") {
+        try {
+            int vertex;
+            cin >> vertex;
+            cout << "build-res" << endl;
+        } catch (invalid_argument & e) {
+            cerr << e.what() << endl;       //whatever function error gives
+        }
+    } else if (move == "improve") {
+        try {
+            int vertex;
+            cin >> vertex;
+            cout << "improve" << endl;
+        } catch (invalid_argument & e) {
+            cerr << e.what() << endl;       //whatever function error gives
+        }
+    } else if (move == "trade") {
+        try {
+            string color, resourceGive, resourceTake;
+            cin >> color >> resourceGive >> resourceTake;
+            cout << "trade" << endl;
+            //function to call trade
+        } catch (invalid_argument & e) {
+            //whatever function error gives
+        }
+    } else if (move == "next") {
+        next();
+        --movePhase;
+    } else if (move == "save") {
+        cout << "save" << endl;
+    } else if (move == "help") {
+        help();
+        cout << "help" << endl;
+    } else {
+        cout << "Invalid command." << endl;
     }
 }
 
 void Game::playGame() {
-    cin.exceptions(ios::eofbit|ios::failbit);
+    //cin.exceptions(ios::eofbit|ios::failbit);
     
     // setting up of basements  --> take arg to determine if u need to set up basement or not
+    cout << "IN PLAY GAME" << endl;
 
-    // NEED MORE THOUGHT/INPUT OF CATCHING EOF FOR INPUT AND WHEN TO SAVE
+    int movePhase = 0;
+    string move;
+    while(cin >> move && winner == -1) {
+        if (movePhase == 0) {
+            cout << "0" << endl;
+            movePhase++;
+            //handleRollPhase(*players[turn], move, movePhase);
+        } else {
+            cout << "1" << endl;
+            movePhase--;
+            //handleActionPhase(*players[turn], move, movePhase);
+        }
+    }
 
-    while(winner == -1) {
-        try {
-            handleRollPhase(*players[turn]);
-            handleActionPhase(*players[turn]);
-        } catch (ios::failure &) { save(); } 
+    if (winner == -1) {         // if while loop ended cause EOF auto save game
+        save();
     } 
 } 
 
