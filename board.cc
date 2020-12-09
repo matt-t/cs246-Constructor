@@ -212,8 +212,6 @@ std::string getDividerString(std::string s) {
     int rightMargin = whiteSpace/2;
     int leftMargin = (s.length() % 2 == 0) ? whiteSpace/2 : (whiteSpace/2) + 1;
     str += getMargin(leftMargin) + s + getMargin(rightMargin);
-    cout << str << endl;
-    cout << "grief ^" << endl;
     return str;
 }
 
@@ -233,6 +231,7 @@ std::string getTileString(Tile &tile, bool resource = true) {
     if (resource) {
         s = getResourceString(tile.getResource());
     } else {
+        cout << tile.getRollNum() << "jeepers" << endl;
         s = getTileSpan(std::to_string(tile.getRollNum()));
     }
     std::string str = "";
@@ -249,7 +248,14 @@ std::string Board::getVertexLine(std::vector<int> tileOrRoadLocations, std::vect
     std::string s = "";
     int curVertexIdx = 0;
     int tileOrRoadIdx = 0;
-    s += getMargin(6);
+    int margin = 6;
+    if (numTiles < 5) {
+        margin += 10;
+    }
+    if (numTiles < 3) {
+        margin += 10;
+    }
+    s += getMargin(margin);
     bool isRoad = roadFirst;
     while (curVertexIdx < vertexLocations.size()) {
         s += getVertexString(*vertices[vertexLocations[curVertexIdx++]]);
@@ -271,15 +277,12 @@ std::string Board::getDividerLine(std::vector<int> tileLocations, int numTiles, 
     int curTileIdx = 0;
     int curDividerIdx = 0;
     s += getMargin(6);
-    cout << "huh" << endl;
     s += getDividerString(numTiles == 5 ? dividerStrings[curDividerIdx++] : "  ");
-    cout << s << endl;
     if (tileLocations.size() == 3) {
         s += getTileString(*tiles[tileLocations[curTileIdx++]], dividers);
     } else {
         s += getMargin(6);
     }
-    cout << s << endl;
     s += getDividerString(numTiles >= 3 ? dividerStrings[curDividerIdx++] : "  ");
 
     if (tileLocations.size() == 2) {
@@ -288,13 +291,14 @@ std::string Board::getDividerLine(std::vector<int> tileLocations, int numTiles, 
         s += getMargin(6);
     }
 
-    s += getDividerString(numTiles >= 1 ? dividerStrings[curDividerIdx++] : "  ");
-    if (tileLocations.size() != 2) {
+    s += getDividerString(dividerStrings[curDividerIdx++]);
+    if (tileLocations.size() % 2 != 0) {
         s += getTileString(*tiles[tileLocations[curTileIdx++]], dividers);
     } else {
         s += getMargin(6);
     }
-    s += getDividerString(numTiles >= 1 ? dividerStrings[curDividerIdx++] : "  ");
+
+    s += getDividerString(dividerStrings[curDividerIdx++]);
 
     if (tileLocations.size() == 2) {
         s += getTileString(*tiles[tileLocations[curTileIdx++]], dividers);
@@ -309,8 +313,6 @@ std::string Board::getDividerLine(std::vector<int> tileLocations, int numTiles, 
         s += getMargin(6);
     }
     s += getDividerString(numTiles == 5 ? dividerStrings[curDividerIdx++] : "  ");
-    cout << "huh" << endl;
-
     return s;
 }
 
@@ -322,6 +324,15 @@ std::vector<int> getVectorBetween(int leftBound, int rightBound) {
     return v;
 }
 
+std::vector<std::string> getStringVectorBetween(int leftBound, int rightBound) {
+    std::vector<std::string> v;
+    for (int i = leftBound; i <= rightBound; i++) {
+        v.emplace_back(std::to_string(i));
+    }
+    return v;
+}
+
+
 std::ostream &operator<<(std::ostream &out, const Board &board) {
     int roadIdx = 0;
     int vertexIdx = 0;
@@ -329,5 +340,6 @@ std::ostream &operator<<(std::ostream &out, const Board &board) {
     int rollIdx = 0;
     out << board.getVertexLine(getVectorBetween(0, 0), getVectorBetween(0, 1), 1) << std::endl;
     out << board.getDividerLine(getVectorBetween(0, -1), 1) << std::endl;
+    out << board.getDividerLine(getVectorBetween(0, 0), 1, false, getStringVectorBetween(1, 2)) << std::endl;
     return out;
 }
