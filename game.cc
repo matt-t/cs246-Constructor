@@ -4,12 +4,24 @@
 
 using namespace std;
 
-Game::Game(std::vector<std::pair<Resource, int>> tileInfo): players{}, board{ make_unique<Board>(tileInfo)}, turn{0}, winner{-1} 
-{}
+Game::Game(std::vector<std::pair<Resource, int>> tileInfo): board{make_unique<Board>(tileInfo)}, turn{0}, winner{-1} 
+{
+    // for (int i = 0; i < 4; i++) {
+    //     std::unique_ptr<Player> plyr = make_unique<Player>();
+    //     players.emplace_back(std::move(plyr));
+    // }
+}
+    
 
 Game::Game(std::vector<std::pair<Resource, int>> tileInfo, int turn, int geese, std::vector<Color> roadInfo, std::vector<std::pair<Color, Residence>> buildInfo):
-    players{}, board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
-{}
+    board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
+{
+    // cerr << "yikers" << endl;
+    // for (int i = 0; i < 4; i++) {
+    //     std::unique_ptr<Player> plyr = make_unique<Player>();
+    //     players.emplace_back(std::move(plyr));
+    // }
+}
 
 void Game::save() {
 
@@ -71,6 +83,7 @@ void Game::handleRollPhase(Player &player, string move, int &movePhase) {
 
 void Game::handleActionPhase(Player &player, string move, int &movePhase) {
     if (move == "board") {
+        cout << *board << endl;
         cout << "board" << endl;
     } else if (move == "status") {
         cout << "status" << endl;
@@ -130,8 +143,8 @@ void Game::playGame() {
     
     // setting up of basements  --> take arg to determine if u need to set up basement or not
     cout << "IN PLAY GAME" << endl;
-
-    int movePhase = 0;      // Always default to rollPhase
+    cout << *board << endl;
+    int movePhase = 0;
     string move;
     while(cin >> move && winner == -1) {
         if (movePhase == 0) {

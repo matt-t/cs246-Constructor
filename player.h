@@ -10,6 +10,7 @@
 
 class Player {
     public:
+        Player();
         void changeDice(DiceType dice);
         std::map<int, Residence> getResidences() const;
         void addResources(Resource resource, int amount);

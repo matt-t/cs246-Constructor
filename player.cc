@@ -1,6 +1,12 @@
 #include "player.h"
 #include "loadedDice.h"
 #include "fairDice.h"
+#include <memory>
+
+Player::Player() {
+    playerDice = std::make_unique<LoadedDice>();
+};
+
 
 void Player::changeDice(DiceType newDice) {
     if (newDice == DiceType::Fair) {

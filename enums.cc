@@ -28,6 +28,20 @@ std::ostream& operator<<(std::ostream& out, const Resource resource) {
     return out;
 }
 
+std::string getResourceString(const Resource resource) {
+    if (resource == Resource::Brick) {
+        return RESOURCE_BRICK_STRING;
+    } else if (resource == Resource::Energy) {
+        return RESOURCE_ENERGY_STRING;
+    } else if (resource == Resource::Glass) {
+        return RESOURCE_GLASS_STRING;
+    } else if (resource == Resource::Heat) {
+        return RESOURCE_HEAT_STRING;
+    } else if (resource == Resource::Wifi) {
+        return RESOURCE_WIFI_STRING;
+    }
+}
+
 std::ostream& operator<<(std::ostream& out, const Color color) {
     if (color == Color::Blue) {
         out <<  COLOR_BLUE_STRING;
