@@ -21,6 +21,7 @@ class Player {
         void buildRoad(int location);
         int rollDice();
         int handleGooseRoll();
+        int getPoints();
 
     private:
         Color color;

@@ -110,6 +110,10 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
             //whatever function error gives
         }
     } else if (move == "next") {
+        // CHECK IF WINNER
+        if (player.getPoints() == 10) {
+            winner = turn;
+        }
         next();
         --movePhase;
     } else if (move == "save") {
@@ -123,12 +127,11 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
 }
 
 void Game::playGame() {
-    //cin.exceptions(ios::eofbit|ios::failbit);
     
     // setting up of basements  --> take arg to determine if u need to set up basement or not
     cout << "IN PLAY GAME" << endl;
 
-    int movePhase = 0;
+    int movePhase = 0;      // Always default to rollPhase
     string move;
     while(cin >> move && winner == -1) {
         if (movePhase == 0) {
