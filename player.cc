@@ -77,3 +77,7 @@ int Player::getPoints() const {
 std::map<Resource, int> Player::getResources() const {
     return resources;
 }
+
+Color Player::getColor() {
+    return color;
+}

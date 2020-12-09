@@ -24,6 +24,7 @@ class Player {
         int handleGooseRoll();
         int getPoints() const;
         std::map<Resource, int> getResources() const;
+        Color getColor();
 
     private:
         Color color;

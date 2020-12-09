@@ -39,7 +39,7 @@ class Game {
     void residences(Player &player);
     
     //
-    void help() noexcept;
+    void help(int movePhase) noexcept;
     
     //
     void printBoard();
