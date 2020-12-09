@@ -15,6 +15,11 @@ class Board{
     std::vector<std::shared_ptr<Road>> roads;
     int geese;
 
+
+    std::string getVertexLine(std::vector<int> tileOrRoadLocations, std::vector<int> vertexLocations, int numTiles, bool roadFirst) const;
+    std::string getDividerLine(std::vector<int> tileLocations, int numTiles, bool dividers, std::vector<std::string> dividerStrings) const;
+
+
     public:
     //constructors
     Board(std::vector<std::pair<Resource, int>> tileInfo);

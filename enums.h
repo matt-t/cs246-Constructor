@@ -16,5 +16,6 @@ enum class DiceType { Fair, Loaded };
 std::ostream& operator<<(std::ostream& out, const Residence residence);
 std::ostream& operator<<(std::ostream& out, const Resource resource);
 std::ostream& operator<<(std::ostream& out, const Color color);
+std::string getResourceString(const Resource resource);
 
 #endif

@@ -19,6 +19,10 @@ Residence Vertex::getResidence() const noexcept {
 	return typeOfBuilding;
 }
 
+int Vertex::getLocation() const noexcept {
+	return location;
+}
+
 //builds residence
 void Vertex::build(Color player, bool gameStart ) {
 	//is already built

@@ -56,4 +56,9 @@ const std::vector<std::vector<int>> TilesRoads = {
     {52, 55, 56, 63, 64, 67}, {53, 57, 58, 65, 66, 68}, {61, 64, 65, 69, 70, 71} //16-18
 };
 
+const std::vector<int> vertexLocations1 = {0, 1};
+const std::vector<int> tileOrRoadLocations1 = {0};
+
+const std::vector<std::string> defaultDividers(6, "|");
+
 #endif

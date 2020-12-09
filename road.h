@@ -16,6 +16,7 @@ class Road {
 	Road(int location);
 	Road(int location, Color owner);
 	Color getOwner() const noexcept;
+	int getLocation() const noexcept;
 	void build(Color player);
 	void addVertex(std::shared_ptr<Vertex> vertex) noexcept;
 };
