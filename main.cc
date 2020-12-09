@@ -180,11 +180,11 @@ int main(int argc, char* argv[]){
 	if (game_loaded == true) {
 		cout << "The game constructor is run with loaded game." << endl;
 		//feed in boardInfo AND gameInfo;
-		Game game{boardInfo, turn, geese, roadInfo, buildInfo};
+		Game game{seed, boardInfo, turn, geese, roadInfo, buildInfo};
 		game.playGame();
 	} else if (board_loaded == true) {
 		cout << "The game constructor is run with loaded board." << endl;
-		Game game{boardInfo};
+		Game game{seed, boardInfo};
 		game.playGame();
 	} else {
 		//generate boardInfo vector for the randomized board

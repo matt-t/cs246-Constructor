@@ -27,8 +27,8 @@ class Game {
     public:
     
     // Constructor
-    Game(std::vector<std::pair<Resource, int>> tileInfo);
-    Game(std::vector<std::pair<Resource, int>> tileInfo, int turn, int geese, std::vector<Color> roadInfo, std::vector<std::pair<Color, Residence>> buildInfo);
+    Game(int seed, std::vector<std::pair<Resource, int>> tileInfo);
+    Game(int seed, std::vector<std::pair<Resource, int>> tileInfo, int turn, int geese, std::vector<Color> roadInfo, std::vector<std::pair<Color, Residence>> buildInfo);
     
     //
     void save();

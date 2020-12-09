@@ -4,8 +4,17 @@
 
 using namespace std;
 
-Game::Game(std::vector<std::pair<Resource, int>> tileInfo): board{make_unique<Board>(tileInfo)}, turn{0}, winner{-1} 
+Game::Game(int seed, vector<pair<Resource, int>> tileInfo): 
+    seed{ seed }, board{make_unique<Board>(tileInfo)}, turn{0}, winner{-1} 
 {
+    auto b = make_unique<Player>(Color::Blue);
+    players.push_back(move(b));
+    auto r = make_unique<Player>(Color::Red);
+    players.push_back(move(r));
+    auto o = make_unique<Player>(Color::Orange);
+    players.push_back(move(o));
+    auto y = make_unique<Player>(Color::Yellow);
+    players.push_back(move(y));
     // for (int i = 0; i < 4; i++) {
     //     std::unique_ptr<Player> plyr = make_unique<Player>();
     //     players.emplace_back(std::move(plyr));
@@ -13,9 +22,18 @@ Game::Game(std::vector<std::pair<Resource, int>> tileInfo): board{make_unique<Bo
 }
     
 
-Game::Game(std::vector<std::pair<Resource, int>> tileInfo, int turn, int geese, std::vector<Color> roadInfo, std::vector<std::pair<Color, Residence>> buildInfo):
-    board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
+Game::Game(int seed, vector<pair<Resource, int>> tileInfo, int turn, int geese, vector<Color> roadInfo, vector<pair<Color, Residence>> buildInfo, 
+            vector<int>playerPoints, vector<map<Resource, int>>playerResources, vector<map<int, Residence>>playerResidences, vector<vector<int>>playerRoads):
+    seed{ seed }, board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
 {
+    auto b = make_unique<Player>(Color::Blue, int playerPoints[0], map<Resource, int> playerResources[0], map<int, Residence> playerResidences[0], vector<int> playerRoads[0]);
+    players.push_back(move(b));
+    auto r = make_unique<Player>(Color::Red);
+    players.push_back(move(r));
+    auto o = make_unique<Player>(Color::Orange);
+    players.push_back(move(o));
+    auto y = make_unique<Player>(Color::Yellow);
+    players.push_back(move(y));
     // cerr << "yikers" << endl;
     // for (int i = 0; i < 4; i++) {
     //     std::unique_ptr<Player> plyr = make_unique<Player>();
@@ -140,7 +158,7 @@ void Game::playGame() {
     
     // setting up of basements  --> take arg to determine if u need to set up basement or not
     cout << "IN PLAY GAME" << endl;
-    cout << *board << endl;
+   // cout << *board << endl;
     int movePhase = 0;
     string move;
     while(cin >> move && winner == -1) {

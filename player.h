@@ -10,7 +10,8 @@
 
 class Player {
     public:
-        Player();
+        Player(Color player);
+        Player(Color player, int points, std::map<Resource, int> resources, std::map<int, Residence> residences, std::vector<int> roads);
         void changeDice(DiceType dice);
         std::map<int, Residence> getResidences() const;
         void addResources(Resource resource, int amount);
