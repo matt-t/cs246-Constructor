@@ -1,8 +1,12 @@
-#ifndef __BOARD_H_ //should this be CONSTANTS_H
-#define __BOARD_H_
+#ifndef __CONSTANTS_H_ //should this be CONSTANTS_H
+#define __CONSTANTS_H_
 
 #include <string>
 #include <vector>
+#include <map>
+#include "enums.h"
+
+const std::vector<Color> COLOR_ORDER{Color::Blue, Color::Red, Color::Orange, Color::Yellow};
 
 const std::string RESIDENCE_BASEMENT_STRING = "Basement";
 const std::string RESIDENCE_HOUSE_STRING = "House";
@@ -14,6 +18,7 @@ const std::string RESOURCE_ENERGY_STRING = "Energy";
 const std::string RESOURCE_GLASS_STRING = "Glass";
 const std::string RESOURCE_HEAT_STRING = "Heat";
 const std::string RESOURCE_WIFI_STRING = "Wifi";
+const std::string RESOURCE_PARK_STRING = "Park";
 
 //
 const std::string COLOR_BLUE_STRING = "Blue";
@@ -21,6 +26,8 @@ const std::string COLOR_RED_STRING = "Red";
 const std::string COLOR_ORANGE_STRING = "Orange";
 const std::string COLOR_YELLOW_STRING = "Yellow";
 const std::string COLOR_NONE_STRING = "None";
+
+const std::string GOOSE_STRING = "GOOSE";
 
 const std::vector<std::vector<int>> VerticesRoads = { 
     {0, 1}, {0, 2}, {3, 5}, {1, 3, 6}, {2, 4, 7}, {4, 8}, //vertices 0 - 5
@@ -56,9 +63,65 @@ const std::vector<std::vector<int>> TilesRoads = {
     {52, 55, 56, 63, 64, 67}, {53, 57, 58, 65, 66, 68}, {61, 64, 65, 69, 70, 71} //16-18
 };
 
-const std::vector<int> vertexLocations1 = {0, 1};
-const std::vector<int> tileOrRoadLocations1 = {0};
+const int TOP_LEFT_VERTEX = 0;
+const int TOP_RIGHT_VERTEX = 1;
+const int MIDDLE_RIGHT_VERTEX = 3;
+const int BOTTOM_RIGHT_VERTEX = 5;
+const int BOTTOM_LEFT_VERTEX = 4;
+const int MIDDLE_LEFT_VERTEX = 2;
 
-const std::vector<std::string> defaultDividers(6, "|");
+const int TOP_MIDDLE_ROAD = 0;
+const int TOP_RIGHT_ROAD = 2;
+const int BOTTOM_RIGHT_ROAD = 4;
+const int BOTTOM_MIDDLE_ROAD = 5;
+const int BOTTOM_LEFT_ROAD = 3;
+const int TOP_LEFT_ROAD = 1;
+
+const std::map<Color, char> COLOR_TO_CHAR = {
+    { Color::Blue, 'B' }, 
+    { Color::Red, 'R' },
+    { Color::Yellow, 'Y' },
+    { Color::Orange, 'O' },
+    { Color::None, 'N'}
+};
+
+const std::map<char, Residence> CHAR_TO_RESIDENCE = {
+    { 'B', Residence::Basement },
+    { 'H', Residence::House},
+    { 'T', Residence::Tower },
+};
+
+const std::map<Residence, int> RESIDENCE_TO_POINTS = {
+    { Residence::Basement, 1 },
+    { Residence::House, 2},
+    { Residence::Tower, 3},
+};
+
+const std::map<Residence, char> RESIDENCE_TO_CHAR = {
+    { Residence::Basement, 'B' },
+    { Residence::House, 'H'},
+    { Residence::Tower, 'T'},
+    { Residence::None, '?'}
+};
+
+const std::map<Resource, int> BASEMENT_COST = {
+    { Resource::Brick, 1 },
+    { Resource::Energy, 1 },
+    { Resource::Glass, 1 },
+    { Resource::Wifi, 1 }
+};
+
+const std::map<Resource, int> HOUSE_COST = {
+    { Resource::Glass, 2 },
+    { Resource::Heat, 3 }
+};
+
+const std::map<Resource, int> TOWER_COST = {
+    { Resource::Brick, 3 },
+    { Resource::Energy, 2 },
+    { Resource::Glass, 2 },
+    { Resource::Wifi, 1 },
+    { Resource::Heat, 2 }
+};
 
 #endif

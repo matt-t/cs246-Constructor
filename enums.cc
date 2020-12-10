@@ -24,6 +24,8 @@ std::ostream& operator<<(std::ostream& out, const Resource resource) {
         out <<  RESOURCE_HEAT_STRING;
     } else if (resource == Resource::Wifi) {
         out <<  RESOURCE_WIFI_STRING;
+    } else if (resource == Resource::Park) {
+        out << RESOURCE_PARK_STRING;
     }
     return out;
 }
@@ -39,6 +41,8 @@ std::string getResourceString(const Resource resource) {
         return RESOURCE_HEAT_STRING;
     } else if (resource == Resource::Wifi) {
         return RESOURCE_WIFI_STRING;
+    } else if (resource == Resource::Park) {
+        return RESOURCE_PARK_STRING;
     }
 }
 

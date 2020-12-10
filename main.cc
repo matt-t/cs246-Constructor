@@ -8,6 +8,7 @@
 #include <vector>
 #include "enums.h"
 #include "game.h"
+#include "constants.h"
 
 using namespace std;
 
@@ -27,10 +28,10 @@ int main(int argc, char* argv[]){
 	vector<Color> roadInfo(r, Color::None);
 	vector<pair<Color, Residence>> buildInfo(v, {Color::None, Residence::None});
 	int geese, turn;
-	vector<int> playerPoints;
-	vector<map<Resource, int>>playerResources;
-	vector<map<int, Residence>>playerResidences;
-	vector<vector<int>>playerRoads;
+	vector<int> playerPoints = {0, 0, 0, 0};
+	vector<map<Resource, int>>playerResources(4);
+	vector<map<int, Residence>>playerResidences(4);
+	vector<vector<int>>playerRoads(4);
 
 	for (int i = 1 ; i < argc; ++i) {
 		string s = argv[i];
@@ -81,8 +82,38 @@ int main(int argc, char* argv[]){
 					getline(f, line);
 					istringstream read(line);
 					read >> turn;
-					for (int i = 0; i < 4; ++i){
+					for (const Color color: COLOR_ORDER){
 						getline(f, line);
+						read.clear();
+						read.str(line);
+						int num;
+						cerr << "jeepers" << endl;
+						read >> num;
+						playerResources[i].emplace(Resource::Brick, num);
+						read >> num;
+						playerResources[i].emplace(Resource::Energy, num);
+						read >> num;
+						playerResources[i].emplace(Resource::Glass, num);
+						read >> num;
+						playerResources[i].emplace(Resource::Heat, num);
+						read >> num;
+						playerResources[i].emplace(Resource::Wifi, num);
+						string type;
+						read >> type;
+						while(read >> num){
+							playerRoads[i].emplace_back(num);
+							roadInfo[num] = color;
+						}
+						read.clear();
+						read >> type;
+						char residenceType;
+						while (read >> num){ // im not sure if we need to reset failbit here
+							read >> residenceType;
+							playerResidences[i].emplace(num, CHAR_TO_RESIDENCE.at(residenceType));
+							playerPoints[i] += RESIDENCE_TO_POINTS.at(CHAR_TO_RESIDENCE.at(residenceType));
+							buildInfo[num] = make_pair(color, CHAR_TO_RESIDENCE.at(residenceType));
+						}
+						read.clear();
 					}
 					getline(f, line);
 					read.clear();
