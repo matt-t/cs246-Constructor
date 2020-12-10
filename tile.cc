@@ -6,6 +6,19 @@ std::vector<std::weak_ptr<Vertex>> vertices, std::vector<std::weak_ptr<Road>> ro
     locationNum{ locationNum }, resource{ resource }, rollNum{ rollNum }, geese{ false }, vertices{ vertices }, roads{ roads }
 {}
 
+Vertex* Tile::getVertex(int index) const noexcept {
+    return vertices[index].lock().get();
+}
+
+Road* Tile::getRoad(int index) const noexcept {
+    return roads[index].lock().get();
+}
+
+int Tile::getLocation() const noexcept {
+    return locationNum;
+}
+
+
 std::map<Color, int> Tile::produceResources() noexcept{
     std::map<Color, int> list;
     list[Color::Blue] = 0;

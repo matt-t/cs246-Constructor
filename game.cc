@@ -4,7 +4,7 @@
 
 using namespace std;
 
-Game::Game(std::vector<std::pair<Resource, int>> tileInfo): board{make_unique<Board>(tileInfo)}, turn{0}, winner{-1} 
+Game::Game(std::vector<std::pair<Resource, int>> tileInfo): players{}, board{make_unique<Board>(tileInfo)}, turn{0}, winner{-1} 
 {
     // for (int i = 0; i < 4; i++) {
     //     std::unique_ptr<Player> plyr = make_unique<Player>();
@@ -14,7 +14,7 @@ Game::Game(std::vector<std::pair<Resource, int>> tileInfo): board{make_unique<Bo
     
 
 Game::Game(std::vector<std::pair<Resource, int>> tileInfo, int turn, int geese, std::vector<Color> roadInfo, std::vector<std::pair<Color, Residence>> buildInfo):
-    board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
+    players{}, board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
 {
     // cerr << "yikers" << endl;
     // for (int i = 0; i < 4; i++) {
