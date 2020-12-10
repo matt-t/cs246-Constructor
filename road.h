@@ -20,4 +20,7 @@ class Road {
 	void build(Color player);
 	void addVertex(std::shared_ptr<Vertex> vertex) noexcept;
 };
+
+class RoadExistsException{};
+class InvalidRoadLocationException{};
 #endif

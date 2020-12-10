@@ -80,16 +80,34 @@ Board::Board(std::vector<std::pair<Resource, int>> tileInfo, std::vector<Color> 
     
 
 void Board::buildResidence(Color color, int location){
-    vertices[location]->build(color);//error check
+    try{
+        vertices[location]->build(color);
+    } catch(BuildingExistsException& e){
+        cerr << "ERROR: A residence already exists here." << endl;
+    } catch (InvalidLocationException& e){
+        cerr << "ERROR: You cannot build here." << endl;
+    }
 }
 
 void Board::upgradeResidence(Color color, int location){
-    vertices[location]->upgrade(color);//error check
+    try{ 
+        vertices[location]->upgrade(color);
+    } catch(BuidingNotOwnedException& e){
+        cerr << "ERROR: You do not own this residence." << endl;
+    } catch (AlreadyTowerException& e){
+        cerr << "ERROR: Your residence is already a Tower." << endl;
+    }
 }
 
 
 void Board::buildRoad(Color color, int location){
-    roads[location]->build(color);//error check
+    try{
+        roads[location]->build(color);
+    } catch (RoadExistsException& e){
+        cerr << "ERROR: Someone has already built a road here." << endl;
+    } catch(InvalidRoadLocationException& e) {
+        cerr << "ERROR: Invalid location chosen. None of your road or residence connect to here." << endl;
+    } //need to change player's information
 }
 
 void Board::changeGeese(int location){
