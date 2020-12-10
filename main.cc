@@ -13,7 +13,18 @@
 using namespace std;
 
 int main(int argc, char* argv[]){
-	
+	// // testing STUFF
+	// Player boi{ Color::Blue };
+	// boi.addResources(Resource::Brick, 15);
+	// cout << boi.totalResource() << " lul" << endl;
+	// boi.changeDice(DiceType::Fair);
+	// Player boi2 = boi;
+	// cout << boi2.totalResource() << " lul2" << endl;
+	// cout << boi2.rollDice() << endl;
+	// cout << boi2.rollDice() << endl;
+	// cout << boi2.rollDice() << endl;
+	// cout << boi2.rollDice() << endl;
+
 	//processing of command line arguments
 	int seed = 0;
 	string game_file;
@@ -77,12 +88,12 @@ int main(int argc, char* argv[]){
 					cerr << "ERROR: Invalid file " << game_file << endl;
 					return 1;
 				}
-				if (f.is_open()){
+				if (f.is_open()) {
 					string line;
 					getline(f, line);
 					istringstream read(line);
 					read >> turn;
-					for (const Color color: COLOR_ORDER){
+					for (const Color color: COLOR_ORDER) {
 						getline(f, line);
 						read.clear();
 						read.str(line);
@@ -100,7 +111,7 @@ int main(int argc, char* argv[]){
 						playerResources[i].emplace(Resource::Wifi, num);
 						string type;
 						read >> type;
-						while(read >> num){
+						while(read >> num) {
 							playerRoads[i].emplace_back(num);
 							roadInfo[num] = color;
 						}

@@ -136,3 +136,6 @@ std::map<Resource, int> Player::getResources() const {
 Color Player::getColor() {
     return color;
 }
+
+
+
