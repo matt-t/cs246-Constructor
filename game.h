@@ -10,6 +10,7 @@
 
 class Game {
     /* Private Variables */
+    int seed;
     std::vector<std::unique_ptr<Player>> players;
     std::unique_ptr<Board> board;
     int turn;
@@ -26,8 +27,10 @@ class Game {
     public:
     
     // Constructor
-    Game(std::vector<std::pair<Resource, int>> tileInfo);
-    Game(std::vector<std::pair<Resource, int>> tileInfo, int turn, int geese, std::vector<Color> roadInfo, std::vector<std::pair<Color, Residence>> buildInfo);
+    Game(int seed, std::vector<std::pair<Resource, int>> tileInfo);
+    Game(int seed, std::vector<std::pair<Resource, int>> tileInfo, int turn, int geese, std::vector<Color> roadInfo, std::vector<std::pair<Color, Residence>> buildInfo, 
+            std::vector<int>playerPoints, std::vector<std::map<Resource, int>>playerResources, std::vector<std::map<int, Residence>>playerResidences, std::vector<std::vector<int>>playerRoads);
+
     
     //
     void save();
@@ -39,7 +42,7 @@ class Game {
     void residences(Player &player);
     
     //
-    void help() noexcept;
+    void help(int movePhase) noexcept;
     
     //
     void printBoard();

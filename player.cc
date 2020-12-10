@@ -3,11 +3,22 @@
 #include "fairDice.h"
 #include <memory>
 
-Player::Player() {
+using namespace std;
+
+//Ctor
+Player::Player(Color player):
+    color{ player }, points{ 0 }
+{
     playerDice = std::make_unique<LoadedDice>();
 };
 
-
+Player::Player(Color player, int points, map<Resource, int> resources, map<int, Residence> residences, vector<int> roads):
+    color{ player }, points{ points }, resources{ resources }, residences{ residences}, roads{ roads }
+{
+    playerDice = std::make_unique<LoadedDice>();
+}
+        
+//methods
 void Player::changeDice(DiceType newDice) {
     if (newDice == DiceType::Fair) {
         playerDice = std::make_unique<FairDice>();
@@ -70,6 +81,14 @@ int Player::rollDice() {
     return playerDice->rollDice();
 }
 
-int Player::getPoints() {
+int Player::getPoints() const {
     return points;
+}
+
+std::map<Resource, int> Player::getResources() const {
+    return resources;
+}
+
+Color Player::getColor() {
+    return color;
 }

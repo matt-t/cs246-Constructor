@@ -4,8 +4,17 @@
 
 using namespace std;
 
-Game::Game(std::vector<std::pair<Resource, int>> tileInfo): players{}, board{make_unique<Board>(tileInfo)}, turn{0}, winner{-1} 
+Game::Game(int seed, vector<pair<Resource, int>> tileInfo): 
+    seed{ seed }, board{make_unique<Board>(tileInfo)}, turn{0}, winner{-1} 
 {
+    auto b = make_unique<Player>(Color::Blue);
+    players.push_back(move(b));
+    auto r = make_unique<Player>(Color::Red);
+    players.push_back(move(r));
+    auto o = make_unique<Player>(Color::Orange);
+    players.push_back(move(o));
+    auto y = make_unique<Player>(Color::Yellow);
+    players.push_back(move(y));
     // for (int i = 0; i < 4; i++) {
     //     std::unique_ptr<Player> plyr = make_unique<Player>();
     //     players.emplace_back(std::move(plyr));
@@ -13,9 +22,18 @@ Game::Game(std::vector<std::pair<Resource, int>> tileInfo): players{}, board{mak
 }
     
 
-Game::Game(std::vector<std::pair<Resource, int>> tileInfo, int turn, int geese, std::vector<Color> roadInfo, std::vector<std::pair<Color, Residence>> buildInfo):
-    players{}, board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
+Game::Game(int seed, vector<pair<Resource, int>> tileInfo, int turn, int geese, vector<Color> roadInfo, vector<pair<Color, Residence>> buildInfo, 
+            vector<int>playerPoints, vector<map<Resource, int>>playerResources, vector<map<int, Residence>>playerResidences, vector<vector<int>>playerRoads):
+    seed{ seed }, board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
 {
+    auto b = make_unique<Player>(Color::Blue,  playerPoints[0], playerResources[0], playerResidences[0], playerRoads[0]);
+    players.push_back(move(b));
+    auto r = make_unique<Player>(Color::Red, playerPoints[1],  playerResources[1], playerResidences[1], playerRoads[1]);
+    players.push_back(move(r));
+    auto o = make_unique<Player>(Color::Orange, playerPoints[2], playerResources[2], playerResidences[2], playerRoads[2]);
+    players.push_back(move(o));
+    auto y = make_unique<Player>(Color::Yellow, playerPoints[3], playerResources[3], playerResidences[3], playerRoads[3]);
+    players.push_back(move(y));
     // cerr << "yikers" << endl;
     // for (int i = 0; i < 4; i++) {
     //     std::unique_ptr<Player> plyr = make_unique<Player>();
@@ -28,31 +46,41 @@ void Game::save() {
 }
 
 void Game::status(Player &player) {
-    // player.printStatus();
-    // cout << player.getColor() << " has " << player.getPoints() << " building points, ";
-    // <numBrick> brick, <numEnergy> energy, <numGlass> glass, ;
-    // <numHeat> heat, and <numWifi> wifi << endl;
+    cout << "player.getColor()" << " has " << player.getPoints() << " building points, ";
+    auto resources = player.getResources();
+    cout << resources[Resource::Brick] << " brick, ";
+    cout << resources[Resource::Energy] << " energy, ";
+    cout << resources[Resource::Glass] << " glass, ";
+    cout << resources[Resource::Heat] << " heat, and ";
+    cout << resources[Resource::Wifi] << " wifi" << endl;
 }
 
 void Game::residences(Player &player) {
     auto residences = player.getResidences();
-    for (auto &res: residences) {
-        cout << res.first << res.second << endl;
+    for (auto res: residences) {
+        cout << res.first << ": "<<  res.second << endl;
     }
 }
     
-void Game::help() noexcept {
+void Game::help(int movePhase) noexcept {
     cout << "Valid Commands:" << endl;
-    cout << "board" << endl;
-    cout << "status" << endl;
-    cout << "residences" << endl;
-    cout << "build-road <edge#>" << endl;
-    cout << "build-res <housing#>" << endl;
-    cout << "improve-res <houseing#>" << endl;
-    cout << "trade <colour> <give> <take>" << endl;
-    cout << "next" << endl;
-    cout << "save <file>" << endl;
-    cout << "help" << endl;
+    if (movePhase) {
+        cout << "~ board" << endl;
+        cout << "~ status : prints the current status of all builders in order from builder 0 to 3." << endl;
+        cout << "~ residences" << endl;
+        cout << "~ build-road <road#> : attempts to builds the road at <road#>." << endl;
+        cout << "~ build-res <housing#> : attempts to builds a basement at <housing#>." << endl;
+        cout << "~ improve-res <housing#> : attempts to improve the residence at <housing#>." << endl;
+        cout << "~ trade <colour> <give> <take> : attempts to trade with builder <colour>, giving one resource of type <give> and receiving one resource of type <take>." << endl;
+        cout << "~ next : passes control onto the next builder in the game." << endl;
+        cout << "~ save <file> : saves the current game state to <file>." << endl;
+    } else {
+        cout << "~ load : changes current builder's dice type to 'loaded'" << endl;
+        cout << "~ fair : changes current builder's dice type to 'fair'" << endl;
+        cout << "~ roll : rolls the dice and distributes resources." << endl;
+        cout << "~ status : prints the current status of all builders in order from builder 0 to 3." << endl;
+    }
+    cout << "~ help : prints out the list of commands." << endl;
 }
     
 void Game::printBoard() {
@@ -75,6 +103,8 @@ void Game::handleRollPhase(Player &player, string move, int &movePhase) {
         cout << "load" << endl;
     } else if (move == "fair") {
         cout <<  "fair" << endl;
+    } else if (move == "help") {
+        help(movePhase);
     } else {
         cout << "Invalid command." << endl;
     }
@@ -86,9 +116,9 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
         cout << *board << endl;
         cout << "board" << endl;
     } else if (move == "status") {
-        cout << "status" << endl;
+        status(player);
     } else if (move == "residences") {
-        cout << "residences" << endl;
+        residences(player);
     } else if (move == "build-road") {
         try {
             int edge;
@@ -118,22 +148,25 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
             string color, resourceGive, resourceTake;
             cin >> color >> resourceGive >> resourceTake;
             cout << "trade" << endl;
-            //function to call trade
+            /*
+            auto playerReceive = COPY(*player)
+            auto playerLose = COPY(players.find())
+            playerReceive
+            */
         } catch (invalid_argument & e) {
             //whatever function error gives
         }
     } else if (move == "next") {
-        // CHECK IF WINNER
-        if (player.getPoints() == 10) {
+        if (player.getPoints() >= 10) {         // CHECK IF WINNER
             winner = turn;
         }
         next();
         --movePhase;
+        cout << turn << " " << winner << endl;
     } else if (move == "save") {
         cout << "save" << endl;
     } else if (move == "help") {
-        help();
-        cout << "help" << endl;
+        help(movePhase);
     } else {
         cout << "Invalid command." << endl;
     }
@@ -142,24 +175,38 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
 void Game::playGame() {
     
     // setting up of basements  --> take arg to determine if u need to set up basement or not
-    cout << "IN PLAY GAME" << endl;
     cout << *board << endl;
     int movePhase = 0;
     string move;
-    while(cin >> move && winner == -1) {
-        if (movePhase == 0) {
-            cout << "0" << endl;
-            movePhase++;
-            //handleRollPhase(*players[turn], move, movePhase);
+    cout << "Builder " << players[turn]->getColor() << "'s turn." << endl;
+    while (winner == -1) {
+        if (movePhase) {
+            cout << "Enter a command:" << endl;
+        }
+        cout << "> ";
+
+        if (cin >> move) {
+            if (movePhase == 0) {
+                handleRollPhase(*players[turn], move, movePhase);
+            } else {
+                int temp = turn;
+                handleActionPhase(*players[turn], move, movePhase);
+                if (temp != turn && winner == -1) {
+                    // PRINT BOARD
+                    cout << "Builder " << players[turn]->getColor() << "'s turn." << endl;
+                } else if (winner != -1) {
+                    turn = temp;        // undo the next turn move cause we ending the game 
+                }
+            }
         } else {
-            cout << "1" << endl;
-            movePhase--;
-            //handleActionPhase(*players[turn], move, movePhase);
+            break;
         }
     }
 
     if (winner == -1) {         // if while loop ended cause EOF auto save game
         save();
-    } 
+    } else {                    // if while loop ended cause player won 
+        cout << "Congratulations!! " << "<COLOR" << " wins!!" << endl;
+    }
 } 
 

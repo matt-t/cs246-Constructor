@@ -27,6 +27,10 @@ int main(int argc, char* argv[]){
 	vector<Color> roadInfo(r, Color::None);
 	vector<pair<Color, Residence>> buildInfo(v, {Color::None, Residence::None});
 	int geese, turn;
+	vector<int> playerPoints;
+	vector<map<Resource, int>>playerResources;
+	vector<map<int, Residence>>playerResidences;
+	vector<vector<int>>playerRoads;
 
 	for (int i = 1 ; i < argc; ++i) {
 		string s = argv[i];
@@ -177,14 +181,15 @@ int main(int argc, char* argv[]){
 		}
 	}
 
+
 	if (game_loaded == true) {
 		cout << "The game constructor is run with loaded game." << endl;
 		//feed in boardInfo AND gameInfo;
-		Game game{boardInfo, turn, geese, roadInfo, buildInfo};
+		Game game{seed, boardInfo, turn, geese, roadInfo, buildInfo, playerPoints, playerResources, playerResidences, playerRoads};
 		game.playGame();
 	} else if (board_loaded == true) {
 		cout << "The game constructor is run with loaded board." << endl;
-		Game game{boardInfo};
+		Game game{seed, boardInfo};
 		game.playGame();
 	} else {
 		//generate boardInfo vector for the randomized board

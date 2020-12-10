@@ -10,7 +10,8 @@
 
 class Player {
     public:
-        Player();
+        Player(Color player);
+        Player(Color player, int points, std::map<Resource, int> resources, std::map<int, Residence> residences, std::vector<int> roads);
         void changeDice(DiceType dice);
         std::map<int, Residence> getResidences() const;
         void addResources(Resource resource, int amount);
@@ -22,7 +23,9 @@ class Player {
         void buildRoad(int location);
         int rollDice();
         int handleGooseRoll();
-        int getPoints();
+        int getPoints() const;
+        std::map<Resource, int> getResources() const;
+        Color getColor();
 
     private:
         Color color;
@@ -31,7 +34,6 @@ class Player {
         std::map<int, Residence> residences;
         std::vector<int> roads;
         std::unique_ptr<Dice> playerDice;
-        
 };
 
 class InsufficientResourceException{};
