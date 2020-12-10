@@ -8,9 +8,10 @@ class LoadedDice: public Dice {
     public:
         int rollDice() const override;
         void loadDice(int num);
+        std::unique_ptr<Dice> clone() const override;
 };
 
 class UnloadedException {};
-
+class InvalidRollException {};
 
 #endif
