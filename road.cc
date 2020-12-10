@@ -23,7 +23,7 @@ int Road::getLocation() const noexcept {
 
 void Road::build(Color player) {
 	if (owner != Color::None) {
-		throw;//with custom message
+		throw RoadExistsException{};//with custom message
 	}
 	bool validBuild = false;
 	for (int i = 0; i < vertices.size(); ++i) {
@@ -41,7 +41,7 @@ void Road::build(Color player) {
 		}
 	}
 	if (validBuild == false) {
-		throw; //another custom message
+		throw InvalidRoadLocationException{}; //another custom message
 	}
 	owner = player;
 }
