@@ -27,9 +27,10 @@ class Board{
     void upgradeResidence(Color color, int location);
     void buildRoad(Color color, int location);
     void changeGeese(int location);
+    int getGeese();
     //getting roll and location information
     std::map<Color, std::map<Resource, int>> getRollResources(int rollNumber) noexcept;
-    std::vector<Color> getLocationPlayers(int location);
+    std::set<Color> getLocationPlayers(int location);
 
     friend std::ostream &operator<<(std::ostream &out, const Board &board);    
 };

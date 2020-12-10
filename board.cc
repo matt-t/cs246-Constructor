@@ -113,17 +113,21 @@ void Board::buildRoad(Color color, int location){
 void Board::changeGeese(int location){
     if (location == geese) {
         throw GeeseExistsHereException(); //geese cannot be placed on the same
-    }
+    } //check if the location is even in the valid tiles 
     tiles[geese]->geese = false;
     tiles[location]->geese = true;
     geese = location;
 }
 
+int Board::getGeese(){
+    return geese;
+}
+
 std::map<Color, std::map<Resource, int>> Board::getRollResources(int rollNumber) noexcept{
 
 }
-std::vector<Color> Board::getLocationPlayers(int location){
-    tiles[location]->getLocationPlayers()
+std::set<Color> Board::getLocationPlayers(int location){
+    return tiles[location]->getLocationPlayers();
 }
 
 std::string getMargin(int numSpaces) {

@@ -13,12 +13,12 @@ const std::string RESIDENCE_HOUSE_STRING = "House";
 const std::string RESIDENCE_TOWER_STRING = "Tower";
 
 //
-const std::string RESOURCE_BRICK_STRING = "Brick";
-const std::string RESOURCE_ENERGY_STRING = "Energy";
-const std::string RESOURCE_GLASS_STRING = "Glass";
-const std::string RESOURCE_HEAT_STRING = "Heat";
-const std::string RESOURCE_WIFI_STRING = "Wifi";
-const std::string RESOURCE_PARK_STRING = "Park";
+const std::string RESOURCE_BRICK_STRING = "BRICK";
+const std::string RESOURCE_ENERGY_STRING = "ENERGY";
+const std::string RESOURCE_GLASS_STRING = "GLASS";
+const std::string RESOURCE_HEAT_STRING = "HEAT";
+const std::string RESOURCE_WIFI_STRING = "WIFI";
+const std::string RESOURCE_PARK_STRING = "PARK";
 
 //
 const std::string COLOR_BLUE_STRING = "Blue";
@@ -65,17 +65,19 @@ const std::vector<std::vector<int>> TilesRoads = {
 
 const int TOP_LEFT_VERTEX = 0;
 const int TOP_RIGHT_VERTEX = 1;
-const int MIDDLE_RIGHT_VERTEX = 3;
-const int BOTTOM_RIGHT_VERTEX = 5;
-const int BOTTOM_LEFT_VERTEX = 4;
 const int MIDDLE_LEFT_VERTEX = 2;
+const int MIDDLE_RIGHT_VERTEX = 3;
+const int BOTTOM_LEFT_VERTEX = 4;
+const int BOTTOM_RIGHT_VERTEX = 5;
 
 const int TOP_MIDDLE_ROAD = 0;
+const int TOP_LEFT_ROAD = 1;
 const int TOP_RIGHT_ROAD = 2;
+const int BOTTOM_LEFT_ROAD = 3;
 const int BOTTOM_RIGHT_ROAD = 4;
 const int BOTTOM_MIDDLE_ROAD = 5;
-const int BOTTOM_LEFT_ROAD = 3;
-const int TOP_LEFT_ROAD = 1;
+
+
 
 const std::map<Color, char> COLOR_TO_CHAR = {
     { Color::Blue, 'B' }, 
@@ -124,4 +126,21 @@ const std::map<Resource, int> TOWER_COST = {
     { Resource::Heat, 2 }
 };
 
+const std::map<std::string, Color> STRING_TO_COLOR = {
+    { "B", Color::Blue}, 
+    { "BLUE", Color::Blue}, 
+    { "R", Color::Red },
+    { "RED", Color::Red },
+    { "Y", Color::Yellow},
+    { "YELLOW", Color::Yellow},
+    { "O", Color::Orange},
+    { "ORANGE", Color::Orange}
+};
+
+const std::map<Color, std::string> COLOR_TO_STRING = {
+    {Color::Blue, "Blue"}, 
+    {Color::Red, "Red"}, 
+    {Color::Yellow, "Yellow"},
+    {Color::Orange, "Orange"}
+};
 #endif

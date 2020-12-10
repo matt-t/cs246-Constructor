@@ -1,6 +1,8 @@
 #include <iostream>
+#include <algorithm>
 #include "game.h"
 #include "enums.h"
+#include "constants.h"
 
 using namespace std;
 
@@ -23,36 +25,29 @@ Game::Game(int seed, vector<pair<Resource, int>> tileInfo):
     
 
 Game::Game(int seed, vector<pair<Resource, int>> tileInfo, int turn, int geese, vector<Color> roadInfo, vector<pair<Color, Residence>> buildInfo, 
-            vector<int>playerPoints, vector<map<Resource, int>>playerResources, vector<map<int, Residence>>playerResidences, vector<vector<int>>playerRoads):
+            std::map<Color, int> playerPoints, map<Color, map<Resource, int>> playerResources, map<Color, map<int, Residence>> playerResidences, map<Color, vector<int>> playerRoads):
     seed{ seed }, board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
 {
-    auto b = make_unique<Player>(Color::Blue,  playerPoints[0], playerResources[0], playerResidences[0], playerRoads[0]);
-    players.push_back(move(b));
-    auto r = make_unique<Player>(Color::Red, playerPoints[1],  playerResources[1], playerResidences[1], playerRoads[1]);
-    players.push_back(move(r));
-    auto o = make_unique<Player>(Color::Orange, playerPoints[2], playerResources[2], playerResidences[2], playerRoads[2]);
-    players.push_back(move(o));
-    auto y = make_unique<Player>(Color::Yellow, playerPoints[3], playerResources[3], playerResidences[3], playerRoads[3]);
-    players.push_back(move(y));
-    // cerr << "yikers" << endl;
-    // for (int i = 0; i < 4; i++) {
-    //     std::unique_ptr<Player> plyr = make_unique<Player>();
-    //     players.emplace_back(std::move(plyr));
-    // }
+    for (Color color: COLOR_ORDER) {
+        std::unique_ptr<Player> temp = std::make_unique<Player>(color, playerPoints[color], playerResources[color], playerResidences[color], playerRoads[color]);
+        players.push_back(std::move(temp));
+    }
 }
 
 void Game::save() {
 
 }
 
-void Game::status(Player &player) {
-    cout << player.getColor() << " has " << player.getPoints() << " building points, ";
-    auto resources = player.getResources();
-    cout << resources[Resource::Brick] << " brick, ";
-    cout << resources[Resource::Energy] << " energy, ";
-    cout << resources[Resource::Glass] << " glass, ";
-    cout << resources[Resource::Heat] << " heat, and ";
-    cout << resources[Resource::Wifi] << " wifi" << endl;
+void Game::status() {
+    for (int i = 0; i < 4; i++) {
+        cout << players[i]->getColor() << " has " << players[i]->getPoints() << " building points, ";
+        auto resources = players[i]->getResources();
+        cout << resources[Resource::Brick] << " " << RESOURCE_BRICK_STRING << ", ";
+        cout << resources[Resource::Energy] << " " << RESOURCE_ENERGY_STRING << ", ";
+        cout << resources[Resource::Glass] << " " << RESOURCE_GLASS_STRING << ", ";
+        cout << resources[Resource::Heat] << " " << RESOURCE_HEAT_STRING << " , and ";
+        cout << resources[Resource::Wifi] << " " << RESOURCE_WIFI_STRING << "." << endl;
+    }
 }
 
 void Game::residences(Player &player) {
@@ -100,35 +95,51 @@ void Game::next() noexcept {
 void Game::handleRollPhase(Player &player, string move, int &movePhase) {
     if (move == "roll") {
         cout << "roll" << endl;
+        
+        player.changeDice(DiceType::Fair);//for testing
+        cout << player.rollDice(seed) << endl;
+
         int getRoll; //= what the roll returns
         if (getRoll == 7) {
             //players with 10 or more resource lose half resources
-            
+            set<Color> unluckyPlayers = board->getLocationPlayers(board->getGeese());//check if more than 10 resource
             //roller chooses position
             //notify board 
             cout << "Choose where to place the GEESE." << endl;
             int newGeeseTile;
-            bool chnaged = false;
+            bool changed = false;
             while (changed == false){
                 while (!(cin >> newGeeseTile)){
                     cout << "ERROR: Choose a valid integer." << endl;
                 }
                 try {
-                    board.changeGeese(newGeeseTile);
+                    board->changeGeese(newGeeseTile);
                     changed = true;
                 } catch(GeeseExistsHereException& e) {
                     cout << "ERROR: The geese already exists here. Choose somewhere else." << endl;
                 }
             }
             //cout who roller can steal from
-            vector<Color> stealAvailable = board.getLocationPlayers(newGeeseTile);
-            cout << "Builder can choose to steal from "
-            for (int i = 0; i < stealAvailable; ++i){
-                //stealAvailable[i]
+            set<Color> stealAvailable = board->getLocationPlayers(newGeeseTile);//check if have resources
+            cout << "Builder can choose to steal from ";
+            for (auto p : stealAvailable){
+                cout << COLOR_TO_STRING.at(p) << " ";
+            } cout << endl;
+            //choose who to steal from
+            string stealFrom;
+            while (cin >> stealFrom) {
+                transform(stealFrom.begin(), stealFrom.end(), stealFrom.begin(), ::toupper);
+                if (STRING_TO_COLOR.count(stealFrom) == 0){
+                    cout << "ERROR: Choose a valid player." << endl;
+                } else {
+                    break;
+                }
             }
+            Color stealing = STRING_TO_COLOR.at(stealFrom);
             //steals random resource 
         } else {
             //produce resource from the tiles rolled
+            
         }
         ++movePhase;
     } else if (move == "load") {
@@ -137,6 +148,8 @@ void Game::handleRollPhase(Player &player, string move, int &movePhase) {
         cout <<  "fair" << endl;
     } else if (move == "help") {
         help(movePhase);
+    } else if (move == "status") {
+        status();
     } else {
         cout << "Invalid command." << endl;
     }
@@ -148,7 +161,7 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
         cout << *board << endl;
         cout << "board" << endl;
     } else if (move == "status") {
-        status(player);
+        status();
     } else if (move == "residences") {
         residences(player);
     } else if (move == "build-road") {
@@ -183,7 +196,7 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
             /*
             auto playerReceive = COPY(*player)
             auto playerLose = COPY(players.find())
-            playerReceive
+            playerReceive.addResources()
             */
         } catch (invalid_argument & e) {
             //whatever function error gives

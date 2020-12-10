@@ -3,9 +3,9 @@
 #include <vector>
 #include <random>
 
-int FairDice::rollDice() const {
+int FairDice::rollDice(int seed) const {
     std::vector<int> diceNums{1, 2, 3, 4, 5, 6};
-    std::default_random_engine rng{1};
+    std::default_random_engine rng{seed};
     std::shuffle(diceNums.begin(), diceNums.end(), rng);
     int firstRoll = diceNums[0];
     std::shuffle(diceNums.begin(), diceNums.end(), rng);

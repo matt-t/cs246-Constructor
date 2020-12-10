@@ -16,12 +16,12 @@ class Player {
         std::map<int, Residence> getResidences() const;
         void addResources(Resource resource, int amount);
         void takeResources(Resource resource, int amount);
-        void generateRandomResource();
+        Resource generateRandomResource();
         int totalResource() const;
         void buildResidence(int location);
         void upgradeResidence(int location);
         void buildRoad(int location);
-        int rollDice();
+        int rollDice(int seed) const;
         int handleGooseRoll();
         int getPoints() const;
         std::map<Resource, int> getResources() const;

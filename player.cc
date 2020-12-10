@@ -2,6 +2,7 @@
 #include "loadedDice.h"
 #include "fairDice.h"
 #include <memory>
+#include "constants.h"
 
 using namespace std;
 
@@ -101,8 +102,11 @@ void Player::buildResidence(int location) {
     if (residences.count(location) != 0) {
         throw PlayerResidenceTypeException();
     }
+    // for (Resource resourceCost: BASEMENT_COST) {
+    //     if (player.resources[resourceCost.first] < resourceCost.second) {}
+    // }
     residences[location] = Residence::Basement;
-    ++points;
+    points += RESIDENCE_TO_POINTS.at(Residence::Basement);
 }
 
 void Player::upgradeResidence(int location) {
@@ -112,8 +116,9 @@ void Player::upgradeResidence(int location) {
     if (residences[location] == Residence::Tower) {
         throw PlayerResidenceTypeException();
     }
-    residences[location] = residences[location] == Residence::Basement ? Residence::House : Residence::Tower;
-    ++points;
+    residences[location] == Residence::Basement 
+        ? (residences[location] = Residence::House, points = points + RESIDENCE_TO_POINTS.at(Residence::House) - RESIDENCE_TO_POINTS.at(Residence::Basement))
+        : (residences[location] = Residence::Tower, points = points + RESIDENCE_TO_POINTS.at(Residence::Tower) - RESIDENCE_TO_POINTS.at(Residence::House));
 }
 
 
@@ -121,8 +126,8 @@ void Player::buildRoad(int location) {
     roads.emplace_back(location);
 }
 
-int Player::rollDice() {
-    return playerDice->rollDice();
+int Player::rollDice(int seed) const {
+    return playerDice->rollDice(seed);
 }
 
 int Player::getPoints() const {
@@ -136,3 +141,6 @@ std::map<Resource, int> Player::getResources() const {
 Color Player::getColor() {
     return color;
 }
+
+
+
