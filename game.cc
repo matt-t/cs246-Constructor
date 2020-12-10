@@ -1,6 +1,7 @@
 #include <iostream>
 #include "game.h"
 #include "enums.h"
+#include "constants.h"
 
 using namespace std;
 
@@ -23,22 +24,13 @@ Game::Game(int seed, vector<pair<Resource, int>> tileInfo):
     
 
 Game::Game(int seed, vector<pair<Resource, int>> tileInfo, int turn, int geese, vector<Color> roadInfo, vector<pair<Color, Residence>> buildInfo, 
-            vector<int>playerPoints, vector<map<Resource, int>>playerResources, vector<map<int, Residence>>playerResidences, vector<vector<int>>playerRoads):
+            std::map<Color, int> playerPoints, map<Color, map<Resource, int>> playerResources, map<Color, map<int, Residence>> playerResidences, map<Color, vector<int>> playerRoads):
     seed{ seed }, board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
 {
-    auto b = make_unique<Player>(Color::Blue,  playerPoints[0], playerResources[0], playerResidences[0], playerRoads[0]);
-    players.push_back(move(b));
-    auto r = make_unique<Player>(Color::Red, playerPoints[1],  playerResources[1], playerResidences[1], playerRoads[1]);
-    players.push_back(move(r));
-    auto o = make_unique<Player>(Color::Orange, playerPoints[2], playerResources[2], playerResidences[2], playerRoads[2]);
-    players.push_back(move(o));
-    auto y = make_unique<Player>(Color::Yellow, playerPoints[3], playerResources[3], playerResidences[3], playerRoads[3]);
-    players.push_back(move(y));
-    // cerr << "yikers" << endl;
-    // for (int i = 0; i < 4; i++) {
-    //     std::unique_ptr<Player> plyr = make_unique<Player>();
-    //     players.emplace_back(std::move(plyr));
-    // }
+    for (Color color: COLOR_ORDER) {
+        std::unique_ptr<Player> temp = std::make_unique<Player>(color, playerPoints[color], playerResources[color], playerResidences[color], playerRoads[color]);
+        players.push_back(std::move(temp));
+    }
 }
 
 void Game::save() {
@@ -99,7 +91,8 @@ void Game::next() noexcept {
 
 void Game::handleRollPhase(Player &player, string move, int &movePhase) {
     if (move == "roll") {
-        cout << "roll" << endl;
+        player.changeDice(DiceType::Fair);
+        cout << player.rollDice(seed) << endl;
         ++movePhase;
     } else if (move == "load") {
         cout << "load" << endl;

@@ -13,18 +13,6 @@
 using namespace std;
 
 int main(int argc, char* argv[]){
-	// // testing STUFF
-	// Player boi{ Color::Blue };
-	// boi.addResources(Resource::Brick, 15);
-	// cout << boi.totalResource() << " lul" << endl;
-	// boi.changeDice(DiceType::Fair);
-	// Player boi2 = boi;
-	// cout << boi2.totalResource() << " lul2" << endl;
-	// cout << boi2.rollDice() << endl;
-	// cout << boi2.rollDice() << endl;
-	// cout << boi2.rollDice() << endl;
-	// cout << boi2.rollDice() << endl;
-
 	//processing of command line arguments
 	int seed = 0;
 	string game_file;
@@ -39,10 +27,10 @@ int main(int argc, char* argv[]){
 	vector<Color> roadInfo(r, Color::None);
 	vector<pair<Color, Residence>> buildInfo(v, {Color::None, Residence::None});
 	int geese, turn;
-	vector<int> playerPoints = {0, 0, 0, 0};
-	vector<map<Resource, int>>playerResources(4);
-	vector<map<int, Residence>>playerResidences(4);
-	vector<vector<int>>playerRoads(4);
+	map<Color, int> playerPoints;
+	map<Color, map<Resource, int>> playerResources;
+	map<Color, map<int, Residence>> playerResidences;
+	map<Color, vector<int>> playerRoads;
 
 	for (int i = 1 ; i < argc; ++i) {
 		string s = argv[i];
@@ -94,25 +82,25 @@ int main(int argc, char* argv[]){
 					istringstream read(line);
 					read >> turn;
 					for (const Color color: COLOR_ORDER) {
+						playerPoints[color] = 0;
 						getline(f, line);
 						read.clear();
 						read.str(line);
 						int num;
-						cerr << "jeepers" << endl;
 						read >> num;
-						playerResources[i].emplace(Resource::Brick, num);
+						playerResources[color].emplace(Resource::Brick, num);
 						read >> num;
-						playerResources[i].emplace(Resource::Energy, num);
+						playerResources[color].emplace(Resource::Energy, num);
 						read >> num;
-						playerResources[i].emplace(Resource::Glass, num);
+						playerResources[color].emplace(Resource::Glass, num);
 						read >> num;
-						playerResources[i].emplace(Resource::Heat, num);
+						playerResources[color].emplace(Resource::Heat, num);
 						read >> num;
-						playerResources[i].emplace(Resource::Wifi, num);
+						playerResources[color].emplace(Resource::Wifi, num);
 						string type;
 						read >> type;
 						while(read >> num) {
-							playerRoads[i].emplace_back(num);
+							playerRoads[color].emplace_back(num);
 							roadInfo[num] = color;
 						}
 						read.clear();
@@ -120,8 +108,8 @@ int main(int argc, char* argv[]){
 						char residenceType;
 						while (read >> num){ // im not sure if we need to reset failbit here
 							read >> residenceType;
-							playerResidences[i].emplace(num, CHAR_TO_RESIDENCE.at(residenceType));
-							playerPoints[i] += RESIDENCE_TO_POINTS.at(CHAR_TO_RESIDENCE.at(residenceType));
+							playerResidences[color].emplace(num, CHAR_TO_RESIDENCE.at(residenceType));
+							playerPoints[color] += RESIDENCE_TO_POINTS.at(CHAR_TO_RESIDENCE.at(residenceType));
 							buildInfo[num] = make_pair(color, CHAR_TO_RESIDENCE.at(residenceType));
 						}
 						read.clear();

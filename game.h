@@ -29,9 +29,9 @@ class Game {
     // Constructor
     Game(int seed, std::vector<std::pair<Resource, int>> tileInfo);
     Game(int seed, std::vector<std::pair<Resource, int>> tileInfo, int turn, int geese, std::vector<Color> roadInfo, std::vector<std::pair<Color, Residence>> buildInfo, 
-            std::vector<int>playerPoints, std::vector<std::map<Resource, int>>playerResources, std::vector<std::map<int, Residence>>playerResidences, std::vector<std::vector<int>>playerRoads);
+            std::map<Color, int> playerPoints, std::map<Color, std::map<Resource, int>> playerResources, std::map<Color, std::map<int, Residence>> playerResidences, std::map<Color, std::vector<int>> playerRoads);
 
-    
+
     //
     void save();
     

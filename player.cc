@@ -101,6 +101,9 @@ void Player::buildResidence(int location) {
     if (residences.count(location) != 0) {
         throw PlayerResidenceTypeException();
     }
+    // for (Resource resourceCost: BASEMENT_COST) {
+    //     if (player.resources[resourceCost.first] < resourceCost.second) {}
+    // }
     residences[location] = Residence::Basement;
     ++points;
 }
@@ -121,8 +124,8 @@ void Player::buildRoad(int location) {
     roads.emplace_back(location);
 }
 
-int Player::rollDice() {
-    return playerDice->rollDice();
+int Player::rollDice(int seed) const {
+    return playerDice->rollDice(seed);
 }
 
 int Player::getPoints() const {
