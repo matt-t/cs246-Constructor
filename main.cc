@@ -27,10 +27,10 @@ int main(int argc, char* argv[]){
 	vector<Color> roadInfo(r, Color::None);
 	vector<pair<Color, Residence>> buildInfo(v, {Color::None, Residence::None});
 	int geese, turn;
-	vector<int> playerPoints;
-	vector<map<Resource, int>>playerResources;
-	vector<map<int, Residence>>playerResidences;
-	vector<vector<int>>playerRoads;
+	vector<int> playerPoints = {0, 0, 0, 0};
+	vector<map<Resource, int>>playerResources(4);
+	vector<map<int, Residence>>playerResidences(4);
+	vector<vector<int>>playerRoads(4);
 
 	for (int i = 1 ; i < argc; ++i) {
 		string s = argv[i];
@@ -83,6 +83,36 @@ int main(int argc, char* argv[]){
 					read >> turn;
 					for (int i = 0; i < 4; ++i){
 						getline(f, line);
+						read.clear();
+						read.str(line);
+						int num;
+						read >> num;
+						playerResources[i].emplace(Resource::Brick, num);
+						read >> num;
+						playerResources[i].emplace(Resource::Energy, num);
+						read >> num;
+						playerResources[i].emplace(Resource::Glass, num);
+						read >> num;
+						playerResources[i].emplace(Resource::Heat, num);
+						read >> num;
+						playerResources[i].emplace(Resource::Wifi, num);
+						read >> num;
+						while(read >> num){
+							playerRoads[i].emplace_back(num);
+						}read.clear();
+						while (read >> num){ // im not sure if we need to reset failbit here
+							playerResidences[i].emplace(num, Residence::Basement);
+							playerPoints[i]++;
+							cout << "basement!!" <<endl;
+						}read.clear();
+						while (read >> num){
+							playerResidences[i].emplace(num, Residence::Tower);
+							playerPoints[i] += 3;
+						}read.clear();
+						while (read >> num){
+							playerResidences[i].emplace(num, Residence::House);
+							playerPoints[i] += 2;
+						}
 					}
 					getline(f, line);
 					read.clear();

@@ -46,7 +46,7 @@ void Game::save() {
 }
 
 void Game::status(Player &player) {
-    cout << "player.getColor()" << " has " << player.getPoints() << " building points, ";
+    cout << player.getColor() << " has " << player.getPoints() << " building points, ";
     auto resources = player.getResources();
     cout << resources[Resource::Brick] << " brick, ";
     cout << resources[Resource::Energy] << " energy, ";
@@ -56,6 +56,7 @@ void Game::status(Player &player) {
 }
 
 void Game::residences(Player &player) {
+    cout << player.getPoints() << endl;
     auto residences = player.getResidences();
     for (auto res: residences) {
         cout << res.first << ": "<<  res.second << endl;
