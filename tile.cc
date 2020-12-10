@@ -51,7 +51,7 @@ int Tile::getRollNum() const noexcept{
     return rollNum;
 }
 
-std::vector<Color> Tile::getLocationPlayers() const noexcept { //can have duplicates
+std::vector<Color> Tile::getLocationPlayers() const noexcept { //can have duplicates   NEED TO REMOVE DUPLICATES
     std::vector<Color> list;
     for (int i = 0; i < vertices.size(); ++i) {
         auto getVertex = vertices[i].lock();

@@ -100,6 +100,36 @@ void Game::next() noexcept {
 void Game::handleRollPhase(Player &player, string move, int &movePhase) {
     if (move == "roll") {
         cout << "roll" << endl;
+        int getRoll; //= what the roll returns
+        if (getRoll == 7) {
+            //players with 10 or more resource lose half resources
+            
+            //roller chooses position
+            //notify board 
+            cout << "Choose where to place the GEESE." << endl;
+            int newGeeseTile;
+            bool chnaged = false;
+            while (changed == false){
+                while (!(cin >> newGeeseTile)){
+                    cout << "ERROR: Choose a valid integer." << endl;
+                }
+                try {
+                    board.changeGeese(newGeeseTile);
+                    changed = true;
+                } catch(GeeseExistsHereException& e) {
+                    cout << "ERROR: The geese already exists here. Choose somewhere else." << endl;
+                }
+            }
+            //cout who roller can steal from
+            vector<Color> stealAvailable = board.getLocationPlayers(newGeeseTile);
+            cout << "Builder can choose to steal from "
+            for (int i = 0; i < stealAvailable; ++i){
+                //stealAvailable[i]
+            }
+            //steals random resource 
+        } else {
+            //produce resource from the tiles rolled
+        }
         ++movePhase;
     } else if (move == "load") {
         cout << "load" << endl;
