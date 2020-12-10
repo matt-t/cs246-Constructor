@@ -5,7 +5,7 @@
 
 class Dice {
     public:
-        virtual int rollDice() const = 0;
+        virtual int rollDice(int seed) const = 0;
         virtual ~Dice() = default;
         virtual std::unique_ptr<Dice> clone() const = 0;
 };
