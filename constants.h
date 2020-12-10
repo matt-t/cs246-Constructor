@@ -124,4 +124,15 @@ const std::map<Resource, int> TOWER_COST = {
     { Resource::Heat, 2 }
 };
 
+const std::map<std::string, Color> STRING_TO_COLOR = {
+    { "B", Color::Blue}, 
+    { "BLUE", Color::Blue}, 
+    { "R", Color::Red },
+    { "RED", Color::Red },
+    { "Y", Color::Yellow},
+    { "YELLOW", Color::Yellow},
+    { "O", Color::Orange},
+    { "ORANGE", Color::Orange}
+};
+
 #endif

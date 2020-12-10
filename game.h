@@ -36,7 +36,7 @@ class Game {
     void save();
     
     //
-    void status(Player &player);
+    void status();
 
     //
     void residences(Player &player);

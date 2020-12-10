@@ -2,6 +2,7 @@
 #include "loadedDice.h"
 #include "fairDice.h"
 #include <memory>
+#include "constants.h"
 
 using namespace std;
 
@@ -102,7 +103,7 @@ void Player::buildResidence(int location) {
         throw PlayerResidenceTypeException();
     }
     residences[location] = Residence::Basement;
-    ++points;
+    points += RESIDENCE_TO_POINTS.at(Residence::Basement);
 }
 
 void Player::upgradeResidence(int location) {
@@ -112,8 +113,9 @@ void Player::upgradeResidence(int location) {
     if (residences[location] == Residence::Tower) {
         throw PlayerResidenceTypeException();
     }
-    residences[location] = residences[location] == Residence::Basement ? Residence::House : Residence::Tower;
-    ++points;
+    residences[location] == Residence::Basement 
+        ? (residences[location] = Residence::House, points = points + RESIDENCE_TO_POINTS.at(Residence::House) - RESIDENCE_TO_POINTS.at(Residence::Basement))
+        : (residences[location] = Residence::Tower, points = points + RESIDENCE_TO_POINTS.at(Residence::Tower) - RESIDENCE_TO_POINTS.at(Residence::House));
 }
 
 

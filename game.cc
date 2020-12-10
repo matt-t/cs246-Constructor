@@ -1,6 +1,7 @@
 #include <iostream>
 #include "game.h"
 #include "enums.h"
+#include "constants.h"
 
 using namespace std;
 
@@ -45,14 +46,16 @@ void Game::save() {
 
 }
 
-void Game::status(Player &player) {
-    cout << player.getColor() << " has " << player.getPoints() << " building points, ";
-    auto resources = player.getResources();
-    cout << resources[Resource::Brick] << " brick, ";
-    cout << resources[Resource::Energy] << " energy, ";
-    cout << resources[Resource::Glass] << " glass, ";
-    cout << resources[Resource::Heat] << " heat, and ";
-    cout << resources[Resource::Wifi] << " wifi" << endl;
+void Game::status() {
+    for (int i = 0; i < 4; i++) {
+        cout << players[i]->getColor() << " has " << players[i]->getPoints() << " building points, ";
+        auto resources = players[i]->getResources();
+        cout << resources[Resource::Brick] << " " << RESOURCE_BRICK_STRING << ", ";
+        cout << resources[Resource::Energy] << " " << RESOURCE_ENERGY_STRING << ", ";
+        cout << resources[Resource::Glass] << " " << RESOURCE_GLASS_STRING << ", ";
+        cout << resources[Resource::Heat] << " " << RESOURCE_HEAT_STRING << " , and ";
+        cout << resources[Resource::Wifi] << " " << RESOURCE_WIFI_STRING << "." << endl;
+    }
 }
 
 void Game::residences(Player &player) {
@@ -107,6 +110,8 @@ void Game::handleRollPhase(Player &player, string move, int &movePhase) {
         cout <<  "fair" << endl;
     } else if (move == "help") {
         help(movePhase);
+    } else if (move == "status") {
+        status();
     } else {
         cout << "Invalid command." << endl;
     }
@@ -118,7 +123,7 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
         cout << *board << endl;
         cout << "board" << endl;
     } else if (move == "status") {
-        status(player);
+        status();
     } else if (move == "residences") {
         residences(player);
     } else if (move == "build-road") {
@@ -153,7 +158,7 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
             /*
             auto playerReceive = COPY(*player)
             auto playerLose = COPY(players.find())
-            playerReceive
+            playerReceive.addResources()
             */
         } catch (invalid_argument & e) {
             //whatever function error gives
