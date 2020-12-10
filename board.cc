@@ -314,7 +314,7 @@ std::string Board::printLine(Tile &tile, int line, bool includeLeft = false) con
 }
 
 
-std::vector<std::string> Board::printChunk(std::vector<int> tileLocations, bool top, int topChange = 0, int bottomChange = 0) const {
+std::vector<std::string> Board::printChunk(std::vector<int> tileLocations, bool top, int topChange = 0, int bottomChange = 0) const noexcept {
     std::vector<std::string> chunks;
     int oddLine = 0;
     int evenLine = 4;
@@ -342,11 +342,6 @@ std::vector<std::string> Board::printChunk(std::vector<int> tileLocations, bool 
 
 std::ostream &operator<<(std::ostream &out, const Board &board) {
 
-    // for (int tile = 0; tile <= 18; tile++) {
-    //     for (int i = 0; i <= 8; i++) {
-    //         out << getMargin(26) << board.printLine(*board.tiles[tile], i, true) << endl;
-    //     }
-    // }
     std::vector<vector<int>> chunks{
         {3, 1, 4, 2, 5}, {3, 6, 4, 7, 5}, {8, 6, 9, 7, 10}, {8, 11, 9, 12, 10}, {8, 11, 9, 12, 10}, {13, 16, 14, 17, 15}
     };
@@ -357,13 +352,13 @@ std::ostream &operator<<(std::ostream &out, const Board &board) {
 
     std::vector<std::string> topStrings = board.printChunk(top, true);
     for (const std::string &line: topStrings) {
-        out << getMargin(26) << line << endl;
+        out << getMargin(26) << line << std::endl;
     }
     
     
     std::vector<std::string> topStrings2 = board.printChunk(top2, true);
     for (const std::string &line: topStrings2) {
-        out << getMargin(16) << line << endl;
+        out << getMargin(16) << line << std::endl;
     }
 
     bool odd = true;
@@ -379,12 +374,12 @@ std::ostream &operator<<(std::ostream &out, const Board &board) {
 
     std::vector<std::string> botStrings2 = board.printChunk(bottom2, false, 1, 1);
     for (const std::string &line: botStrings2) {
-        out << getMargin(16) << line << endl;
+        out << getMargin(16) << line << std::endl;
     }
     
     std::vector<std::string> botStrings = board.printChunk(bottom, false, 1, 1);
     for (const std::string &line: botStrings) {
-        out << getMargin(26) << line << endl;
+        out << getMargin(26) << line << std::endl;
     }
     
     return out;

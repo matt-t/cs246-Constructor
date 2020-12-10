@@ -15,11 +15,8 @@ class Board{
     std::vector<std::shared_ptr<Road>> roads;
     int geese;
 
-
-    // std::string getVertexLine(std::vector<int> tileOrRoadLocations, std::vector<int> vertexLocations, int numTiles, bool roadFirst) const;
-    // std::string getDividerLine(std::vector<int> tileLocations, int numTiles, bool dividers, std::vector<std::string> dividerStrings) const;
     std::string printLine(Tile &tile, int line, bool includeLeft) const noexcept;
-    std::vector<std::string> printChunk(std::vector<int> tileLocations, bool top, int topChange, int bottomChange) const;
+    std::vector<std::string> printChunk(std::vector<int> tileLocations, bool top, int topChange, int bottomChange) const noexcept;
 
     public:
     //constructors
