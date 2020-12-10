@@ -61,6 +61,7 @@ Board::Board(std::vector<std::pair<Resource, int>> tileInfo, std::vector<Color> 
             vertices[i]->addRoad(roads[VerticesRoads[i][j]]);
         }
     }
+    cerr << "cc" << endl;
     for (int i = 0; i <= 18; ++i){
         std::vector<std::weak_ptr<Vertex>>tileVertices;
         std::vector<std::weak_ptr<Road>> tileRoads;
@@ -74,7 +75,9 @@ Board::Board(std::vector<std::pair<Resource, int>> tileInfo, std::vector<Color> 
         }
         auto p = std::make_shared<Tile>(i, tileInfo[i].first, tileInfo[i].second, tileVertices, tileRoads);
         tiles.push_back(p);
+        cerr << "cc" << i << endl;
     }
+    cerr << "what" << endl;
     tiles[geese]->geese = true;
     cerr << "ess" << endl;
 }
@@ -181,15 +184,25 @@ std::string getTCString(Color color) {
 
 
 
-std::string getRoadString(Road &road) {
+std::string getRoadString(Road &road, bool horizontal = true) {
     std::string str = "";
-    str += "--";
+    if (horizontal) {
+        str += "--";
+    } else {
+        str += " ";
+    }
+    
     if (road.getOwner() == Color::None) {
         str += getTCString(road.getLocation());
     } else {
         str += getTCString(road.getOwner());
     }
-    str += "--";
+    if (horizontal) {
+        str += "--";
+    } else {
+        str += " ";
+    }
+    
     return str;
 }
 
@@ -215,131 +228,159 @@ std::string getDividerString(std::string s) {
     return str;
 }
 
-std::string getTileSpan(std::string s = "") {
+std::string getTileString(std::string s = "") {
     std::string str = "";
     int whiteSpace = 6 - s.length();
-    int leftMargin = whiteSpace/2;
-    int rightMargin = (s.length() % 2 == 0) ? whiteSpace/2 : (whiteSpace/2) + 1;
+    int rightMargin = whiteSpace/2;
+    int leftMargin = (s.length() % 2 == 0) ? whiteSpace/2 : (whiteSpace/2) + 1;
     str += getMargin(leftMargin);
     str += s;
     str += getMargin(rightMargin);
     return str;
 }
 
-std::string getTileString(Tile &tile, bool resource = true) {
+std::string Board::printLine(Tile &tile, int line, bool includeLeft = false) const noexcept {
     std::string s = "";
-    if (resource) {
-        s = getResourceString(tile.getResource());
-    } else {
-        cout << tile.getRollNum() << "jeepers" << endl;
-        s = getTileSpan(std::to_string(tile.getRollNum()));
-    }
-    std::string str = "";
-    int whiteSpace = 6 - s.length();
-    int leftMargin = whiteSpace/2;
-    int rightMargin = (s.length() % 2 == 0) ? whiteSpace/2 : whiteSpace/2 + 1;
-    str += getMargin(leftMargin);
-    str += s;
-    str += getMargin(rightMargin);
-    return str;
-}
-
-std::string Board::getVertexLine(std::vector<int> tileOrRoadLocations, std::vector<int> vertexLocations, int numTiles, bool roadFirst = true) const {
-    std::string s = "";
-    int curVertexIdx = 0;
-    int tileOrRoadIdx = 0;
-    int margin = 6;
-    if (numTiles < 5) {
-        margin += 10;
-    }
-    if (numTiles < 3) {
-        margin += 10;
-    }
-    s += getMargin(margin);
-    bool isRoad = roadFirst;
-    while (curVertexIdx < vertexLocations.size()) {
-        s += getVertexString(*vertices[vertexLocations[curVertexIdx++]]);
-        if (tileOrRoadIdx != tileOrRoadLocations.size()) {
-            if (isRoad) {
-                s += getRoadString(*roads[tileOrRoadLocations[tileOrRoadIdx++]]);
+    switch(line) {
+        case 0:
+            if (includeLeft) {
+                s += getVertexString(*tile.getVertex(TOP_LEFT_VERTEX));
+            }
+            s += getRoadString(*tile.getRoad(TOP_MIDDLE_ROAD));
+            s += getVertexString(*tile.getVertex(TOP_RIGHT_VERTEX));
+            break;
+        case 1:
+            if (includeLeft) {
+                s += getDividerString("|");
+            }
+            s += getMargin(6);
+            s += getDividerString("|");
+            break;
+        case 2:
+            if (includeLeft) {
+                s += getRoadString(*tile.getRoad(TOP_LEFT_ROAD), false);
+            }
+            s += getTileString(std::to_string(tile.getLocation()));
+            s += getRoadString(*tile.getRoad(TOP_RIGHT_ROAD), false);
+            break;
+        case 3:
+            if (includeLeft) {
+                s += getDividerString("|");
+            }
+            s += getTileString(getResourceString(tile.getResource()));
+            s += getDividerString("|");
+            break;
+        case 4:
+            if (includeLeft) {
+                s += getVertexString(*tile.getVertex(MIDDLE_LEFT_VERTEX));
+            }
+            s += getTileString(std::to_string(tile.getRollNum()));
+            s += getVertexString(*tile.getVertex(MIDDLE_RIGHT_VERTEX));
+            break;
+        case 5:
+            if (includeLeft) {
+                s += getDividerString("|");
+            }
+            if (tile.geese) {
+                s += getTileString(GOOSE_STRING);
             } else {
-                s += getTileString(*tiles[tileOrRoadLocations[tileOrRoadIdx++]]);
+                s += getMargin(6);
+            }
+            s += getDividerString("|");
+            break;
+        case 6:
+            if (includeLeft) {
+                s += getRoadString(*tile.getRoad(BOTTOM_LEFT_ROAD), false);
+            }
+            s += getMargin(6);
+            s += getRoadString(*tile.getRoad(BOTTOM_RIGHT_ROAD), false);
+            break;
+        case 7:
+            if (includeLeft) {
+                s += getDividerString("|");
+            }
+            s += getMargin(6);
+            s += getDividerString("|");
+            break;
+        case 8:
+            if (includeLeft) {
+                s += getVertexString(*tile.getVertex(BOTTOM_LEFT_VERTEX));
+            }
+            s += getRoadString(*tile.getRoad(BOTTOM_MIDDLE_ROAD));
+            s += getVertexString(*tile.getVertex(BOTTOM_RIGHT_VERTEX));
+            break;
+    }
+    return s;
+}
+
+
+std::vector<std::string> Board::printChunk(std::vector<int> tileLocations, bool top, int topChange = 0, int bottomChange = 0) const noexcept {
+    std::vector<std::string> chunks;
+    int oddLine = 0;
+    int evenLine = 4;
+    if (!top) {
+        oddLine = 4;
+        evenLine = 0;
+    }
+    for (int lineNum = 0 + topChange; lineNum < 4 + bottomChange; lineNum++) {
+        bool odd = true;
+        std::string chunk = "";
+        bool leftMost = true;
+        int curLine = 0;
+        for (const int &tileLocation: tileLocations) {
+            curLine = odd ? oddLine + lineNum : evenLine + lineNum;
+            chunk += printLine(*tiles[tileLocation], curLine, leftMost);
+            odd = !odd;
+            if (leftMost == true) {
+                leftMost = false;
             }
         }
-        isRoad = !isRoad;
+        chunks.push_back(chunk);
     }
-    return s;
+    return chunks;
 }
-
-
-std::string Board::getDividerLine(std::vector<int> tileLocations, int numTiles, bool dividers = true, std::vector<std::string> dividerStrings = defaultDividers) const {
-    std::string s = "";
-    int curTileIdx = 0;
-    int curDividerIdx = 0;
-    s += getMargin(6);
-    s += getDividerString(numTiles == 5 ? dividerStrings[curDividerIdx++] : "  ");
-    if (tileLocations.size() == 3) {
-        s += getTileString(*tiles[tileLocations[curTileIdx++]], dividers);
-    } else {
-        s += getMargin(6);
-    }
-    s += getDividerString(numTiles >= 3 ? dividerStrings[curDividerIdx++] : "  ");
-
-    if (tileLocations.size() == 2) {
-        s += getTileString(*tiles[tileLocations[curTileIdx++]], dividers);
-    } else {
-        s += getMargin(6);
-    }
-
-    s += getDividerString(dividerStrings[curDividerIdx++]);
-    if (tileLocations.size() % 2 != 0) {
-        s += getTileString(*tiles[tileLocations[curTileIdx++]], dividers);
-    } else {
-        s += getMargin(6);
-    }
-
-    s += getDividerString(dividerStrings[curDividerIdx++]);
-
-    if (tileLocations.size() == 2) {
-        s += getTileString(*tiles[tileLocations[curTileIdx++]], dividers);
-    } else {
-        s += getMargin(6);
-    }
-    
-    s += getDividerString(numTiles >= 3 ? dividerStrings[curDividerIdx++] : "  ");
-    if (tileLocations.size() == 3) {
-        s += getTileString(*tiles[tileLocations[curTileIdx++]], dividers);
-    } else {
-        s += getMargin(6);
-    }
-    s += getDividerString(numTiles == 5 ? dividerStrings[curDividerIdx++] : "  ");
-    return s;
-}
-
-std::vector<int> getVectorBetween(int leftBound, int rightBound) {
-    std::vector<int> v;
-    for (int i = leftBound; i <= rightBound; i++) {
-        v.emplace_back(i);
-    }
-    return v;
-}
-
-std::vector<std::string> getStringVectorBetween(int leftBound, int rightBound) {
-    std::vector<std::string> v;
-    for (int i = leftBound; i <= rightBound; i++) {
-        v.emplace_back(std::to_string(i));
-    }
-    return v;
-}
-
 
 std::ostream &operator<<(std::ostream &out, const Board &board) {
-    int roadIdx = 0;
-    int vertexIdx = 0;
-    int tileIdx = 0;
-    int rollIdx = 0;
-    out << board.getVertexLine(getVectorBetween(0, 0), getVectorBetween(0, 1), 1) << std::endl;
-    out << board.getDividerLine(getVectorBetween(0, -1), 1) << std::endl;
-    out << board.getDividerLine(getVectorBetween(0, 0), 1, false, getStringVectorBetween(1, 2)) << std::endl;
+
+    std::vector<vector<int>> chunks{
+        {3, 1, 4, 2, 5}, {3, 6, 4, 7, 5}, {8, 6, 9, 7, 10}, {8, 11, 9, 12, 10}, {8, 11, 9, 12, 10}, {13, 16, 14, 17, 15}
+    };
+    std::vector<int> top{0};
+    std::vector<int> top2{1, 0, 2};
+    std::vector<int> bottom2{16, 18, 17};
+    std::vector<int> bottom{18};
+
+    std::vector<std::string> topStrings = board.printChunk(top, true);
+    for (const std::string &line: topStrings) {
+        out << getMargin(26) << line << std::endl;
+    }
+    
+    
+    std::vector<std::string> topStrings2 = board.printChunk(top2, true);
+    for (const std::string &line: topStrings2) {
+        out << getMargin(16) << line << std::endl;
+    }
+
+    bool odd = true;
+    int curChunk = 0;
+    for(std::vector<int> &chunk: chunks) {
+        curChunk++;
+        std::vector<std::string> chunkStrings = board.printChunk(chunk, odd, 0, curChunk == chunks.size() ? 1 : 0);
+        for (const std::string &line: chunkStrings) {
+            out << getMargin(6) << line << endl;
+        }
+        odd = !odd;
+    }
+
+    std::vector<std::string> botStrings2 = board.printChunk(bottom2, false, 1, 1);
+    for (const std::string &line: botStrings2) {
+        out << getMargin(16) << line << std::endl;
+    }
+    
+    std::vector<std::string> botStrings = board.printChunk(bottom, false, 1, 1);
+    for (const std::string &line: botStrings) {
+        out << getMargin(26) << line << std::endl;
+    }
+    
     return out;
 }

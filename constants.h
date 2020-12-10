@@ -14,6 +14,7 @@ const std::string RESOURCE_ENERGY_STRING = "Energy";
 const std::string RESOURCE_GLASS_STRING = "Glass";
 const std::string RESOURCE_HEAT_STRING = "Heat";
 const std::string RESOURCE_WIFI_STRING = "Wifi";
+const std::string RESOURCE_PARK_STRING = "Park";
 
 //
 const std::string COLOR_BLUE_STRING = "Blue";
@@ -21,6 +22,8 @@ const std::string COLOR_RED_STRING = "Red";
 const std::string COLOR_ORANGE_STRING = "Orange";
 const std::string COLOR_YELLOW_STRING = "Yellow";
 const std::string COLOR_NONE_STRING = "None";
+
+const std::string GOOSE_STRING = "GOOSE";
 
 const std::vector<std::vector<int>> VerticesRoads = { 
     {0, 1}, {0, 2}, {3, 5}, {1, 3, 6}, {2, 4, 7}, {4, 8}, //vertices 0 - 5
@@ -60,5 +63,19 @@ const std::vector<int> vertexLocations1 = {0, 1};
 const std::vector<int> tileOrRoadLocations1 = {0};
 
 const std::vector<std::string> defaultDividers(6, "|");
+
+const int TOP_LEFT_VERTEX = 0;
+const int TOP_RIGHT_VERTEX = 1;
+const int MIDDLE_RIGHT_VERTEX = 3;
+const int BOTTOM_RIGHT_VERTEX = 5;
+const int BOTTOM_LEFT_VERTEX = 4;
+const int MIDDLE_LEFT_VERTEX = 2;
+
+const int TOP_MIDDLE_ROAD = 0;
+const int TOP_RIGHT_ROAD = 2;
+const int BOTTOM_RIGHT_ROAD = 4;
+const int BOTTOM_MIDDLE_ROAD = 5;
+const int BOTTOM_LEFT_ROAD = 3;
+const int TOP_LEFT_ROAD = 1;
 
 #endif
