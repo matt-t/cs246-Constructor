@@ -8,6 +8,7 @@
 #include <vector>
 #include "enums.h"
 #include "game.h"
+#include "constants.h"
 
 using namespace std;
 
@@ -81,11 +82,12 @@ int main(int argc, char* argv[]){
 					getline(f, line);
 					istringstream read(line);
 					read >> turn;
-					for (int i = 0; i < 4; ++i){
+					for (const Color color: COLOR_ORDER){
 						getline(f, line);
 						read.clear();
 						read.str(line);
 						int num;
+						cerr << "jeepers" << endl;
 						read >> num;
 						playerResources[i].emplace(Resource::Brick, num);
 						read >> num;
@@ -96,23 +98,22 @@ int main(int argc, char* argv[]){
 						playerResources[i].emplace(Resource::Heat, num);
 						read >> num;
 						playerResources[i].emplace(Resource::Wifi, num);
-						read >> num;
+						string type;
+						read >> type;
 						while(read >> num){
 							playerRoads[i].emplace_back(num);
-						}read.clear();
-						while (read >> num){ // im not sure if we need to reset failbit here
-							playerResidences[i].emplace(num, Residence::Basement);
-							playerPoints[i]++;
-							cout << "basement!!" <<endl;
-						}read.clear();
-						while (read >> num){
-							playerResidences[i].emplace(num, Residence::Tower);
-							playerPoints[i] += 3;
-						}read.clear();
-						while (read >> num){
-							playerResidences[i].emplace(num, Residence::House);
-							playerPoints[i] += 2;
+							roadInfo[num] = color;
 						}
+						read.clear();
+						read >> type;
+						char residenceType;
+						while (read >> num){ // im not sure if we need to reset failbit here
+							read >> residenceType;
+							playerResidences[i].emplace(num, CHAR_TO_RESIDENCE.at(residenceType));
+							playerPoints[i] += RESIDENCE_TO_POINTS.at(CHAR_TO_RESIDENCE.at(residenceType));
+							buildInfo[num] = make_pair(color, CHAR_TO_RESIDENCE.at(residenceType));
+						}
+						read.clear();
 					}
 					getline(f, line);
 					read.clear();

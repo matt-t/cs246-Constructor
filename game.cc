@@ -89,6 +89,7 @@ void Game::printBoard() {
 }
 
 void Game::next() noexcept {
+    cout << *board;
     if (turn == 3) {
         turn = 0;
     } else {

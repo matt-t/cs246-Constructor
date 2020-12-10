@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <cmath>
+#include <vector>
 
 #include "constants.h"
 
@@ -44,7 +45,6 @@ Board::Board(vector<pair<Resource, int>> boardInfo){
 Board::Board(std::vector<std::pair<Resource, int>> tileInfo, std::vector<Color> roadInfo, std::vector<std::pair<Color, Residence>> buildInfo, int geese):
     geese{ geese }
 {
-    cerr << "succ" << endl;
     for  (int i = 0; i <= 53; ++i){
         auto p = std::make_shared<Vertex>(i, buildInfo[i].first, buildInfo[i].second);
         vertices.push_back(p);
@@ -61,7 +61,6 @@ Board::Board(std::vector<std::pair<Resource, int>> tileInfo, std::vector<Color> 
             vertices[i]->addRoad(roads[VerticesRoads[i][j]]);
         }
     }
-    cerr << "cc" << endl;
     for (int i = 0; i <= 18; ++i){
         std::vector<std::weak_ptr<Vertex>>tileVertices;
         std::vector<std::weak_ptr<Road>> tileRoads;
@@ -75,11 +74,8 @@ Board::Board(std::vector<std::pair<Resource, int>> tileInfo, std::vector<Color> 
         }
         auto p = std::make_shared<Tile>(i, tileInfo[i].first, tileInfo[i].second, tileVertices, tileRoads);
         tiles.push_back(p);
-        cerr << "cc" << i << endl;
     }
-    cerr << "what" << endl;
     tiles[geese]->geese = true;
-    cerr << "ess" << endl;
 }
     
 
@@ -111,46 +107,6 @@ std::map<Color, std::map<Resource, int>> Board::getRollResources(int rollNumber)
 std::vector<Color> Board::getLocationPlayers(int location){
     
 }
-char getChar(Color color) {
-    char c = '@';
-    switch(color) {
-        case Color::Blue:
-            c = 'B';
-            break;
-        case Color::Red:
-            c = 'R';
-            break;
-        case Color::Yellow:
-            c = 'Y';
-            break;
-        case Color::Orange:
-            c = 'O';
-            break;
-        case Color::None:
-            c = 'N';
-            break;
-    }
-    return c;
-}
-
-char getChar(Residence residence) {
-    char c = '@';
-    switch(residence) {
-        case Residence::Basement:
-            c = 'B';
-            break;
-        case Residence::House:
-            c = 'H';
-            break;
-        case Residence::Tower:
-            c = 'T';
-            break;
-        case Residence::None:
-            c = '?';
-            break;
-    }
-    return c;
-}
 
 std::string getMargin(int numSpaces) {
     std::string s = "";
@@ -170,14 +126,14 @@ std::string getTCString(int num) {
 
 std::string getTCString(Color color, Residence residence) {
     std::string s = "";
-    s += getChar(color);
-    s += getChar(residence);
+    s += COLOR_TO_CHAR.at(color);
+    s += RESIDENCE_TO_CHAR.at(residence);
     return s;
 }
 
 std::string getTCString(Color color) {
     std::string s = "";
-    s += getChar(color);
+    s += COLOR_TO_CHAR.at(color);
     s += 'R';
     return s;
 }
