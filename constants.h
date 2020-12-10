@@ -137,4 +137,12 @@ const std::map<std::string, Color> STRING_TO_COLOR = {
     { "ORANGE", Color::Orange}
 };
 
+const std::map<std::string, Resource> STRING_TO_RESOURCE = {
+    { "BRICK", Resource::Brick}, 
+    { "ENERGY", Resource::Energy}, 
+    { "GLASS", Resource::Glass},
+    { "HEAT", Resource::Heat},
+    { "WIFI", Resource::Wifi}
+};
+
 #endif
