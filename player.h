@@ -27,6 +27,19 @@ class Player {
         std::map<Resource, int> getResources() const;
         Color getColor();
 
+
+
+        // Copy constructor
+        Player(const Player &other);
+        // Move constructor
+        Player(Player &&other);
+        // Copy assignment operator
+        Player &operator=(const Player &other);
+        // Move assignment operator
+        Player &operator=(Player &&other);
+        // Destructor
+        ~Player();
+
     private:
         Color color;
         int points;

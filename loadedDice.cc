@@ -7,5 +7,13 @@ int LoadedDice::rollDice() const {
     return loadedNumber;
 }
 void LoadedDice::loadDice(int num) {
+    if (num > 12 || num < 2) {
+        throw InvalidRollException();
+    }
     loadedNumber = num;
 }
+
+std::unique_ptr<Dice> LoadedDice::clone() const {
+    return std::make_unique<LoadedDice>(*this);
+}
+

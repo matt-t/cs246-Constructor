@@ -17,6 +17,50 @@ Player::Player(Color player, int points, map<Resource, int> resources, map<int, 
 {
     playerDice = std::make_unique<LoadedDice>();
 }
+
+// Copy constructor
+Player::Player(const Player &other): 
+color{other.color},
+resources{other.resources},
+residences{other.residences},
+roads{other.roads},
+playerDice{other.playerDice->clone()}
+{}
+
+// Move constructor
+Player::Player(Player &&other) : 
+color{other.color},
+resources{other.resources},
+residences{other.residences},
+roads{other.roads},
+playerDice{nullptr}
+{
+    std::swap(playerDice, other.playerDice);
+}
+
+// Copy assignment operator
+Player & Player::operator=(const Player &other) {
+    Player temp = other;
+    std::swap(color, temp.color);
+    std::swap(resources, temp.resources);
+    std::swap(residences, temp.residences);
+    std::swap(roads, temp.roads);
+    std::swap(playerDice, temp.playerDice);
+    return *this;
+}
+// Move assignment operator
+Player & Player::operator=(Player &&other) {
+    std::swap(color, other.color);
+    std::swap(resources, other.resources);
+    std::swap(residences, other.residences);
+    std::swap(roads, other.roads);
+    std::swap(playerDice, other.playerDice);
+    return *this;
+}
+
+// Destructor
+Player::~Player() {}
+
         
 //methods
 void Player::changeDice(DiceType newDice) {
