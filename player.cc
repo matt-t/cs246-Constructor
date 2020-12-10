@@ -3,6 +3,8 @@
 #include "fairDice.h"
 #include <memory>
 
+using namespace std;
+
 //Ctor
 Player::Player(Color player):
     color{ player }, points{ 0 }
@@ -10,7 +12,7 @@ Player::Player(Color player):
     playerDice = std::make_unique<LoadedDice>();
 };
 
-Player::Player(Color player, int points, std::map<Resource, int> resources, std::map<int, Residence> residences, std::vector<int> roads):
+Player::Player(Color player, int points, map<Resource, int> resources, map<int, Residence> residences, vector<int> roads):
     color{ player }, points{ points }, resources{ resources }, residences{ residences}, roads{ roads }
 {
     playerDice = std::make_unique<LoadedDice>();

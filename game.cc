@@ -26,13 +26,13 @@ Game::Game(int seed, vector<pair<Resource, int>> tileInfo, int turn, int geese, 
             vector<int>playerPoints, vector<map<Resource, int>>playerResources, vector<map<int, Residence>>playerResidences, vector<vector<int>>playerRoads):
     seed{ seed }, board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
 {
-    auto b = make_unique<Player>(Color::Blue, int playerPoints[0], map<Resource, int> playerResources[0], map<int, Residence> playerResidences[0], vector<int> playerRoads[0]);
+    auto b = make_unique<Player>(Color::Blue,  playerPoints[0], playerResources[0], playerResidences[0], playerRoads[0]);
     players.push_back(move(b));
-    auto r = make_unique<Player>(Color::Red);
+    auto r = make_unique<Player>(Color::Red, playerPoints[1],  playerResources[1], playerResidences[1], playerRoads[1]);
     players.push_back(move(r));
-    auto o = make_unique<Player>(Color::Orange);
+    auto o = make_unique<Player>(Color::Orange, playerPoints[2], playerResources[2], playerResidences[2], playerRoads[2]);
     players.push_back(move(o));
-    auto y = make_unique<Player>(Color::Yellow);
+    auto y = make_unique<Player>(Color::Yellow, playerPoints[3], playerResources[3], playerResidences[3], playerRoads[3]);
     players.push_back(move(y));
     // cerr << "yikers" << endl;
     // for (int i = 0; i < 4; i++) {
