@@ -14,8 +14,8 @@ class Player {
         Player(Color player, int points, std::map<Resource, int> resources, std::map<int, Residence> residences, std::vector<int> roads);
         void changeDice(DiceType dice);
         std::map<int, Residence> getResidences() const;
-        void addResources(Resource resource, int amount);
-        void takeResources(Resource resource, int amount);
+        void addResource(Resource resource, int amount);
+        void takeResource(Resource resource, int amount);
         void generateRandomResource();
         int totalResource() const;
         void buildResidence(int location);

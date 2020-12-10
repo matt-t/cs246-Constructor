@@ -80,8 +80,11 @@ Board::Board(std::vector<std::pair<Resource, int>> tileInfo, std::vector<Color> 
     
 
 void Board::buildResidence(Color color, int location){
+    if (location > 53 || location < 0) {
+        throw InvalidLocationException();
+    }
     try{
-        vertices[location]->build(color);
+    vertices[location]->build(color);
     } catch(BuildingExistsException& e){
         cerr << "ERROR: A residence already exists here." << endl;
     } catch (InvalidLocationException& e){

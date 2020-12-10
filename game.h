@@ -11,7 +11,7 @@
 class Game {
     /* Private Variables */
     int seed;
-    std::vector<std::unique_ptr<Player>> players;
+    std::map<Color, std::unique_ptr<Player>> players;
     std::unique_ptr<Board> board;
     int turn;
     int winner;

@@ -145,4 +145,5 @@ const std::map<std::string, Resource> STRING_TO_RESOURCE = {
     { "WIFI", Resource::Wifi}
 };
 
+
 #endif
