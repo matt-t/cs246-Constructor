@@ -11,7 +11,7 @@ class LoadedDice: public Dice {
         std::unique_ptr<Dice> clone() const override;
 };
 
-class UnloadedException {};
+class UnloadedDiceException {};
 class InvalidRollException {};
 
 #endif

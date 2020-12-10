@@ -4,19 +4,24 @@
 #include "enums.h"
 #include "constants.h"
 
+
 using namespace std;
 
 Game::Game(int seed, vector<pair<Resource, int>> tileInfo): 
     seed{ seed }, board{make_unique<Board>(tileInfo)}, turn{0}, winner{-1} 
 {
-    auto b = make_unique<Player>(Color::Blue);
-    players.push_back(move(b));
-    auto r = make_unique<Player>(Color::Red);
-    players.push_back(move(r));
-    auto o = make_unique<Player>(Color::Orange);
-    players.push_back(move(o));
-    auto y = make_unique<Player>(Color::Yellow);
-    players.push_back(move(y));
+    for (Color color: COLOR_ORDER) {
+        // std::unique_ptr<Player> temp = std::make_unique<Player>(color);
+        players[color] = std::make_unique<Player>(color);
+    }
+    // auto b = make_unique<Player>(Color::Blue);
+    // players.push_back(move(b));
+    // auto r = make_unique<Player>(Color::Red);
+    // players.push_back(move(r));
+    // auto o = make_unique<Player>(Color::Orange);
+    // players.push_back(move(o));
+    // auto y = make_unique<Player>(Color::Yellow);
+    // players.push_back(move(y));
     // for (int i = 0; i < 4; i++) {
     //     std::unique_ptr<Player> plyr = make_unique<Player>();
     //     players.emplace_back(std::move(plyr));
@@ -29,8 +34,8 @@ Game::Game(int seed, vector<pair<Resource, int>> tileInfo, int turn, int geese, 
     seed{ seed }, board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
 {
     for (Color color: COLOR_ORDER) {
-        std::unique_ptr<Player> temp = std::make_unique<Player>(color, playerPoints[color], playerResources[color], playerResidences[color], playerRoads[color]);
-        players.push_back(std::move(temp));
+        players[color] = std::make_unique<Player>(color, playerPoints[color], playerResources[color], playerResidences[color], playerRoads[color]);
+        // players.push_back(std::move(temp));
     }
 }
 
@@ -39,9 +44,9 @@ void Game::save() {
 }
 
 void Game::status() {
-    for (int i = 0; i < 4; i++) {
-        cout << players[i]->getColor() << " has " << players[i]->getPoints() << " building points, ";
-        auto resources = players[i]->getResources();
+    for (Color color: COLOR_ORDER) {
+        cout << color << " has " << players[color]->getPoints() << " building points, ";
+        auto resources = players[color]->getResources();
         cout << resources[Resource::Brick] << " " << RESOURCE_BRICK_STRING << ", ";
         cout << resources[Resource::Energy] << " " << RESOURCE_ENERGY_STRING << ", ";
         cout << resources[Resource::Glass] << " " << RESOURCE_GLASS_STRING << ", ";
@@ -191,8 +196,41 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
     } else if (move == "trade") {
         try {
             string color, resourceGive, resourceTake;
-            cin >> color >> resourceGive >> resourceTake;
-            cout << "trade" << endl;
+            while(true) {
+                cin >> color;
+                std::transform(color.begin(), color.end(), color.begin(), [](char c) {return std::toupper(c);});
+                if (STRING_TO_COLOR.count(color) == 0) {
+                    cout << "ur a troll, give me a real colour" << endl;
+                } else {
+                    break;
+                }
+            }
+            while(true) {
+                cin >> resourceGive;
+                std::transform(resourceGive.begin(), resourceGive.end(), resourceGive.begin(), [](char c) {return std::toupper(c);});
+                if (STRING_TO_RESOURCE.count(resourceGive) == 0) {
+                    cout << "ur a troll, give me a real resource" << endl;
+                } else {
+                    break;
+                }
+            }
+            while(cin >> resourceTake) {
+                std::transform(resourceTake.begin(), resourceTake.end(), resourceTake.begin(), [](char c) {return std::toupper(c);});
+                if (STRING_TO_RESOURCE.count(resourceTake) == 0) {
+                    cout << "ur a troll, give me a real resource" << endl;
+                } else {
+                    break;
+                }
+            }
+            cout << "trading between " << player.getColor() << " and " << color << " with " << resourceGive << " + " << resourceTake << endl;
+            
+            unique_ptr<Player> tempOther = make_unique<Player>(*players[STRING_TO_COLOR.at(color)]);
+            unique_ptr<Player> tempSelf = make_unique<Player>(player);
+            tempOther->takeResource(STRING_TO_RESOURCE.at(resourceTake), 1);
+            tempSelf->addResource(STRING_TO_RESOURCE.at(resourceGive), 1);
+            std::swap(players[STRING_TO_COLOR.at(color)], tempOther);
+            std::swap(players[player.getColor()], tempSelf);
+            
             /*
             auto playerReceive = COPY(*player)
             auto playerLose = COPY(players.find())
@@ -200,6 +238,8 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
             */
         } catch (invalid_argument & e) {
             //whatever function error gives
+        } catch (...) {
+            throw "wtf";
         }
     } else if (move == "next") {
         if (player.getPoints() >= 10) {         // CHECK IF WINNER
@@ -223,7 +263,7 @@ void Game::playGame() {
     cout << *board << endl;
     int movePhase = 0;
     string move;
-    cout << "Builder " << players[turn]->getColor() << "'s turn." << endl;
+    cout << "Builder " << COLOR_ORDER.at(turn) << "'s turn." << endl;
     while (winner == -1) {
         if (movePhase) {
             cout << "Enter a command:" << endl;
@@ -232,13 +272,13 @@ void Game::playGame() {
 
         if (cin >> move) {
             if (movePhase == 0) {
-                handleRollPhase(*players[turn], move, movePhase);
+                handleRollPhase(*players[COLOR_ORDER.at(turn)], move, movePhase);
             } else {
                 int temp = turn;
-                handleActionPhase(*players[turn], move, movePhase);
+                handleActionPhase(*players[COLOR_ORDER.at(turn)], move, movePhase);
                 if (temp != turn && winner == -1) {
                     // PRINT BOARD
-                    cout << "Builder " << players[turn]->getColor() << "'s turn." << endl;
+                    cout << "Builder " << COLOR_ORDER.at(turn) << "'s turn." << endl;
                 } else if (winner != -1) {
                     turn = temp;        // undo the next turn move cause we ending the game 
                 }
