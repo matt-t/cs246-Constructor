@@ -45,6 +45,7 @@ playerDice{nullptr}
 Player & Player::operator=(const Player &other) {
     Player temp = other;
     std::swap(color, temp.color);
+    std::swap(points, temp.points);
     std::swap(resources, temp.resources);
     std::swap(residences, temp.residences);
     std::swap(roads, temp.roads);
@@ -54,6 +55,7 @@ Player & Player::operator=(const Player &other) {
 // Move assignment operator
 Player & Player::operator=(Player &&other) {
     std::swap(color, other.color);
+    std::swap(points, other.points);
     std::swap(resources, other.resources);
     std::swap(residences, other.residences);
     std::swap(roads, other.roads);
