@@ -13,8 +13,6 @@ class Player {
         Player(Color player);
         Player(Color player, int points, std::map<Resource, int> resources, std::map<int, Residence> residences, std::vector<int> roads);
         void changeDice(DiceType dice);
-        std::map<int, Residence> getResidences() const;
-        std::vector<int> getRoads() const;
         void addResource(Resource resource, int amount);
         void takeResource(Resource resource, int amount);
         Resource generateRandomResource();
@@ -27,6 +25,7 @@ class Player {
         int getPoints() const;
         std::map<Resource, int> getResources() const;
         std::map<int, Residence> getResidences() const;
+        std::vector<int> getRoads() const;
         Color getColor();
 
         // Copy constructor
