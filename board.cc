@@ -116,7 +116,9 @@ void Board::buildRoad(Color color, int location){
 void Board::changeGeese(int location){
     if (location == geese) {
         throw GeeseExistsHereException(); //geese cannot be placed on the same
-    } //check if the location is even in the valid tiles 
+    } else if (location < 0 || location > 18) {
+        throw GeeseOutOfRange();
+    }
     tiles[geese]->geese = false;
     tiles[location]->geese = true;
     geese = location;

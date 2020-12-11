@@ -3,6 +3,7 @@
 #include "fairDice.h"
 #include <memory>
 #include "constants.h"
+#include <stdlib.h>
 
 using namespace std;
 
@@ -91,8 +92,12 @@ void Player::takeResource(Resource resource, int amount) {
     resources[resource] -= amount;
 }
 
-void Player::generateRandomResource() {
-    
+Resource Player::generateRandomResource() {
+    int seed = rand() % totalResource();
+    for (auto r : resources){
+        seed -= r.second;
+        if (seed <= 0){return r.first;}
+    }
 }
 int Player::totalResource() const {
     int sum = 0;

@@ -38,5 +38,6 @@ class Board{
 std::ostream &operator<<(std::ostream &out, const Board &board);
 
 class GeeseExistsHereException{};
+class GeeseOutOfRange{};
 
 #endif

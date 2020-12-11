@@ -84,7 +84,7 @@ void Game::help(int movePhase) noexcept {
     cout << "~ help : prints out the list of commands." << endl;
 }
     
-void Game::printBoard() {
+void Game::printBoard() { //might not need this 
 
 }
 
@@ -102,47 +102,74 @@ void Game::handleRollPhase(Player &player, string move, int &movePhase) {
         cout << "roll" << endl;
         
         player.changeDice(DiceType::Fair);//for testing
-        cout << player.rollDice(seed) << endl;
+        int getRoll = player.rollDice(seed);
+        cout << getRoll << endl;
 
-        int getRoll; //= what the roll returns
-        if (getRoll == 7) {
+        if (getRoll == 4) {
             //players with 10 or more resource lose half resources
-            set<Color> unluckyPlayers = board->getLocationPlayers(board->getGeese());//check if more than 10 resource
-            //roller chooses position
-            //notify board 
+            set<Color> unluckyPlayers = board->getLocationPlayers(board->getGeese());
+            for (auto p : unluckyPlayers) {//check if more than 10 resource
+                if (players[p]->totalResource() >= 10){
+                    int half = players[p]->totalResource() / 2;
+                    cout << "Builder " << COLOR_TO_STRING.at(p) << " loses " << half << " resources to the geese. They lose:" << endl;
+                    for (int i = half; i > 0; --i){
+                        Resource stolen = players[p]->generateRandomResource();
+                        players[p]->takeResource(stolen, 1);
+                        cout << "1 " << RESOURCE_TO_STRING.at(stolen) << endl;
+                    }//need to cout message correctly
+                }
+            }
+            //roller chooses position and notify board 
             cout << "Choose where to place the GEESE." << endl;
             int newGeeseTile;
             bool changed = false;
             while (changed == false){
-                while (!(cin >> newGeeseTile)){
-                    cout << "ERROR: Choose a valid integer." << endl;
-                }
-                try {
-                    board->changeGeese(newGeeseTile);
-                    changed = true;
-                } catch(GeeseExistsHereException& e) {
-                    cout << "ERROR: The geese already exists here. Choose somewhere else." << endl;
+                cin >> newGeeseTile;
+                if (cin.fail()){
+                    cin.clear();
+                    cin.ignore(256,'\n');
+                    cout << "ERROR: Choose a valid integer." << endl; 
+                } else {
+                    try {
+                        board->changeGeese(newGeeseTile);
+                        changed = true;
+                    } catch(GeeseExistsHereException& e) {
+                        cout << "ERROR: The geese already exists here. Choose somewhere else." << endl;
+                    } catch(GeeseOutOfRange& e) {
+                        cout << "ERROR: Tile selection is invalid." << endl;
+                    }
                 }
             }
             //cout who roller can steal from
-            set<Color> stealAvailable = board->getLocationPlayers(newGeeseTile);//check if have resources
-            cout << "Builder can choose to steal from ";
-            for (auto p : stealAvailable){
-                cout << COLOR_TO_STRING.at(p) << " ";
-            } cout << endl;
-            //choose who to steal from
-            string stealFrom;
-            while (cin >> stealFrom) {
-                transform(stealFrom.begin(), stealFrom.end(), stealFrom.begin(), ::toupper);
-                if (STRING_TO_COLOR.count(stealFrom) == 0){
-                    cout << "ERROR: Choose a valid player." << endl;
-                } else {
-                    break;
+            set<Color> stealAvailable = board->getLocationPlayers(newGeeseTile);
+            for (auto p : stealAvailable) { //check if have resources, if not removed from the set
+                if (players[p]->totalResource() == 0 || p == player.getColor()){
+                    stealAvailable.erase(p);
                 }
             }
-            Color stealing = STRING_TO_COLOR.at(stealFrom);
-            //steals random resource 
-        } else {
+            if (stealAvailable.size() != 0){
+                cout << "Builder " << player.getColor() << " can choose to steal from ";
+                for (auto p : stealAvailable){
+                    cout << COLOR_TO_STRING.at(p) << " ";
+                } cout << endl;
+                //choose who to steal from
+                string stealFrom;
+                while (cin >> stealFrom) {
+                    transform(stealFrom.begin(), stealFrom.end(), stealFrom.begin(), ::toupper);
+                    if (STRING_TO_COLOR.count(stealFrom) == 0){
+                        cout << "ERROR: Choose a valid player." << endl;
+                    } else {
+                        break;
+                    }
+                }
+                Color stealing = STRING_TO_COLOR.at(stealFrom);
+                //steals random resource 
+                Resource stolen = players[stealing]->generateRandomResource();
+                players[stealing]->takeResource(stolen, 1);
+                player.addResource(stolen, 1);
+                cout << "Builder " << COLOR_TO_STRING.at(player.getColor()) << " steals " << RESOURCE_TO_STRING.at(stolen) << " from builder " << COLOR_TO_STRING.at(stealing) << endl;
+            }
+            } else {
             //produce resource from the tiles rolled
             
         }
