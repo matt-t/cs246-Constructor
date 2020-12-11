@@ -30,10 +30,10 @@ void Vertex::build(Color player, bool gameStart ) {
 		throw BuildingExistsException(); //already a building here
 	}
 	//has adjacent building connected to it
-	for (int i = 0; i < roads.size(); ++i) {
-		auto getRoad = roads[i].lock();
-		for (int j = 0; j < getRoad->vertices.size(); ++j) {
-			auto getVertex = getRoad->vertices[j].lock();
+	for (int adjacentRoad = 0; adjacentRoad < roads.size(); ++adjacentRoad) {
+		auto getRoad = roads[adjacentRoad].lock();
+		for (int adjacentVertex = 0; adjacentVertex < getRoad->vertices.size(); ++adjacentVertex) {
+			auto getVertex = getRoad->vertices[adjacentVertex].lock();
 			if (getVertex->location != location && getVertex->owner != Color::None) {
 				throw InvalidLocationException();//there's a building adjacent to it
 			}

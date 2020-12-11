@@ -79,11 +79,11 @@ Board::Board(std::vector<std::pair<Resource, int>> tileInfo, std::vector<Color> 
 }
     
 
-void Board::buildResidence(Color color, int location){
+void Board::buildResidence(Color color, int location, bool gameStart){
     if (location > 53 || location < 0) {
         throw InvalidLocationException();
     }
-    vertices[location]->build(color);
+    vertices[location]->build(color, gameStart);
 }
 
 void Board::upgradeResidence(Color color, int location){
