@@ -385,6 +385,7 @@ void Game::playGame() {
 void Game::setBasements() {
     int vertex;
     vector<int> locations;
+    cout << *board << endl;
     for (auto iter = players.begin(); iter != players.end(); ++iter) {
         while(true) {
             cout << "Builder " << iter->first << " where do you want to build a basement?" << endl;
@@ -396,27 +397,25 @@ void Game::setBasements() {
             } else {
                 try {
                     unique_ptr<Player> tempSelf = make_unique<Player>(*iter->second);
-                    //tempSelf->buildResidence(vertex);
+                    tempSelf->buildResidence(vertex, true);
                     board->buildResidence(iter->first, vertex);
-                    //std::swap(players[iter->first], tempSelf);
+                    std::swap(players[iter->first], tempSelf);
                     cout << "Builder " << iter->first << " successfullly built a basement at " << vertex << "." << endl;
                     locations.push_back(vertex);
                 } catch (BuildingExistsException& e) {
-                    //
-                    //cerr << e.what() << endl;
-                    cerr << "Basements already exist as locations: ";
+                    cout << "ERROR: A residence already exists here." << endl;
+                    cout << "Basements already exist as locations: ";
                     for (const auto& v: locations) {
-                        cerr << v << " ";
+                        cout << v << " ";
                     }
-                    cerr << endl;
+                    cout << endl;
                 } catch (InvalidLocationException& e) {
-                    //
-                    //cerr << e.what() << endl;
-                    cerr << "Basements already exist as locations: ";
+                    cout << "ERROR: You cannot build here." << endl;
+                    cout << "Basements already exist as locations: ";
                     for (const auto& v: locations) {
-                        cerr << v << " ";
+                        cout << v << " ";
                     }
-                    cerr << endl;
+                    cout << endl;
                 }
             }
         }
