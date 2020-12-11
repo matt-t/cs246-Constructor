@@ -102,7 +102,7 @@ void Game::handleRollMove(Player &player, string move, int &movePhase) {
         int getRoll = player.rollDice();
         cout << getRoll << endl;
 
-        if (getRoll == 4) {
+        if (getRoll == 7) {
             //players with 10 or more resource lose half resources
             set<Color> unluckyPlayers = board->getLocationPlayers(board->getGeese());
             for (auto p : unluckyPlayers) {//check if more than 10 resource

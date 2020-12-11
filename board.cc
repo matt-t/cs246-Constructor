@@ -10,6 +10,7 @@
 using namespace std;
 
 Board::Board(vector<pair<Resource, int>> boardInfo){
+    geese = -1;
     for  (int i = 0; i <= 53; ++i){
         auto p = std::make_shared<Vertex>(i);
         vertices.push_back(p);
@@ -38,6 +39,10 @@ Board::Board(vector<pair<Resource, int>> boardInfo){
 	        tileRoads.push_back(wp);
         }
         auto p = std::make_shared<Tile>(i, boardInfo[i].first, boardInfo[i].second, tileVertices, tileRoads);
+        if (boardInfo[i].first == Resource::Park && geese == -1){
+            p->geese = true;
+            geese = i;
+        }
         tiles.push_back(p);
     }
 }
@@ -135,9 +140,24 @@ int Board::getTileRollNum(int location) const {
     return tiles[location]->getRollNum();
 }
 
-std::map<Color, std::map<Resource, int>> Board::getRollResources(int rollNumber) noexcept{
-
+map<Color, map<Resource, int>> Board::getRollResources(int rollNumber) noexcept{
+    map<Color, map<Resource, int>> returnMap;
+    for (auto p : tiles) {
+        if (p->getRollNum() == rollNumber){
+            map<Color, int> getPlayersHere = p->produceResources();
+            for (auto q : getPlayersHere){
+                if (returnMap.count(q.first) == 0){
+                    returnMap.insert(pair<Color, map<Resource, int>>(q.first, {{p->getResource, q.second}}));
+                } else if (returnMap[q.first].count(p->getResource) == 0) {
+                    returnMap[q.first].insert(pair<Resource, int>(p->getResource, q.second));
+                } else {
+                    returnMap[q.first][p->getResource] += q.second;
+                }
+            }
+        }
+    }
 }
+
 std::set<Color> Board::getLocationPlayers(int location){
     return tiles[location]->getLocationPlayers();
 }
