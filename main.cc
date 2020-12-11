@@ -193,15 +193,15 @@ int main(int argc, char* argv[]){
 			}
 		} else if (s == "-random-board"){
 			if (board_loaded == true){
-                                cerr << "ERROR: already specified -board, can't also specify -random-board" << endl;
-                                return 1;
-                        } else if (game_loaded == true){
-                                cerr << "ERROR: already specified -load, can't also specify -random-board" << endl;
-                                return 1;
-                        } else if (board_randomized == true) {
-                                cerr << "ERROR: already specified -random-board once before" << endl;
-                                return 1;
-                        }
+				cerr << "ERROR: already specified -board, can't also specify -random-board" << endl;
+				return 1;
+			} else if (game_loaded == true){
+				cerr << "ERROR: already specified -load, can't also specify -random-board" << endl;
+				return 1;
+			} else if (board_randomized == true) {
+				cerr << "ERROR: already specified -random-board once before" << endl;
+				return 1;
+			}
 			board_randomized = true;
 			cout << "The board is randomized" << endl;
 			// do something to the board

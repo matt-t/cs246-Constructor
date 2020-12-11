@@ -191,7 +191,6 @@ void Game::playGame() {
                 int temp = turn;
                 handleActionPhase(*players[turn], move, movePhase);
                 if (temp != turn && winner == -1) {
-                    // PRINT BOARD
                     cout << "Builder " << players[turn]->getColor() << "'s turn." << endl;
                 } else if (winner != -1) {
                     turn = temp;        // undo the next turn move cause we ending the game 
@@ -205,7 +204,7 @@ void Game::playGame() {
     if (winner == -1) {         // if while loop ended cause EOF auto save game
         save();
     } else {                    // if while loop ended cause player won 
-        cout << "Congratulations!! " << "<COLOR" << " wins!!" << endl;
+        cout << "Congratulations!! " << players[turn]->getColor() << " wins!!" << endl;
     }
 } 
 
