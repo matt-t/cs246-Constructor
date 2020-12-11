@@ -225,6 +225,20 @@ int main(int argc, char* argv[]){
 		//generate boardInfo vector for the randomized board
 	} 
 
+	/*
+	if (load) {
+		load
+	} else if (board) { 		do check for load && board in for loop and return err there?
+		board with filename
+	} else if (random && seed) {
+		random with seed
+	} else if (random) {
+		random
+	} else {
+		board layout.txt
+	}
+	*/
+
 	// Handles gameplay:
 	// game.playGame();
 	

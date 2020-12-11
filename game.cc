@@ -364,7 +364,7 @@ void Game::playGame() {
     if (winner == -1) {         // if while loop ended cause EOF auto save game
         save();
     } else {                    // if while loop ended cause player won 
-        cout << "Congratulations!! " << " wins!!" << endl;
+        cout << "Congratulations!! " << COLOR_ORDER.at(turn) << " wins!!" << endl;
     }
 } 
 
