@@ -44,7 +44,7 @@ void Game::save() {
 
 }
 
-void Game::status() {
+void Game::status() noexcept {
     for (const Color &color: COLOR_ORDER) {
         cout << color << " has " << players[color]->getPoints() << " building points, ";
         auto resources = players[color]->getResources();
