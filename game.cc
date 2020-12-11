@@ -200,7 +200,6 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
     } else if (move == "build-road") {
         try {
             int edge;
-            cin >> edge;
             unique_ptr<Player> tempSelf = make_unique<Player>(player);
             tempSelf->buildRoad(edge);
             board->buildRoad(player.getColor(), edge);
@@ -238,16 +237,15 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
             string color, resourceGive, resourceTake;
             while(true) {
                 cin >> color;
-                std::transform(color.begin(), color.end(), color.begin(), [](char c) {return std::toupper(c);});
+                std::transform(color.begin(), color.end(), color.begin(), ::toupper);
                 if (STRING_TO_COLOR.count(color) == 0) {
                     cout << "ur a troll, give me a real colour" << endl;
                 } else {
                     break;
                 }
             }
-            while(true) {
-                cin >> resourceGive;
-                std::transform(resourceGive.begin(), resourceGive.end(), resourceGive.begin(), [](char c) {return std::toupper(c);});
+            while(cin >> resourceGive) {
+                std::transform(resourceGive.begin(), resourceGive.end(), resourceGive.begin(), ::toupper);
                 if (STRING_TO_RESOURCE.count(resourceGive) == 0) {
                     cout << "ur a troll, give me a real resource" << endl;
                 } else {
@@ -255,7 +253,7 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
                 }
             }
             while(cin >> resourceTake) {
-                std::transform(resourceTake.begin(), resourceTake.end(), resourceTake.begin(), [](char c) {return std::toupper(c);});
+                std::transform(resourceTake.begin(), resourceTake.end(), resourceTake.begin(), ::toupper);
                 if (STRING_TO_RESOURCE.count(resourceTake) == 0) {
                     cout << "ur a troll, give me a real resource" << endl;
                 } else {
