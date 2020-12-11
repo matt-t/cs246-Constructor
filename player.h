@@ -17,9 +17,9 @@ class Player {
         void takeResource(Resource resource, int amount);
         Resource generateRandomResource();
         int totalResource() const;
-        void buildResidence(int location);
+        void buildResidence(int location, bool isFree = false);
         void upgradeResidence(int location);
-        void buildRoad(int location);
+        void buildRoad(int location, bool isFree = false);
         int rollDice() const;
         int handleGooseRoll();
         int getPoints() const;

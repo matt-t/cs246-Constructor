@@ -128,6 +128,11 @@ const std::map<Resource, int> TOWER_COST = {
     { Resource::Heat, 2 }
 };
 
+const std::map<Resource, int> ROAD_COST = {
+    { Resource::Heat, 1 },
+    { Resource::Wifi, 1 }
+};
+
 const std::map<std::string, Color> STRING_TO_COLOR = {
     { "B", Color::Blue}, 
     { "BLUE", Color::Blue}, 
@@ -162,14 +167,6 @@ const std::map<Resource, std::string> RESOURCE_TO_STRING = {
     {Resource::Park, "Park"}
 };
 
-const std::map<Resource, int> RESOURCE_TO_SAVE_NUM = {
-    {Resource::Brick, 0}, 
-    {Resource::Energy, 1}, 
-    {Resource::Glass, 2},
-    {Resource::Heat, 3},
-    {Resource::Wifi, 4},
-    {Resource::Park, 5}
-};
 
 const std::map<Resource, int> RESOURCE_TO_INT = {
     {Resource::Brick, 0}, 

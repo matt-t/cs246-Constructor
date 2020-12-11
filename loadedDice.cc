@@ -1,16 +1,25 @@
 #include "loadedDice.h"
+#include <iostream>
 
 int LoadedDice::rollDice() const {
-    if (loadedNumber == 0) {
-        throw UnloadedDiceException();
+    int loadedNum;
+    while (true) {
+        std::cout << "Input a roll between 2 and 12:" << std::endl;
+        if (std::cin >> loadedNum) {
+            if (loadedNum > 12 || loadedNum < 2) {
+                std::cout << "ERROR: Invalid roll " << loadedNum << std::endl;
+            } else {
+                return loadedNum;
+            } 
+        } else {
+            if (std::cin.eof()) {
+                // throw Eof_Exception();
+            }
+            std::cin.clear();
+            std::cin.ignore(256, '\n');
+            std::cout << "ERROR:  isn't a valid integer." << std::endl;
+        }
     }
-    return loadedNumber;
-}
-void LoadedDice::loadDice(int num) {
-    if (num > 12 || num < 2) {
-        throw InvalidRollException();
-    }
-    loadedNumber = num;
 }
 
 std::unique_ptr<Dice> LoadedDice::clone() const {
