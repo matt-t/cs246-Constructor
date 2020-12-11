@@ -43,7 +43,7 @@ void Game::save() {
 
 }
 
-void Game::status() {
+void Game::status() noexcept {
     for (Color color: COLOR_ORDER) {
         cout << color << " has " << players[color]->getPoints() << " building points, ";
         auto resources = players[color]->getResources();
@@ -83,10 +83,6 @@ void Game::help(int movePhase) noexcept {
     }
     cout << "~ help : prints out the list of commands." << endl;
 }
-    
-void Game::printBoard() { //might not need this 
-
-}
 
 void Game::next() noexcept {
     cout << *board;
@@ -97,7 +93,7 @@ void Game::next() noexcept {
     }
 }
 
-void Game::handleRollPhase(Player &player, string move, int &movePhase) {
+void Game::handleRollMove(Player &player, string move, int &movePhase) {
     if (move == "roll") {
         cout << "roll" << endl;
         
@@ -110,13 +106,29 @@ void Game::handleRollPhase(Player &player, string move, int &movePhase) {
             set<Color> unluckyPlayers = board->getLocationPlayers(board->getGeese());
             for (auto p : unluckyPlayers) {//check if more than 10 resource
                 if (players[p]->totalResource() >= 10){
+                    int numBrick=0, numEnergy=0, numGlass=0, numHeat=0, numWifi=0;
                     int half = players[p]->totalResource() / 2;
                     cout << "Builder " << COLOR_TO_STRING.at(p) << " loses " << half << " resources to the geese. They lose:" << endl;
                     for (int i = half; i > 0; --i){
                         Resource stolen = players[p]->generateRandomResource();
                         players[p]->takeResource(stolen, 1);
-                        cout << "1 " << RESOURCE_TO_STRING.at(stolen) << endl;
-                    }//need to cout message correctly
+                        if (stolen == Resource::Brick) {
+                            ++numBrick;
+                        } else if (stolen == Resource::Energy) {
+                            ++numEnergy;
+                        } else if (stolen == Resource::Glass) {
+                            ++numGlass;
+                        } else if (stolen == Resource::Heat) {
+                            ++numHeat;
+                        } else {
+                            ++numWifi;
+                        }
+                    }
+                    cout << numBrick << " " << RESOURCE_BRICK_STRING << endl;
+                    cout << numEnergy << " " << RESOURCE_ENERGY_STRING << endl;
+                    cout << numGlass << " " << RESOURCE_GLASS_STRING << endl;
+                    cout << numHeat << " " << RESOURCE_HEAT_STRING << endl;
+                    cout << numWifi << " " << RESOURCE_WIFI_STRING << endl;
                 }
             }
             //roller chooses position and notify board 
@@ -175,8 +187,10 @@ void Game::handleRollPhase(Player &player, string move, int &movePhase) {
         }
         ++movePhase;
     } else if (move == "load") {
+        player.changeDice(DiceType::Loaded);
         cout << "load" << endl;
     } else if (move == "fair") {
+        player.changeDice(DiceType::Fair);
         cout <<  "fair" << endl;
     } else if (move == "help") {
         help(movePhase);
@@ -188,7 +202,7 @@ void Game::handleRollPhase(Player &player, string move, int &movePhase) {
 }
     
 
-void Game::handleActionPhase(Player &player, string move, int &movePhase) {
+void Game::handleActionMove(Player &player, string move, int &movePhase) {
     if (move == "board") {
         cout << *board << endl;
         cout << "board" << endl;
@@ -299,10 +313,10 @@ void Game::playGame() {
 
         if (cin >> move) {
             if (movePhase == 0) {
-                handleRollPhase(*players[COLOR_ORDER.at(turn)], move, movePhase);
+                handleRollMove(*players[COLOR_ORDER.at(turn)], move, movePhase);
             } else {
                 int temp = turn;
-                handleActionPhase(*players[COLOR_ORDER.at(turn)], move, movePhase);
+                handleActionMove(*players[COLOR_ORDER.at(turn)], move, movePhase);
                 if (temp != turn && winner == -1) {
                     // PRINT BOARD
                     cout << "Builder " << COLOR_ORDER.at(turn) << "'s turn." << endl;
