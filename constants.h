@@ -159,4 +159,20 @@ const std::map<Resource, std::string> RESOURCE_TO_STRING = {
     {Resource::Wifi, "Wifi"}
 };
 
+const std::map<Resource, int> RESOURCE_TO_INT = {
+    {Resource::Brick, 0}, 
+    {Resource::Energy, 1}, 
+    {Resource::Glass, 2},
+    {Resource::Heat, 3},
+    {Resource::Wifi, 4},
+    {Resource::Park, 5},
+};
+const std::map<int, Resource> INT_TO_RESOURCE = {
+    {0, Resource::Brick}, 
+    {1, Resource::Energy}, 
+    {2, Resource::Glass},
+    {3, Resource::Heat},
+    {4, Resource::Wifi},
+    {5, Resource::Park},
+};
 #endif

@@ -7,7 +7,7 @@
 
 using namespace std;
 
-Game::Game(int seed, vector<pair<Resource, int>> tileInfo): 
+Game::Game(unsigned int seed, vector<pair<Resource, int>> tileInfo): 
     seed{ seed }, board{make_unique<Board>(tileInfo)}, turn{0}, winner{-1} 
 {
     for (Color color: COLOR_ORDER) {
@@ -29,7 +29,7 @@ Game::Game(int seed, vector<pair<Resource, int>> tileInfo):
 }
     
 
-Game::Game(int seed, vector<pair<Resource, int>> tileInfo, int turn, int geese, vector<Color> roadInfo, vector<pair<Color, Residence>> buildInfo, 
+Game::Game(unsigned int seed, vector<pair<Resource, int>> tileInfo, int turn, int geese, vector<Color> roadInfo, vector<pair<Color, Residence>> buildInfo, 
             std::map<Color, int> playerPoints, map<Color, map<Resource, int>> playerResources, map<Color, map<int, Residence>> playerResidences, map<Color, vector<int>> playerRoads):
     seed{ seed }, board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
 {
@@ -102,7 +102,7 @@ void Game::handleRollPhase(Player &player, string move, int &movePhase) {
         cout << "roll" << endl;
         
         player.changeDice(DiceType::Fair);//for testing
-        int getRoll = player.rollDice(seed);
+        int getRoll = player.rollDice();
         cout << getRoll << endl;
 
         if (getRoll == 4) {
