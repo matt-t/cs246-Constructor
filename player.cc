@@ -77,6 +77,15 @@ void Player::changeDice(DiceType newDice) {
     }
 }
 
+std::vector<int> Player::getRoads() const {
+    return roads;
+}
+
+
+std::map<int, Residence> Player::getResidences() const {
+    return residences;
+}
+
 void Player::addResource(Resource resource, int amount) {
     resources[resource] += amount;
 }

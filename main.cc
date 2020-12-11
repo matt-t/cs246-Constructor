@@ -81,7 +81,7 @@ int main(int argc, char* argv[]){
 					getline(f, line);
 					istringstream read(line);
 					read >> turn;
-					for (const Color color: COLOR_ORDER) {
+					for (const Color &color: COLOR_ORDER) {
 						playerPoints[color] = 0;
 						getline(f, line);
 						read.clear();

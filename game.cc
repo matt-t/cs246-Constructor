@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include "game.h"
 #include "enums.h"
@@ -10,7 +11,7 @@ using namespace std;
 Game::Game(int seed, vector<pair<Resource, int>> tileInfo): 
     seed{ seed }, board{make_unique<Board>(tileInfo)}, turn{0}, winner{-1} 
 {
-    for (Color color: COLOR_ORDER) {
+    for (const Color &color: COLOR_ORDER) {
         // std::unique_ptr<Player> temp = std::make_unique<Player>(color);
         players[color] = std::make_unique<Player>(color);
     }
@@ -33,7 +34,7 @@ Game::Game(int seed, vector<pair<Resource, int>> tileInfo, int turn, int geese, 
             std::map<Color, int> playerPoints, map<Color, map<Resource, int>> playerResources, map<Color, map<int, Residence>> playerResidences, map<Color, vector<int>> playerRoads):
     seed{ seed }, board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
 {
-    for (Color color: COLOR_ORDER) {
+    for (const Color &color: COLOR_ORDER) {
         players[color] = std::make_unique<Player>(color, playerPoints[color], playerResources[color], playerResidences[color], playerRoads[color]);
         // players.push_back(std::move(temp));
     }
@@ -43,8 +44,8 @@ void Game::save() {
 
 }
 
-void Game::status() noexcept {
-    for (Color color: COLOR_ORDER) {
+void Game::status() {
+    for (const Color &color: COLOR_ORDER) {
         cout << color << " has " << players[color]->getPoints() << " building points, ";
         auto resources = players[color]->getResources();
         cout << resources[Resource::Brick] << " " << RESOURCE_BRICK_STRING << ", ";
@@ -214,7 +215,11 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
         try {
             int edge;
             cin >> edge;
-            cout << "build-road" << endl;
+            unique_ptr<Player> tempSelf = make_unique<Player>(player);
+            tempSelf->buildRoad(edge);
+            board->buildRoad(player.getColor(), edge);
+            std::swap(players[player.getColor()], tempSelf);
+            cout << "build-road at " << edge << " for " << player.getColor() << endl;
         } catch (invalid_argument & e) {
             cerr << e.what() << endl;       //whatever function error gives
         }
@@ -222,7 +227,11 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
         try {
             int vertex;
             cin >> vertex;
-            cout << "build-res" << endl;
+            unique_ptr<Player> tempSelf = make_unique<Player>(player);
+            tempSelf->buildResidence(vertex);
+            board->buildResidence(player.getColor(), vertex);
+            std::swap(players[player.getColor()], tempSelf);
+            cout << "build-res at " << vertex << " for " << player.getColor() << endl;
         } catch (invalid_argument & e) {
             cerr << e.what() << endl;       //whatever function error gives
         }
@@ -230,7 +239,11 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
         try {
             int vertex;
             cin >> vertex;
-            cout << "improve" << endl;
+            unique_ptr<Player> tempSelf = make_unique<Player>(player);
+            tempSelf->upgradeResidence(vertex);
+            board->upgradeResidence(player.getColor(), vertex);
+            std::swap(players[player.getColor()], tempSelf);
+            cout << "upgrading residence at " << vertex << " for " << player.getColor() << endl;
         } catch (invalid_argument & e) {
             cerr << e.what() << endl;       //whatever function error gives
         }
@@ -290,7 +303,40 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
         --movePhase;
         cout << turn << " " << winner << endl;
     } else if (move == "save") {
-        cout << "save" << endl;
+        string save_file_name;
+        cin >> save_file_name;
+        ofstream save_file {save_file_name};
+        if (!save_file) {
+            cerr << "can't open output file" << endl;
+            exit(1);
+        }
+        save_file << turn << endl;
+        for (const Color &color: COLOR_ORDER) {
+            save_file << players[color]->getResources()[Resource::Brick] << " ";
+            save_file << players[color]->getResources()[Resource::Energy] << " ";
+            save_file << players[color]->getResources()[Resource::Glass] << " ";
+            save_file << players[color]->getResources()[Resource::Heat] << " ";
+            save_file << players[color]->getResources()[Resource::Wifi] << " ";
+            save_file << 'r' << " ";
+            for (const int &road : players[color]->getRoads()) {
+                save_file << road << " ";
+            }
+            save_file << 'h';
+            for (const auto &residence : players[color]->getResidences()) {
+                save_file << " " << residence.first << " " << RESIDENCE_TO_CHAR.at(residence.second);
+            }
+            save_file << endl;
+        }
+        for (int tileNum = 0; tileNum < NUM_TILES; tileNum++) {
+            save_file << RESOURCE_TO_SAVE_NUM.at(board->getTileResource(tileNum)) << " " << board->getTileRollNum(tileNum);
+            if (tileNum != NUM_TILES - 1) {
+                save_file << " ";
+            }
+        }
+        save_file << endl;
+        save_file << board->getGeese() << endl;
+        
+        cout << "Saving to " << save_file_name << "..."<< endl;
     } else if (move == "help") {
         help(movePhase);
     } else {

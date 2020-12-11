@@ -27,7 +27,9 @@ class Board{
     void upgradeResidence(Color color, int location);
     void buildRoad(Color color, int location);
     void changeGeese(int location);
-    int getGeese();
+    Resource getTileResource(int location) const;
+    int getTileRollNum(int location) const;
+    int getGeese() const;
     //getting roll and location information
     std::map<Color, std::map<Resource, int>> getRollResources(int rollNumber) noexcept;
     std::set<Color> getLocationPlayers(int location);
