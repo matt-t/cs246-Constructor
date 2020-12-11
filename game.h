@@ -48,6 +48,9 @@ class Game {
     //
     void playGame();   
 
+    //
+    void setBasements();
+
 };
 
 #endif
