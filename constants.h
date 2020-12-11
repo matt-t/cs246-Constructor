@@ -8,6 +8,8 @@
 
 const std::vector<Color> COLOR_ORDER{Color::Blue, Color::Red, Color::Orange, Color::Yellow};
 
+const int NUM_TILES = 18;
+
 const std::string RESIDENCE_BASEMENT_STRING = "Basement";
 const std::string RESIDENCE_HOUSE_STRING = "House";
 const std::string RESIDENCE_TOWER_STRING = "Tower";
@@ -156,7 +158,17 @@ const std::map<Resource, std::string> RESOURCE_TO_STRING = {
     {Resource::Energy, "Energy"}, 
     {Resource::Glass, "Glass"},
     {Resource::Heat, "Heat"},
-    {Resource::Wifi, "Wifi"}
+    {Resource::Wifi, "Wifi"},
+    {Resource::Park, "Park"}
+};
+
+const std::map<Resource, int> RESOURCE_TO_SAVE_NUM = {
+    {Resource::Brick, 0}, 
+    {Resource::Energy, 1}, 
+    {Resource::Glass, 2},
+    {Resource::Heat, 3},
+    {Resource::Wifi, 4},
+    {Resource::Park, 5}
 };
 
 const std::map<Resource, int> RESOURCE_TO_INT = {

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include "game.h"
 #include "enums.h"
@@ -10,7 +11,7 @@ using namespace std;
 Game::Game(unsigned int seed, vector<pair<Resource, int>> tileInfo): 
     seed{ seed }, board{make_unique<Board>(tileInfo)}, turn{0}, winner{-1} 
 {
-    for (Color color: COLOR_ORDER) {
+    for (const Color &color: COLOR_ORDER) {
         // std::unique_ptr<Player> temp = std::make_unique<Player>(color);
         players[color] = std::make_unique<Player>(color);
     }
@@ -33,7 +34,7 @@ Game::Game(unsigned int seed, vector<pair<Resource, int>> tileInfo, int turn, in
             std::map<Color, int> playerPoints, map<Color, map<Resource, int>> playerResources, map<Color, map<int, Residence>> playerResidences, map<Color, vector<int>> playerRoads):
     seed{ seed }, board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
 {
-    for (Color color: COLOR_ORDER) {
+    for (const Color &color: COLOR_ORDER) {
         players[color] = std::make_unique<Player>(color, playerPoints[color], playerResources[color], playerResidences[color], playerRoads[color]);
         // players.push_back(std::move(temp));
     }
@@ -43,8 +44,8 @@ void Game::save() {
 
 }
 
-void Game::status() {
-    for (Color color: COLOR_ORDER) {
+void Game::status() noexcept {
+    for (const Color &color: COLOR_ORDER) {
         cout << color << " has " << players[color]->getPoints() << " building points, ";
         auto resources = players[color]->getResources();
         cout << resources[Resource::Brick] << " " << RESOURCE_BRICK_STRING << ", ";
@@ -83,10 +84,6 @@ void Game::help(int movePhase) noexcept {
     }
     cout << "~ help : prints out the list of commands." << endl;
 }
-    
-void Game::printBoard() { //might not need this 
-
-}
 
 void Game::next() noexcept {
     cout << *board;
@@ -97,7 +94,7 @@ void Game::next() noexcept {
     }
 }
 
-void Game::handleRollPhase(Player &player, string move, int &movePhase) {
+void Game::handleRollMove(Player &player, string move, int &movePhase) {
     if (move == "roll") {
         cout << "roll" << endl;
         
@@ -110,13 +107,29 @@ void Game::handleRollPhase(Player &player, string move, int &movePhase) {
             set<Color> unluckyPlayers = board->getLocationPlayers(board->getGeese());
             for (auto p : unluckyPlayers) {//check if more than 10 resource
                 if (players[p]->totalResource() >= 10){
+                    int numBrick=0, numEnergy=0, numGlass=0, numHeat=0, numWifi=0;
                     int half = players[p]->totalResource() / 2;
                     cout << "Builder " << COLOR_TO_STRING.at(p) << " loses " << half << " resources to the geese. They lose:" << endl;
                     for (int i = half; i > 0; --i){
                         Resource stolen = players[p]->generateRandomResource();
                         players[p]->takeResource(stolen, 1);
-                        cout << "1 " << RESOURCE_TO_STRING.at(stolen) << endl;
-                    }//need to cout message correctly
+                        if (stolen == Resource::Brick) {
+                            ++numBrick;
+                        } else if (stolen == Resource::Energy) {
+                            ++numEnergy;
+                        } else if (stolen == Resource::Glass) {
+                            ++numGlass;
+                        } else if (stolen == Resource::Heat) {
+                            ++numHeat;
+                        } else {
+                            ++numWifi;
+                        }
+                    }
+                    cout << numBrick << " " << RESOURCE_BRICK_STRING << endl;
+                    cout << numEnergy << " " << RESOURCE_ENERGY_STRING << endl;
+                    cout << numGlass << " " << RESOURCE_GLASS_STRING << endl;
+                    cout << numHeat << " " << RESOURCE_HEAT_STRING << endl;
+                    cout << numWifi << " " << RESOURCE_WIFI_STRING << endl;
                 }
             }
             //roller chooses position and notify board 
@@ -175,8 +188,10 @@ void Game::handleRollPhase(Player &player, string move, int &movePhase) {
         }
         ++movePhase;
     } else if (move == "load") {
+        player.changeDice(DiceType::Loaded);
         cout << "load" << endl;
     } else if (move == "fair") {
+        player.changeDice(DiceType::Fair);
         cout <<  "fair" << endl;
     } else if (move == "help") {
         help(movePhase);
@@ -188,7 +203,7 @@ void Game::handleRollPhase(Player &player, string move, int &movePhase) {
 }
     
 
-void Game::handleActionPhase(Player &player, string move, int &movePhase) {
+void Game::handleActionMove(Player &player, string move, int &movePhase) {
     if (move == "board") {
         cout << *board << endl;
         cout << "board" << endl;
@@ -200,7 +215,11 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
         try {
             int edge;
             cin >> edge;
-            cout << "build-road" << endl;
+            unique_ptr<Player> tempSelf = make_unique<Player>(player);
+            tempSelf->buildRoad(edge);
+            board->buildRoad(player.getColor(), edge);
+            std::swap(players[player.getColor()], tempSelf);
+            cout << "build-road at " << edge << " for " << player.getColor() << endl;
         } catch (invalid_argument & e) {
             cerr << e.what() << endl;       //whatever function error gives
         }
@@ -208,7 +227,11 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
         try {
             int vertex;
             cin >> vertex;
-            cout << "build-res" << endl;
+            unique_ptr<Player> tempSelf = make_unique<Player>(player);
+            tempSelf->buildResidence(vertex);
+            board->buildResidence(player.getColor(), vertex);
+            std::swap(players[player.getColor()], tempSelf);
+            cout << "build-res at " << vertex << " for " << player.getColor() << endl;
         } catch (invalid_argument & e) {
             cerr << e.what() << endl;       //whatever function error gives
         }
@@ -216,7 +239,11 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
         try {
             int vertex;
             cin >> vertex;
-            cout << "improve" << endl;
+            unique_ptr<Player> tempSelf = make_unique<Player>(player);
+            tempSelf->upgradeResidence(vertex);
+            board->upgradeResidence(player.getColor(), vertex);
+            std::swap(players[player.getColor()], tempSelf);
+            cout << "upgrading residence at " << vertex << " for " << player.getColor() << endl;
         } catch (invalid_argument & e) {
             cerr << e.what() << endl;       //whatever function error gives
         }
@@ -276,7 +303,40 @@ void Game::handleActionPhase(Player &player, string move, int &movePhase) {
         --movePhase;
         cout << turn << " " << winner << endl;
     } else if (move == "save") {
-        cout << "save" << endl;
+        string save_file_name;
+        cin >> save_file_name;
+        ofstream save_file {save_file_name};
+        if (!save_file) {
+            cerr << "can't open output file" << endl;
+            exit(1);
+        }
+        save_file << turn << endl;
+        for (const Color &color: COLOR_ORDER) {
+            save_file << players[color]->getResources()[Resource::Brick] << " ";
+            save_file << players[color]->getResources()[Resource::Energy] << " ";
+            save_file << players[color]->getResources()[Resource::Glass] << " ";
+            save_file << players[color]->getResources()[Resource::Heat] << " ";
+            save_file << players[color]->getResources()[Resource::Wifi] << " ";
+            save_file << 'r' << " ";
+            for (const int &road : players[color]->getRoads()) {
+                save_file << road << " ";
+            }
+            save_file << 'h';
+            for (const auto &residence : players[color]->getResidences()) {
+                save_file << " " << residence.first << " " << RESIDENCE_TO_CHAR.at(residence.second);
+            }
+            save_file << endl;
+        }
+        for (int tileNum = 0; tileNum < NUM_TILES; tileNum++) {
+            save_file << RESOURCE_TO_SAVE_NUM.at(board->getTileResource(tileNum)) << " " << board->getTileRollNum(tileNum);
+            if (tileNum != NUM_TILES - 1) {
+                save_file << " ";
+            }
+        }
+        save_file << endl;
+        save_file << board->getGeese() << endl;
+        
+        cout << "Saving to " << save_file_name << "..."<< endl;
     } else if (move == "help") {
         help(movePhase);
     } else {
@@ -299,10 +359,10 @@ void Game::playGame() {
 
         if (cin >> move) {
             if (movePhase == 0) {
-                handleRollPhase(*players[COLOR_ORDER.at(turn)], move, movePhase);
+                handleRollMove(*players[COLOR_ORDER.at(turn)], move, movePhase);
             } else {
                 int temp = turn;
-                handleActionPhase(*players[COLOR_ORDER.at(turn)], move, movePhase);
+                handleActionMove(*players[COLOR_ORDER.at(turn)], move, movePhase);
                 if (temp != turn && winner == -1) {
                     // PRINT BOARD
                     cout << "Builder " << COLOR_ORDER.at(turn) << "'s turn." << endl;

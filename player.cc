@@ -75,10 +75,6 @@ void Player::changeDice(DiceType newDice) {
     }
 }
 
-std::map<int, Residence> Player::getResidences() const {
-    return residences;
-}
-
 void Player::addResource(Resource resource, int amount) {
     resources[resource] += amount;
 }
@@ -165,6 +161,14 @@ int Player::getPoints() const {
 
 std::map<Resource, int> Player::getResources() const {
     return resources;
+}
+
+std::map<int, Residence> Player::getResidences() const {
+    return residences;
+}
+
+std::vector<int> Player::getRoads() const {
+    return roads;
 }
 
 Color Player::getColor() {

@@ -124,8 +124,15 @@ void Board::changeGeese(int location){
     geese = location;
 }
 
-int Board::getGeese(){
+int Board::getGeese() const {
     return geese;
+}
+
+Resource Board::getTileResource(int location) const {
+    return tiles[location]->getResource();
+}
+int Board::getTileRollNum(int location) const {
+    return tiles[location]->getRollNum();
 }
 
 std::map<Color, std::map<Resource, int>> Board::getRollResources(int rollNumber) noexcept{
