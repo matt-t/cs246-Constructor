@@ -9,12 +9,15 @@
 #include "enums.h"
 #include "game.h"
 #include "constants.h"
+#include <random>
+#include <chrono>
+#include <stdlib.h>
 
 using namespace std;
 
 int main(int argc, char* argv[]){
 	//processing of command line arguments
-	int seed = 0;
+	unsigned int seed = 0;
 	string game_file;
 	string board_file;
 	bool game_loaded = false;
@@ -36,7 +39,7 @@ int main(int argc, char* argv[]){
 		string s = argv[i];
 		stringstream ss;
 		if (s == "-seed"){
-			if (seed_set == true) {
+			if (seed_set == true) { //seed has already been set
 				cerr << "ERROR: already specified -seed once before" << endl;
 				return 1;
 			}
@@ -55,8 +58,7 @@ int main(int argc, char* argv[]){
 			}
 		} else if (s == "-load") {
 			if (board_randomized == true){
-				cerr << "ERROR: already specified -random, can't also specify -load" << endl;
-				return 1;
+				board_randomized = false;
 			} else if (board_loaded == true){
 				cerr << "ERROR: already specified -board, can't also specify -load" << endl;
 				return 1;
@@ -118,7 +120,7 @@ int main(int argc, char* argv[]){
 					read.clear();
 					read.str(line); // sus about how this syntax works
 					int resourceNum, rollNum;
-					Resource resource;
+					Resource resource = Resource::Park; // need some better way to deal with resource if unitialized 
 					while(read >> resourceNum){
 						switch(resourceNum){
 							case 0: resource = Resource::Brick; break;
@@ -141,12 +143,10 @@ int main(int argc, char* argv[]){
 				}
 				game_loaded = true;
 				cout << "The game from " << game_file << "is loaded." << endl;
-				//do something with f;
 			}		
 		} else if (s == "-board") {
 			if (board_randomized == true){
-				cerr << "ERROR: already specified -random, can't also specify -board" << endl;
-				return 1;
+				board_randomized = false;
 			} else if (game_loaded == true){
 					cerr << "ERROR: already specified -load, can't also specify -board" << endl;
 					return 1;
@@ -171,7 +171,7 @@ int main(int argc, char* argv[]){
 					getline(f, line);
 					istringstream read(line);
 					int resourceNum, rollNum;
-					Resource resource;
+					Resource resource = Resource::Park; // need some better way to deal with resource if unitialized 
 					while(read >> resourceNum){
 						switch(resourceNum){
 							case 0: resource = Resource::Brick; break;
@@ -192,52 +192,95 @@ int main(int argc, char* argv[]){
 				cout << "The board from " << board_file << "is loaded." << endl;
 			}
 		} else if (s == "-random-board"){
-			if (board_loaded == true){
-				cerr << "ERROR: already specified -board, can't also specify -random-board" << endl;
-				return 1;
-			} else if (game_loaded == true){
-				cerr << "ERROR: already specified -load, can't also specify -random-board" << endl;
-				return 1;
-			} else if (board_randomized == true) {
-				cerr << "ERROR: already specified -random-board once before" << endl;
-				return 1;
-			}
-			board_randomized = true;
+			if (board_loaded != true && game_loaded != true){
+				board_randomized = true;
+			} //else if (board_randomized == true) {
+			// 	cerr << "ERROR: already specified -random-board once before" << endl;
+			// 	return 1;
+			// }
 			cout << "The board is randomized" << endl;
-			// do something to the board
 		} else {
 			cerr << "ERROR: unrecognized argument" << endl;
 			return 1;
 		}
 	}
-
-
-	if (game_loaded == true) {
+	//if there is no seed passed in, we generate one randomly
+	if (!seed_set){	
+		seed = std::chrono::system_clock::now().time_since_epoch().count();
+	}
+	cout << "the seed is: "<<seed << endl;
+	srand(seed);
+	//process initializing game
+	if (game_loaded) {
 		cout << "The game constructor is run with loaded game." << endl;
 		//feed in boardInfo AND gameInfo;
 		Game game{seed, boardInfo, turn, geese, roadInfo, buildInfo, playerPoints, playerResources, playerResidences, playerRoads};
 		game.playGame();
-	} else if (board_loaded == true) {
+	} else if (board_loaded) {
 		cout << "The game constructor is run with loaded board." << endl;
+		//feed in boardInfo
+		Game game{seed, boardInfo};
+		game.playGame();
+	} else if (board_randomized){
+		//generate a random board by building boardInfo
+		int rollNum;
+		Resource resource;
+		vector<int> rollNumList = {2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, 12};
+		vector<int> resourceList = {0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5};
+		for(int i = 18; i > 0; --i){
+			int randomNum = rand() % (i);
+			int randomResource = rand() % (i + 1);
+			resource = INT_TO_RESOURCE.at(resourceList[randomResource]);
+			resourceList.erase(resourceList.begin() + randomResource);
+			if (resource == Resource::Park) {
+				rollNum = 7;
+			} else {
+				rollNum = rollNumList[randomNum];
+				rollNumList.erase(rollNumList.begin() + randomNum);
+			} 
+			boardInfo.push_back(std::make_pair(resource, rollNum));
+		} 
+		resource = INT_TO_RESOURCE.at(resourceList[0]);
+		if (resource == Resource::Park) {
+			rollNum = 7;
+		} else {
+			rollNum = rollNumList[0];
+		} boardInfo.push_back(std::make_pair(resource, rollNum));
+		
+		cout << "random board!! generated with seed" << endl;
 		Game game{seed, boardInfo};
 		game.playGame();
 	} else {
-		//generate boardInfo vector for the randomized board
-	} 
-
-	/*
-	if (load) {
-		load
-	} else if (board) { 		do check for load && board in for loop and return err there?
-		board with filename
-	} else if (random && seed) {
-		random with seed
-	} else if (random) {
-		random
-	} else {
-		board layout.txt
+		//looks for layout.txt
+		ifstream f("layout.txt");
+		if (f.fail()) {
+				cerr << "ERROR: Unable to open file layout.txt for default board layout." << endl;
+				return 1;
+		} if (f.is_open()){
+			string line;
+			getline(f, line);
+			istringstream read(line);
+			int resourceNum, rollNum;
+			Resource resource = Resource::Park; // need some better way to deal with resource if unitialized 
+			while(read >> resourceNum){
+				switch(resourceNum){
+					case 0: resource = Resource::Brick; break;
+					case 1: resource = Resource::Energy; break;
+					case 2: resource = Resource::Glass; break;
+					case 3: resource = Resource::Heat; break;
+					case 4: resource = Resource::Wifi; break;
+					case 5: resource = Resource::Park; break;
+				}
+				read >> rollNum;
+				boardInfo.push_back(std::make_pair(resource, rollNum));
+			}
+		} else {
+			cerr << "ERROR: Cannot open file " << game_file << endl;
+			return 1;
+		} Game game{seed, boardInfo};
+		game.playGame();
 	}
-	*/
+	
 
 	// Handles gameplay:
 	// game.playGame();

@@ -5,7 +5,7 @@
 
 class FairDice: public Dice {
     public:
-        int rollDice(int seed) const override;
+        int rollDice() const override;
         std::unique_ptr<Dice> clone() const override;
 };
 

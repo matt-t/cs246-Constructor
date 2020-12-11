@@ -20,8 +20,8 @@ class Player {
         void buildResidence(int location);
         void upgradeResidence(int location);
         void buildRoad(int location);
-        int rollDice(int seed) const;
-        int handleGooseRoll();                      // NOT USED IN PLAYER.CC
+        int rollDice() const;
+        int handleGooseRoll();
         int getPoints() const;
         std::map<Resource, int> getResources() const;
         std::map<int, Residence> getResidences() const;

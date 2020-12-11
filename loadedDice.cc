@@ -1,6 +1,6 @@
 #include "loadedDice.h"
 
-int LoadedDice::rollDice(int seed) const {
+int LoadedDice::rollDice() const {
     if (loadedNumber == 0) {
         throw UnloadedDiceException();
     }
