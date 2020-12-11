@@ -90,11 +90,17 @@ void Player::takeResource(Resource resource, int amount) {
 
 Resource Player::generateRandomResource() {
     int seed = rand() % totalResource();
+    Resource resource = Resource::Park;         // does not matter what we initalize it to
     for (auto r : resources){
         seed -= r.second;
-        if (seed <= 0){return r.first;}
+        if (seed <= 0) {
+            resource = r.first;
+            break;
+        }
     }
+    return resource;
 }
+
 int Player::totalResource() const {
     int sum = 0;
     for (auto resource : resources) {
