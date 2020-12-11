@@ -1,10 +1,8 @@
 #include "player.h"
 #include "loadedDice.h"
 #include "fairDice.h"
-#include <memory>
 #include "constants.h"
-#include <stdlib.h>
-
+#include <cstdlib>
 using namespace std;
 
 //Ctor
@@ -77,15 +75,6 @@ void Player::changeDice(DiceType newDice) {
     }
 }
 
-std::vector<int> Player::getRoads() const {
-    return roads;
-}
-
-
-std::map<int, Residence> Player::getResidences() const {
-    return residences;
-}
-
 void Player::addResource(Resource resource, int amount) {
     resources[resource] += amount;
 }
@@ -98,10 +87,10 @@ void Player::takeResource(Resource resource, int amount) {
 }
 
 Resource Player::generateRandomResource() {
-    int seed = rand() % totalResource();
+    int playerSeed = (int) rand() % totalResource();
     for (auto r : resources){
-        seed -= r.second;
-        if (seed <= 0){return r.first;}
+        playerSeed -= r.second;
+        if (playerSeed <= 0){return r.first;}
     }
 }
 int Player::totalResource() const {
@@ -162,8 +151,8 @@ void Player::buildRoad(int location) {
     roads.emplace_back(location);
 }
 
-int Player::rollDice(int seed) const {
-    return playerDice->rollDice(seed);
+int Player::rollDice() const {
+    return playerDice->rollDice();
 }
 
 int Player::getPoints() const {
@@ -172,6 +161,14 @@ int Player::getPoints() const {
 
 std::map<Resource, int> Player::getResources() const {
     return resources;
+}
+
+std::map<int, Residence> Player::getResidences() const {
+    return residences;
+}
+
+std::vector<int> Player::getRoads() const {
+    return roads;
 }
 
 Color Player::getColor() {
