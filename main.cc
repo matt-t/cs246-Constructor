@@ -278,13 +278,9 @@ int main(int argc, char* argv[]){
 			cerr << "ERROR: Cannot open file " << game_file << endl;
 			return 1;
 		} Game game{seed, boardInfo};
+		game.setBasements();
 		game.playGame();
 	}
-	
-
-	// Handles gameplay:
-	// game.playGame();
-	
 
 	// Check to play again
 	/*
