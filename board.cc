@@ -80,8 +80,11 @@ Board::Board(std::vector<std::pair<Resource, int>> tileInfo, std::vector<Color> 
     
 
 void Board::buildResidence(Color color, int location){
+    if (location > 53 || location < 0) {
+        throw InvalidLocationException();
+    }
     try{
-        vertices[location]->build(color);
+    vertices[location]->build(color);
     } catch(BuildingExistsException& e){
         cerr << "ERROR: A residence already exists here." << endl;
     } catch (InvalidLocationException& e){
@@ -113,17 +116,23 @@ void Board::buildRoad(Color color, int location){
 void Board::changeGeese(int location){
     if (location == geese) {
         throw GeeseExistsHereException(); //geese cannot be placed on the same
+    } else if (location < 0 || location > 18) {
+        throw GeeseOutOfRange();
     }
     tiles[geese]->geese = false;
     tiles[location]->geese = true;
     geese = location;
 }
 
+int Board::getGeese(){
+    return geese;
+}
+
 std::map<Color, std::map<Resource, int>> Board::getRollResources(int rollNumber) noexcept{
 
 }
-std::vector<Color> Board::getLocationPlayers(int location){
-    
+std::set<Color> Board::getLocationPlayers(int location){
+    return tiles[location]->getLocationPlayers();
 }
 
 std::string getMargin(int numSpaces) {

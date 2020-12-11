@@ -51,12 +51,12 @@ int Tile::getRollNum() const noexcept{
     return rollNum;
 }
 
-std::vector<Color> Tile::getLocationPlayers() const noexcept { //can have duplicates
-    std::vector<Color> list;
+std::set<Color> Tile::getLocationPlayers() const noexcept {
+    std::set<Color> list;
     for (int i = 0; i < vertices.size(); ++i) {
         auto getVertex = vertices[i].lock();
         if (getVertex->getOwner() != Color::None){
-            list.push_back(getVertex->getOwner());
+            list.insert(getVertex->getOwner());
         }
     }
     return list;
