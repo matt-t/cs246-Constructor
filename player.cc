@@ -101,17 +101,19 @@ int Player::totalResource() const {
     return sum;
 }
 
-void Player::buildResidence(int location) {
+void Player::buildResidence(int location, bool isFree) {
     if (residences.count(location) != 0) {
         throw PlayerResidenceTypeException();
     }
-    for (const auto resourceCost: BASEMENT_COST) {
-        if (resources[resourceCost.first] < resourceCost.second) {
-            throw InsufficientResourceException();
+    if (!isFree) {
+        for (const auto resourceCost: BASEMENT_COST) {
+            if (resources[resourceCost.first] < resourceCost.second) {
+                throw InsufficientResourceException();
+            }
         }
-    }
-    for (const auto resourceCost: BASEMENT_COST) {
-        takeResource(resourceCost.first, resourceCost.second);
+        for (const auto resourceCost: BASEMENT_COST) {
+            takeResource(resourceCost.first, resourceCost.second);
+        }
     }
     residences[location] = Residence::Basement;
     points += RESIDENCE_TO_POINTS.at(Residence::Basement);
@@ -147,7 +149,18 @@ void Player::upgradeResidence(int location) {
 }
 
 
-void Player::buildRoad(int location) {
+void Player::buildRoad(int location, bool isFree) {
+    if (!isFree) {
+        for (const auto resourceCost: ROAD_COST) {
+            if (resources[resourceCost.first] < resourceCost.second) {
+                throw InsufficientResourceException();
+            }
+        }
+        for (const auto resourceCost: ROAD_COST) {
+            takeResource(resourceCost.first, resourceCost.second);
+        }
+    }
+
     roads.emplace_back(location);
 }
 

@@ -59,7 +59,7 @@ void Game::status() noexcept {
 void Game::residences(Player &player) {
     cout << player.getPoints() << endl;
     auto residences = player.getResidences();
-    for (auto res: residences) {
+    for (const auto &res: residences) {
         cout << res.first << ": "<<  res.second << endl;
     }
 }
@@ -97,8 +97,6 @@ void Game::next() noexcept {
 void Game::handleRollMove(Player &player, string move, int &movePhase) {
     if (move == "roll") {
         cout << "roll" << endl;
-        
-        player.changeDice(DiceType::Fair);//for testing
         int getRoll = player.rollDice();
         cout << getRoll << endl;
 
@@ -218,9 +216,13 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             tempSelf->buildRoad(edge);
             board->buildRoad(player.getColor(), edge);
             std::swap(players[player.getColor()], tempSelf);
-            cout << "build-road at " << edge << " for " << player.getColor() << endl;
-        } catch (invalid_argument & e) {
-            cerr << e.what() << endl;       //whatever function error gives
+            cout << "build-road at " << edge << " for " << player.getColor() << endl; // for testing
+        } catch (RoadExistsException& e){
+            cout << "ERROR: Someone has already built a road here." << endl;
+        } catch(InvalidRoadLocationException& e) {
+            cout << "ERROR: Invalid location chosen. None of your road or residence connect to here." << endl;
+        } catch (InsufficientResourceException &e) {
+            cout << "You do not have enough resources." << endl;
         }
     } else if (move == "build-res") {
         try {
@@ -230,9 +232,13 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             tempSelf->buildResidence(vertex);
             board->buildResidence(player.getColor(), vertex);
             std::swap(players[player.getColor()], tempSelf);
-            cout << "build-res at " << vertex << " for " << player.getColor() << endl;
-        } catch (invalid_argument & e) {
-            cerr << e.what() << endl;       //whatever function error gives
+            cout << "build-res at " << vertex << " for " << player.getColor() << endl; // for testing
+        } catch (BuildingExistsException& e){
+            cout << "ERROR: A residence already exists here." << endl;
+        } catch (InvalidLocationException& e){
+            cout << "ERROR: You cannot build here." << endl;
+        } catch (InsufficientResourceException & e) {
+            cout << "You do not have enough resources." << endl;
         }
     } else if (move == "improve") {
         try {
@@ -242,9 +248,13 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             tempSelf->upgradeResidence(vertex);
             board->upgradeResidence(player.getColor(), vertex);
             std::swap(players[player.getColor()], tempSelf);
-            cout << "upgrading residence at " << vertex << " for " << player.getColor() << endl;
-        } catch (invalid_argument & e) {
-            cerr << e.what() << endl;       //whatever function error gives
+            cout << "upgrading residence at " << vertex << " for " << player.getColor() << endl; // for testing
+        } catch(BuidingNotOwnedException& e){
+            cout << "ERROR: You do not own this residence." << endl;
+        } catch (AlreadyTowerException& e){
+            cout << "ERROR: Your residence is already a Tower." << endl;
+        } catch (InsufficientResourceException & e) {
+            cout << "You do not have enough resources." << endl;
         }
     } else if (move == "trade") {
         try {
@@ -274,7 +284,7 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
                     break;
                 }
             }
-            cout << "trading between " << player.getColor() << " and " << color << " with " << resourceGive << " + " << resourceTake << endl;
+            cout << "trading between " << player.getColor() << " and " << color << " with " << resourceGive << " + " << resourceTake << endl; // for testing
             
             unique_ptr<Player> tempOther = make_unique<Player>(*players[STRING_TO_COLOR.at(color)]);
             unique_ptr<Player> tempSelf = make_unique<Player>(player);
@@ -283,15 +293,8 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             std::swap(players[STRING_TO_COLOR.at(color)], tempOther);
             std::swap(players[player.getColor()], tempSelf);
             
-            /*
-            auto playerReceive = COPY(*player)
-            auto playerLose = COPY(players.find())
-            playerReceive.addResources()
-            */
-        } catch (invalid_argument & e) {
-            //whatever function error gives
-        } catch (...) {
-            throw "wtf";
+        } catch (InsufficientResourceException & e) {
+            cout << "You do not have enough resources." << endl;
         }
     } else if (move == "next") {
         if (player.getPoints() >= 10) {         // CHECK IF WINNER
@@ -326,7 +329,7 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             save_file << endl;
         }
         for (int tileNum = 0; tileNum < NUM_TILES; tileNum++) {
-            save_file << RESOURCE_TO_SAVE_NUM.at(board->getTileResource(tileNum)) << " " << board->getTileRollNum(tileNum);
+            save_file << RESOURCE_TO_INT.at(board->getTileResource(tileNum)) << " " << board->getTileRollNum(tileNum);
             if (tileNum != NUM_TILES - 1) {
                 save_file << " ";
             }

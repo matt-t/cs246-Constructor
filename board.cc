@@ -83,34 +83,16 @@ void Board::buildResidence(Color color, int location){
     if (location > 53 || location < 0) {
         throw InvalidLocationException();
     }
-    try{
     vertices[location]->build(color);
-    } catch(BuildingExistsException& e){
-        cerr << "ERROR: A residence already exists here." << endl;
-    } catch (InvalidLocationException& e){
-        cerr << "ERROR: You cannot build here." << endl;
-    }
 }
 
 void Board::upgradeResidence(Color color, int location){
-    try{ 
-        vertices[location]->upgrade(color);
-    } catch(BuidingNotOwnedException& e){
-        cerr << "ERROR: You do not own this residence." << endl;
-    } catch (AlreadyTowerException& e){
-        cerr << "ERROR: Your residence is already a Tower." << endl;
-    }
+    vertices[location]->upgrade(color);
 }
 
 
 void Board::buildRoad(Color color, int location){
-    try{
-        roads[location]->build(color);
-    } catch (RoadExistsException& e){
-        cerr << "ERROR: Someone has already built a road here." << endl;
-    } catch(InvalidRoadLocationException& e) {
-        cerr << "ERROR: Invalid location chosen. None of your road or residence connect to here." << endl;
-    } //need to change player's information
+    roads[location]->build(color);
 }
 
 void Board::changeGeese(int location){
