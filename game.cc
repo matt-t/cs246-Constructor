@@ -28,8 +28,43 @@ Game::Game(unsigned int seed, vector<pair<Resource, int>> tileInfo, int turn, in
     }
 }
 
-void Game::save() {
-
+void Game::save(bool exitGame) {
+    string save_file_name = "backup.sv";
+    if (!exitGame){
+        cin >> save_file_name;
+    }
+    ofstream save_file {save_file_name};
+    if (!save_file) {
+        cerr << "can't open output file" << endl;
+        exit(1);
+    }
+    save_file << turn << endl;
+    for (const Color &color: COLOR_ORDER) {
+        save_file << players[color]->getResources()[Resource::Brick] << " ";
+        save_file << players[color]->getResources()[Resource::Energy] << " ";
+        save_file << players[color]->getResources()[Resource::Glass] << " ";
+        save_file << players[color]->getResources()[Resource::Heat] << " ";
+        save_file << players[color]->getResources()[Resource::Wifi] << " ";
+        save_file << 'r' << " ";
+        for (const int &road : players[color]->getRoads()) {
+            save_file << road << " ";
+        }
+        save_file << 'h';
+        for (const auto &residence : players[color]->getResidences()) {
+            save_file << " " << residence.first << " " << RESIDENCE_TO_CHAR.at(residence.second);
+        }
+        save_file << endl;
+    }
+    for (int tileNum = 0; tileNum < NUM_TILES; tileNum++) {
+        save_file << RESOURCE_TO_INT.at(board->getTileResource(tileNum)) << " " << board->getTileRollNum(tileNum);
+        if (tileNum != NUM_TILES - 1) {
+            save_file << " ";
+        }
+    }
+    save_file << endl;
+    save_file << board->getGeese() << endl;
+    
+    cout << "Saving to " << save_file_name << "..."<< endl;
 }
 
 void Game::status() noexcept {
@@ -45,7 +80,8 @@ void Game::status() noexcept {
 }
 
 void Game::residences(Player &player) {
-    cout << player.getPoints() << endl;
+    cout << "Builder " << player.getColor() << " has " << player.getPoints() << " building points." << endl;
+    cout << "Builder " << player.getColor()<< " has built:"  << endl;
     auto residences = player.getResidences();
     for (const auto &res: residences) {
         cout << res.first << ": "<<  res.second << endl;
@@ -78,97 +114,88 @@ void Game::next() noexcept {
     ++turn;
 }
 
+void Game::handleGoose(Player &player){
+//players with 10 or more resource lose half resources
+    set<Color> unluckyPlayers = board->getLocationPlayers(board->getGeese());
+    for (auto p : unluckyPlayers) {//check if more than 10 resource
+        if (players[p]->totalResource() >= 10){
+            map<Resource, int> coutStolen;
+            int half = players[p]->totalResource() / 2;
+            cout << "Builder " << COLOR_TO_STRING.at(p) << " loses " << half << " resources to the goose. They lose:" << endl;
+            for (int i = half; i > 0; --i){
+                Resource stolen = players[p]->generateRandomResource();
+                players[p]->takeResource(stolen, 1);
+                coutStolen[stolen]++;
+            }
+            for (auto stolenResource : coutStolen){
+                cout << stolenResource.second << " " << RESOURCE_TO_STRING.at(stolenResource.first) << endl;
+            }
+        }
+    }
+    //roller chooses position and notify board 
+    cout << "Choose where to place the GOOSE." << endl;
+    int newGeeseTile;
+    bool changed = false;
+    while (changed == false){
+        cin >> newGeeseTile;
+        if (cin.fail()){
+            cin.clear();
+            cin.ignore(256,'\n');
+            cout << "ERROR: Choose a valid integer." << endl; 
+        } else {
+            try {
+                board->changeGeese(newGeeseTile);
+                changed = true;
+            } catch(GeeseExistsHereException& e) {
+                cout << "ERROR: The goose already exists here. Choose somewhere else." << endl;
+            } catch(GeeseOutOfRange& e) {
+                cout << "ERROR: Tile selection is invalid." << endl;
+            }
+        }
+    }
+    //cout who roller can steal from
+    set<Color> stealAvailable = board->getLocationPlayers(newGeeseTile);
+    for (const auto &color : COLOR_ORDER) { //check if have resources, if not removed from the set
+        if (players[color]->totalResource() == 0 || color == player.getColor()){
+            stealAvailable.erase(color);
+        }
+    }
+    if (stealAvailable.size() != 0){
+        cout << "Builder " << player.getColor() << " can choose to steal from ";
+        for (auto p : stealAvailable){
+            cout << COLOR_TO_STRING.at(p) << " ";
+        } cout << endl;
+        //choose who to steal from
+        string stealFrom;
+        while (cin >> stealFrom) {
+            transform(stealFrom.begin(), stealFrom.end(), stealFrom.begin(), ::toupper);
+            if (STRING_TO_COLOR.count(stealFrom) == 0){
+                cout << "ERROR: Choose a valid player." << endl;
+            } else {
+                break;
+            }
+        }
+        Color stealing = STRING_TO_COLOR.at(stealFrom);
+        //steals random resource 
+        Resource stolen = players[stealing]->generateRandomResource();
+        players[stealing]->takeResource(stolen, 1);
+        player.addResource(stolen, 1);
+        cout << "Builder " << COLOR_TO_STRING.at(player.getColor()) << " steals " << RESOURCE_TO_STRING.at(stolen) << " from builder " << COLOR_TO_STRING.at(stealing) << endl;
+    }
+}
+
 void Game::handleRollMove(Player &player, string move, int &movePhase) {
     if (move == "roll") {
-        cout << "roll" << endl;
+        //cout << "roll" << endl;
         int getRoll = player.rollDice();
-        cout << getRoll << endl;
-        
+        cout << getRoll << " is rolled."<< endl;
         if (getRoll == 7) {
-            //players with 10 or more resource lose half resources
-            set<Color> unluckyPlayers = board->getLocationPlayers(board->getGeese());
-            for (auto p : unluckyPlayers) {//check if more than 10 resource
-                if (players[p]->totalResource() >= 10){
-                    int numBrick=0, numEnergy=0, numGlass=0, numHeat=0, numWifi=0;
-                    int half = players[p]->totalResource() / 2;
-                    cout << "Builder " << COLOR_TO_STRING.at(p) << " loses " << half << " resources to the geese. They lose:" << endl;
-                    for (int i = half; i > 0; --i){
-                        Resource stolen = players[p]->generateRandomResource();
-                        players[p]->takeResource(stolen, 1);
-                        if (stolen == Resource::Brick) {
-                            ++numBrick;
-                        } else if (stolen == Resource::Energy) {
-                            ++numEnergy;
-                        } else if (stolen == Resource::Glass) {
-                            ++numGlass;
-                        } else if (stolen == Resource::Heat) {
-                            ++numHeat;
-                        } else {
-                            ++numWifi;
-                        }
-                    }
-                    cout << numBrick << " " << RESOURCE_BRICK_STRING << endl;
-                    cout << numEnergy << " " << RESOURCE_ENERGY_STRING << endl;
-                    cout << numGlass << " " << RESOURCE_GLASS_STRING << endl;
-                    cout << numHeat << " " << RESOURCE_HEAT_STRING << endl;
-                    cout << numWifi << " " << RESOURCE_WIFI_STRING << endl;
-                }
-            }
-            //roller chooses position and notify board 
-            cout << "Choose where to place the GEESE." << endl;
-            int newGeeseTile;
-            bool changed = false;
-            while (changed == false){
-                cin >> newGeeseTile;
-                if (cin.fail()){
-                    cin.clear();
-                    cin.ignore(256,'\n');
-                    cout << "ERROR: Choose a valid integer." << endl; 
-                } else {
-                    try {
-                        board->changeGeese(newGeeseTile);
-                        changed = true;
-                    } catch(GeeseExistsHereException& e) {
-                        cout << "ERROR: The geese already exists here. Choose somewhere else." << endl;
-                    } catch(GeeseOutOfRange& e) {
-                        cout << "ERROR: Tile selection is invalid." << endl;
-                    }
-                }
-            }
-            //cout who roller can steal from
-            set<Color> stealAvailable = board->getLocationPlayers(newGeeseTile);
-            for (const auto &p : stealAvailable) { //check if have resources, if not removed from the set
-                if (players[p]->totalResource() == 0 || p == player.getColor()){
-                    stealAvailable.erase(p);
-                }
-            }
-            if (stealAvailable.size() != 0){
-                cout << "Builder " << player.getColor() << " can choose to steal from ";
-                for (auto p : stealAvailable){
-                    cout << COLOR_TO_STRING.at(p) << " ";
-                } cout << endl;
-                //choose who to steal from
-                string stealFrom;
-                while (cin >> stealFrom) {
-                    transform(stealFrom.begin(), stealFrom.end(), stealFrom.begin(), ::toupper);
-                    if (STRING_TO_COLOR.count(stealFrom) == 0){
-                        cout << "ERROR: Choose a valid player." << endl;
-                    } else {
-                        break;
-                    }
-                }
-                Color stealing = STRING_TO_COLOR.at(stealFrom);
-                //steals random resource 
-                Resource stolen = players[stealing]->generateRandomResource();
-                players[stealing]->takeResource(stolen, 1);
-                player.addResource(stolen, 1);
-                cout << "Builder " << COLOR_TO_STRING.at(player.getColor()) << " steals " << RESOURCE_TO_STRING.at(stolen) << " from builder " << COLOR_TO_STRING.at(stealing) << endl;
-            }
-            } else {
+            handleGoose(player);
+        } else {
             //produce resource from the tiles rolled
             map<Color, map<Resource, int>> playersGet = board->getRollResources(getRoll);
             for (const auto &color : playersGet) {
-                cout << "Builder "<<color.first << "got:"<< endl;
+                cout << "Builder "<<color.first << " got:"<< endl;
                 for (const auto resource : color.second) {
                     cout << resource.second << " "<<  resource.first  << endl;
                 }
@@ -177,10 +204,10 @@ void Game::handleRollMove(Player &player, string move, int &movePhase) {
         ++movePhase;
     } else if (move == "load") {
         player.changeDice(DiceType::Loaded);
-        cout << "load" << endl;
+        cout << "Dice changed to loaded dice." << endl;
     } else if (move == "fair") {
         player.changeDice(DiceType::Fair);
-        cout <<  "fair" << endl;
+        cout <<  "Dice changed to fair dice." << endl;
     } else if (move == "help") {
         help(movePhase);
     } else if (move == "status") {
@@ -200,51 +227,84 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
     } else if (move == "residences") {
         residences(player);
     } else if (move == "build-road") {
-        try {
-            int edge;
-            unique_ptr<Player> tempSelf = make_unique<Player>(player);
-            tempSelf->buildRoad(edge);
-            board->buildRoad(player.getColor(), edge);
-            std::swap(players[player.getColor()], tempSelf);
-            cout << "build-road at " << edge << " for " << player.getColor() << endl; // for testing
-        } catch (RoadExistsException& e){
-            cout << "ERROR: Someone has already built a road here." << endl;
-        } catch(InvalidRoadLocationException& e) {
-            cout << "ERROR: Invalid location chosen. None of your road or residence connect to here." << endl;
-        } catch (InsufficientResourceException &e) {
-            cout << "You do not have enough resources." << endl;
+        bool roadChosen = false;
+        int edge;
+        while (roadChosen == false){
+            cin >> edge;
+            if (cin.fail()){
+                cin.clear();
+                cin.ignore(256,'\n');
+                cout << "ERROR: Choose a valid location." << endl; 
+                continue;
+            } else {roadChosen = true;}
+            try {
+                unique_ptr<Player> tempSelf = make_unique<Player>(player);
+                tempSelf->buildRoad(edge);
+                board->buildRoad(player.getColor(), edge);
+                std::swap(players[player.getColor()], tempSelf);
+                cout << "build-road at " << edge << " for " << player.getColor() << endl; // for testing
+            } catch (RoadExistsException& e){
+                cout << "ERROR: Someone has already built a road here." << endl;
+            } catch(InvalidRoadLocationException& e) {
+                cout << "ERROR: Cannot build road here. None of your road or residence connect to here." << endl;
+            } catch (InsufficientResourceException &e) {
+                cout << "ERROR: You do not have enough resources." << endl;
+            } catch (InvalidLocationException& e){
+                cout << "ERROR: Enter a valid location." << endl;
+            }
         }
     } else if (move == "build-res") {
-        try {
-            int vertex;
+        int vertex;
+        bool vertexChosen = false;
+        while (vertexChosen == false){
             cin >> vertex;
-            unique_ptr<Player> tempSelf = make_unique<Player>(player);
-            tempSelf->buildResidence(vertex);
-            board->buildResidence(player.getColor(), vertex);
-            std::swap(players[player.getColor()], tempSelf);
-            cout << "build-res at " << vertex << " for " << player.getColor() << endl; // for testing
-        } catch (BuildingExistsException& e){
-            cout << "ERROR: A residence already exists here." << endl;
-        } catch (InvalidLocationException& e){
-            cout << "ERROR: You cannot build here." << endl;
-        } catch (InsufficientResourceException & e) {
-            cout << "You do not have enough resources." << endl;
+            if (cin.fail()){
+                cin.clear();
+                cin.ignore(256,'\n');
+                cout << "ERROR: Choose a valid location." << endl; 
+                continue;
+            } else {vertexChosen = true;}
+            try {
+                unique_ptr<Player> tempSelf = make_unique<Player>(player);
+                tempSelf->buildResidence(vertex);
+                board->buildResidence(player.getColor(), vertex);
+                std::swap(players[player.getColor()], tempSelf);
+                cout << "build-res at " << vertex << " for " << player.getColor() << endl; // for testing
+            } catch (BuildingExistsException& e){
+                cout << "ERROR: A residence already exists here." << endl;
+            } catch (InvalidLocationException& e){
+                cout << "ERROR: You cannot build here." << endl;
+            } catch (InsufficientResourceException & e) {
+                cout << "You do not have enough resources." << endl;
+            }
         }
-    } else if (move == "improve") {
-        try {
-            int vertex;
+    } else if (move == "improve-res") {
+        int vertex;
+        bool vertexChosen = false;
+        while (vertexChosen == false){
             cin >> vertex;
-            unique_ptr<Player> tempSelf = make_unique<Player>(player);
-            tempSelf->upgradeResidence(vertex);
-            board->upgradeResidence(player.getColor(), vertex);
-            std::swap(players[player.getColor()], tempSelf);
-            cout << "upgrading residence at " << vertex << " for " << player.getColor() << endl; // for testing
-        } catch(BuidingNotOwnedException& e){
-            cout << "ERROR: You do not own this residence." << endl;
-        } catch (AlreadyTowerException& e){
-            cout << "ERROR: Your residence is already a Tower." << endl;
-        } catch (InsufficientResourceException & e) {
-            cout << "You do not have enough resources." << endl;
+            if (cin.fail()){
+                cin.clear();
+                cin.ignore(256,'\n');
+                cout << "ERROR: Choose a valid location." << endl; 
+                continue;
+            } else {vertexChosen = true;}
+            try {
+                int vertex;
+                unique_ptr<Player> tempSelf = make_unique<Player>(player);
+                tempSelf->upgradeResidence(vertex);
+                board->upgradeResidence(player.getColor(), vertex);
+                std::swap(players[player.getColor()], tempSelf);
+                cout << "upgrading residence at " << vertex << " for " << player.getColor() << endl; // for testing
+            } catch(BuidingNotOwnedException& e){
+                cout << "ERROR: You do not own this residence." << endl;
+            } catch(InvalidLocationException& e){
+                cout << "ERROR: Enter a valid location." << endl;
+            } catch (AlreadyTowerException& e){
+                cout << "ERROR: Your residence is already a Tower." << endl;
+            } catch (InsufficientResourceException & e) {
+                cout << "You do not have enough resources." << endl;
+            }
         }
     } else if (move == "trade") {
         try {
@@ -252,8 +312,8 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             while(true) {
                 cin >> color;
                 std::transform(color.begin(), color.end(), color.begin(), ::toupper);
-                if (STRING_TO_COLOR.count(color) == 0) {
-                    cout << "ur a troll, give me a real colour" << endl;
+                if (STRING_TO_COLOR.count(color) == 0 || STRING_TO_COLOR.at(color) == player.getColor()) {
+                    cout << "Enter a VALID player color to trade with." << endl;
                 } else {
                     break;
                 }
@@ -261,20 +321,20 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             while(cin >> resourceGive) {
                 std::transform(resourceGive.begin(), resourceGive.end(), resourceGive.begin(), ::toupper);
                 if (STRING_TO_RESOURCE.count(resourceGive) == 0) {
-                    cout << "ur a troll, give me a real resource" << endl;
+                    cout << "Enter a VALID resource you want to trade with." << endl;
                 } else {
                     break;
                 }
-            }
+            } 
             while(cin >> resourceTake) {
                 std::transform(resourceTake.begin(), resourceTake.end(), resourceTake.begin(), ::toupper);
                 if (STRING_TO_RESOURCE.count(resourceTake) == 0) {
-                    cout << "ur a troll, give me a real resource" << endl;
+                    cout << "Enter a VALID resource you want to trade for." << endl;
                 } else {
                     break;
                 }
             }
-            cout << "trading between " << player.getColor() << " and " << color << " with " << resourceGive << " + " << resourceTake << endl; // for testing
+            cout << "trading between " << player.getColor() << " and " << color << " with " << resourceGive << " for " << resourceTake << endl; // for testing
             
             unique_ptr<Player> tempOther = make_unique<Player>(*players[STRING_TO_COLOR.at(color)]);
             unique_ptr<Player> tempSelf = make_unique<Player>(player);
@@ -294,40 +354,7 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
         --movePhase;
         cout << turn % 4 << " " << winner << endl;
     } else if (move == "save") {
-        string save_file_name;
-        cin >> save_file_name;
-        ofstream save_file {save_file_name};
-        if (!save_file) {
-            cerr << "can't open output file" << endl;
-            exit(1);
-        }
-        save_file << turn << endl;
-        for (const Color &color: COLOR_ORDER) {
-            save_file << players[color]->getResources()[Resource::Brick] << " ";
-            save_file << players[color]->getResources()[Resource::Energy] << " ";
-            save_file << players[color]->getResources()[Resource::Glass] << " ";
-            save_file << players[color]->getResources()[Resource::Heat] << " ";
-            save_file << players[color]->getResources()[Resource::Wifi] << " ";
-            save_file << 'r' << " ";
-            for (const int &road : players[color]->getRoads()) {
-                save_file << road << " ";
-            }
-            save_file << 'h';
-            for (const auto &residence : players[color]->getResidences()) {
-                save_file << " " << residence.first << " " << RESIDENCE_TO_CHAR.at(residence.second);
-            }
-            save_file << endl;
-        }
-        for (int tileNum = 0; tileNum < NUM_TILES; tileNum++) {
-            save_file << RESOURCE_TO_INT.at(board->getTileResource(tileNum)) << " " << board->getTileRollNum(tileNum);
-            if (tileNum != NUM_TILES - 1) {
-                save_file << " ";
-            }
-        }
-        save_file << endl;
-        save_file << board->getGeese() << endl;
-        
-        cout << "Saving to " << save_file_name << "..."<< endl;
+        save();
     } else if (move == "help") {
         help(movePhase);
     } else {
@@ -365,9 +392,9 @@ void Game::playGame() {
     }
 
     if (winner == -1) {         // if while loop ended cause EOF auto save game
-        save();
+        save(true);
     } else {                    // if while loop ended cause player won 
-        cout << "Congratulations!! " << COLOR_ORDER.at(turn) << " wins!!" << endl;
+        cout << "Congratulations!! " << COLOR_ORDER.at(turn % 4) << " wins!!" << endl;
     }
 } 
 

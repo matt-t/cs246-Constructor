@@ -18,11 +18,13 @@ class Game {
 
     /* Private Methods */
     //
-    void save();
+    void save(bool exitGame = false);
     
     //
     void status() noexcept;
 
+    //
+    void handleGoose(Player &player);
     //
     void residences(Player &player);
     

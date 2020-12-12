@@ -92,11 +92,17 @@ void Board::buildResidence(Color color, int location, bool gameStart){
 }
 
 void Board::upgradeResidence(Color color, int location){
+    if (location > 53 || location < 0) {
+        throw InvalidLocationException();
+    }
     vertices[location]->upgrade(color);
 }
 
 
 void Board::buildRoad(Color color, int location){
+    if (location < 0 || location > 71){
+        throw InvalidLocationException();
+    }
     roads[location]->build(color);
 }
 
