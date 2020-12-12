@@ -83,8 +83,7 @@ void Game::handleRollMove(Player &player, string move, int &movePhase) {
         cout << "roll" << endl;
         int getRoll = player.rollDice();
         cout << getRoll << endl;
-        board->getRollResources(getRoll);
-
+        
         if (getRoll == 7) {
             //players with 10 or more resource lose half resources
             set<Color> unluckyPlayers = board->getLocationPlayers(board->getGeese());
@@ -138,7 +137,7 @@ void Game::handleRollMove(Player &player, string move, int &movePhase) {
             }
             //cout who roller can steal from
             set<Color> stealAvailable = board->getLocationPlayers(newGeeseTile);
-            for (auto p : stealAvailable) { //check if have resources, if not removed from the set
+            for (const auto &p : stealAvailable) { //check if have resources, if not removed from the set
                 if (players[p]->totalResource() == 0 || p == player.getColor()){
                     stealAvailable.erase(p);
                 }
