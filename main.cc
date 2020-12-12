@@ -13,6 +13,7 @@
 #include <chrono>
 #include <stdlib.h>
 #include "eofException.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -282,18 +283,48 @@ int main(int argc, char* argv[]){
 		game.playGame();
 	}
 
-	// Check to play again
-	/*
 	string playAgain;
-	cout << "Would you like to play again?" << endl;
+	cout << "Would you like to play again?" << endl;				// Currently only loads layout.txt
 	cin >> playAgain;
-	if (playAgain == "yes") {
-			// can we wrap everything in whie loop? 
-			// only thing is that the aboec stuff checks cmd line args 
-			// but we probs wanna restart the game from scrath and there is no input
-			// so we start the game from random board?!?
-	}
-	*/
+	transform(playAgain.begin(), playAgain.end(), playAgain.begin(), ::toupper);
+	while (playAgain == "YES" || playAgain == "Y") {
+		ifstream f("layout.txt");
+		if (f.fail()) {
+				cerr << "ERROR: Unable to open file layout.txt for default board layout." << endl;
+				return 1;
+		} if (f.is_open()){
+			string line;
+			getline(f, line);
+			istringstream read(line);
+			int resourceNum, rollNum;
+			Resource resource = Resource::Park; // need some better way to deal with resource if unitialized 
+			while(read >> resourceNum){
+				switch(resourceNum){
+					case 0: resource = Resource::Brick; break;
+					case 1: resource = Resource::Energy; break;
+					case 2: resource = Resource::Glass; break;
+					case 3: resource = Resource::Heat; break;
+					case 4: resource = Resource::Wifi; break;
+					case 5: resource = Resource::Park; break;
+				}
+				read >> rollNum;
+				boardInfo.push_back(std::make_pair(resource, rollNum));
+			}
+		} else {
+			cerr << "ERROR: Cannot open file " << game_file << endl;
+			return 1;
+		} Game game{seed, boardInfo};
+		try {
+			game.initBasements();
+		} catch (EOFException &e) {
+			return 1;
+		}
+		game.playGame();
 
+		cout << "Would you like to play again?" << endl;
+		cin >> playAgain;
+		transform(playAgain.begin(), playAgain.end(), playAgain.begin(), ::toupper);
+	}
+			
 	return 0;
 }

@@ -465,6 +465,7 @@ void Game::setBasement(Player &player, vector<int> &locations) {
 
 //
 void Game::initBasements() {
+    cout << *board << endl;
     vector<int> locations;
     try {
         for (auto iter = players.begin(); iter != players.end(); ++iter) {
