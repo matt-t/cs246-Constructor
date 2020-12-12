@@ -1,5 +1,6 @@
 #include "loadedDice.h"
 #include <iostream>
+#include "eofException.h"
 
 int LoadedDice::rollDice() const {
     int loadedNum;
@@ -13,7 +14,7 @@ int LoadedDice::rollDice() const {
             } 
         } else {
             if (std::cin.eof()) {
-                // throw Eof_Exception();
+                throw EOFException();
             }
             std::cin.clear();
             std::cin.ignore(256, '\n');

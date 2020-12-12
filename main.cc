@@ -12,6 +12,7 @@
 #include <random>
 #include <chrono>
 #include <stdlib.h>
+#include "eofException.h"
 
 using namespace std;
 
@@ -280,7 +281,11 @@ int main(int argc, char* argv[]){
 			cerr << "ERROR: Cannot open file " << game_file << endl;
 			return 1;
 		} Game game{seed, boardInfo};
-		game.initBasements();
+		try {
+			game.initBasements();
+		} catch (EOFException &e) {
+			return 1;
+		}
 		game.playGame();
 	}
 

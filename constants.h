@@ -79,7 +79,7 @@ const int BOTTOM_LEFT_ROAD = 3;
 const int BOTTOM_RIGHT_ROAD = 4;
 const int BOTTOM_MIDDLE_ROAD = 5;
 
-
+const std::string DEFAULT_SAVE_FILE = "backup.sv";
 
 const std::map<Color, char> COLOR_TO_CHAR = {
     { Color::Blue, 'B' }, 

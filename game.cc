@@ -4,7 +4,7 @@
 #include "game.h"
 #include "enums.h"
 #include "constants.h"
-
+#include "eofException.h"
 
 using namespace std;
 
@@ -29,10 +29,14 @@ Game::Game(unsigned int seed, vector<pair<Resource, int>> tileInfo, int turn, in
 }
 
 void Game::save(bool exitGame) {
-    string save_file_name = "backup.sv";
+    string save_file_name = DEFAULT_SAVE_FILE;
     if (!exitGame){
         cin >> save_file_name;
+        if (cin.eof()) {
+            throw EOFException();
+        }
     }
+
     ofstream save_file {save_file_name};
     if (!save_file) {
         cerr << "can't open output file" << endl;
@@ -138,6 +142,9 @@ void Game::handleGoose(Player &player){
     bool changed = false;
     while (changed == false){
         cin >> newGeeseTile;
+        if (cin.eof()) {
+            throw EOFException();
+        }
         if (cin.fail()){
             cin.clear();
             cin.ignore(256,'\n');
@@ -174,6 +181,9 @@ void Game::handleGoose(Player &player){
             } else {
                 break;
             }
+        }
+        if (cin.eof()) {
+            throw EOFException();
         }
         Color stealing = STRING_TO_COLOR.at(stealFrom);
         //steals random resource 
@@ -231,6 +241,9 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
         int edge;
         while (roadChosen == false){
             cin >> edge;
+            if (cin.eof()) {
+                throw EOFException();
+            }
             if (cin.fail()){
                 cin.clear();
                 cin.ignore(256,'\n');
@@ -258,6 +271,9 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
         bool vertexChosen = false;
         while (vertexChosen == false){
             cin >> vertex;
+            if (cin.eof()) {
+                throw EOFException();
+            }
             if (cin.fail()){
                 cin.clear();
                 cin.ignore(256,'\n');
@@ -283,6 +299,9 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
         bool vertexChosen = false;
         while (vertexChosen == false){
             cin >> vertex;
+            if (cin.eof()) {
+                throw EOFException();
+            }
             if (cin.fail()){
                 cin.clear();
                 cin.ignore(256,'\n');
@@ -309,8 +328,7 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
     } else if (move == "trade") {
         try {
             string color, resourceGive, resourceTake;
-            while(true) {
-                cin >> color;
+            while(cin >> color) {
                 std::transform(color.begin(), color.end(), color.begin(), ::toupper);
                 if (STRING_TO_COLOR.count(color) == 0 || STRING_TO_COLOR.at(color) == player.getColor()) {
                     cout << "Enter a VALID player color to trade with." << endl;
@@ -333,6 +351,9 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
                 } else {
                     break;
                 }
+            }
+            if (cin.eof()) {
+                throw EOFException();
             }
             cout << "trading between " << player.getColor() << " and " << color << " with " << resourceGive << " for " << resourceTake << endl; // for testing
             
@@ -372,21 +393,25 @@ void Game::playGame() {
             cout << "Enter a command:" << endl;
         }
         cout << "> ";
-
-        if (cin >> move) {
-            if (movePhase == 0) {
-                handleRollMove(*players[COLOR_ORDER.at(turn % 4)], move, movePhase);
-            } else {
-                int temp = turn % 4;
-                handleActionMove(*players[COLOR_ORDER.at(turn % 4)], move, movePhase);
-                if (temp != turn % 4 && winner == -1) {
-                    // PRINT BOARD
-                    cout << "Builder " << COLOR_ORDER.at(turn % 4) << "'s turn." << endl;
-                } else if (winner != -1) {
-                    --turn;        // undo the next turn move cause we ending the game 
+        try {
+            if (cin >> move) {
+                if (movePhase == 0) {
+                    handleRollMove(*players[COLOR_ORDER.at(turn % 4)], move, movePhase);
+                } else {
+                    int temp = turn % 4;
+                    handleActionMove(*players[COLOR_ORDER.at(turn % 4)], move, movePhase);
+                    if (temp != turn % 4 && winner == -1) {
+                        // PRINT BOARD
+                        cout << "Builder " << COLOR_ORDER.at(turn % 4) << "'s turn." << endl;
+                    } else if (winner != -1) {
+                        --turn;        // undo the next turn move cause we ending the game 
+                    }
                 }
+            } else {
+                break;
             }
-        } else {
+        } catch (EOFException &e) {
+            cout << "End of file reached." << endl;
             break;
         }
     }
@@ -403,6 +428,9 @@ void Game::setBasement(Player &player, vector<int> &locations) {
     while(true) {
         cout << "Builder " << player.getColor() << " where do you want to build a basement?" << endl;
         cin >> vertex;
+        if (cin.eof()) {
+            throw EOFException();
+        }
         if (cin.fail()){
                 cin.clear();
                 cin.ignore(256,'\n');
@@ -413,7 +441,7 @@ void Game::setBasement(Player &player, vector<int> &locations) {
                 tempSelf->buildResidence(vertex, true);
                 board->buildResidence(player.getColor(), vertex, true);
                 std::swap(players[player.getColor()], tempSelf);
-                cout << "Builder " << player.getColor() << " successfullly built a basement at " << vertex << "." << endl;
+                cout << "Builder " << player.getColor() << " successfully built a basement at " << vertex << "." << endl;
                 locations.push_back(vertex);
                 break;
             } catch (BuildingExistsException& e) {
@@ -438,11 +466,16 @@ void Game::setBasement(Player &player, vector<int> &locations) {
 //
 void Game::initBasements() {
     vector<int> locations;
-    for (auto iter = players.begin(); iter != players.end(); ++iter) {
-        setBasement(*iter->second, locations);
-    }
-    for (auto iter = players.rbegin(); iter != players.rend(); ++iter) {
-        setBasement(*iter->second, locations);
+    try {
+        for (auto iter = players.begin(); iter != players.end(); ++iter) {
+            setBasement(*iter->second, locations);
+        }
+        for (auto iter = players.rbegin(); iter != players.rend(); ++iter) {
+            setBasement(*iter->second, locations);
+        }
+    } catch (EOFException &e) {
+        cout << "End of file reached." << endl;
+        throw e;
     }
 }
 
