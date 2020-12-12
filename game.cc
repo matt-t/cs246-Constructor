@@ -66,7 +66,9 @@ void Game::save(bool exitGame) {
         }
     }
     save_file << endl;
-    save_file << board->getGeese() << endl;
+    if (board->getGeese() != UNINITIALIZED_GEESE) {
+        save_file << board->getGeese() << endl;
+    }
     
     cout << "Saving to " << save_file_name << "..."<< endl;
 }
@@ -120,15 +122,14 @@ void Game::next() noexcept {
 
 void Game::handleGoose(Player &player){
 //players with 10 or more resource lose half resources
-    set<Color> unluckyPlayers = board->getLocationPlayers(board->getGeese());
-    for (auto p : unluckyPlayers) {//check if more than 10 resource
-        if (players[p]->totalResource() >= 10){
+    for (const Color &color : COLOR_ORDER) {//check if more than 10 resource
+        if (players[color]->totalResource() >= 10){
             map<Resource, int> coutStolen;
-            int half = players[p]->totalResource() / 2;
-            cout << "Builder " << COLOR_TO_STRING.at(p) << " loses " << half << " resources to the goose. They lose:" << endl;
+            int half = players[color]->totalResource() / 2;
+            cout << "Builder " << COLOR_TO_STRING.at(color) << " loses " << half << " resources to the goose. They lose:" << endl;
             for (int i = half; i > 0; --i){
-                Resource stolen = players[p]->generateRandomResource();
-                players[p]->takeResource(stolen, 1);
+                Resource stolen = players[color]->generateRandomResource();
+                players[color]->takeResource(stolen, 1);
                 coutStolen[stolen]++;
             }
             for (auto stolenResource : coutStolen){

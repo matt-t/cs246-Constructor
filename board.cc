@@ -9,8 +9,7 @@
 
 using namespace std;
 
-Board::Board(vector<pair<Resource, int>> boardInfo){
-    geese = -1;
+Board::Board(vector<pair<Resource, int>> boardInfo): geese{-1} {
     for  (int i = 0; i <= 53; ++i){
         auto p = std::make_shared<Vertex>(i);
         vertices.push_back(p);
@@ -39,10 +38,6 @@ Board::Board(vector<pair<Resource, int>> boardInfo){
 	        tileRoads.push_back(wp);
         }
         auto p = std::make_shared<Tile>(i, boardInfo[i].first, boardInfo[i].second, tileVertices, tileRoads);
-        if (boardInfo[i].first == Resource::Park && geese == -1){
-            p->geese = true;
-            geese = i;
-        }
         tiles.push_back(p);
     }
 }
@@ -80,7 +75,9 @@ Board::Board(std::vector<std::pair<Resource, int>> tileInfo, std::vector<Color> 
         auto p = std::make_shared<Tile>(i, tileInfo[i].first, tileInfo[i].second, tileVertices, tileRoads);
         tiles.push_back(p);
     }
-    tiles[geese]->geese = true;
+    if (geese != UNINITIALIZED_GEESE) {
+        tiles[geese]->geese = true;
+    }
 }
     
 
@@ -113,7 +110,10 @@ void Board::changeGeese(int location){
     if (location < 0 || location > 18) {
         throw GeeseOutOfRange();
     }
-    tiles[geese]->geese = false;
+    if (geese != UNINITIALIZED_GEESE) {
+        tiles[geese]->geese = false;
+        
+    }
     tiles[location]->geese = true;
     geese = location;
 }
