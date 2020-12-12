@@ -92,11 +92,17 @@ void Board::buildResidence(Color color, int location, bool gameStart){
 }
 
 void Board::upgradeResidence(Color color, int location){
+    if (location > 53 || location < 0) {
+        throw InvalidLocationException();
+    }
     vertices[location]->upgrade(color);
 }
 
 
 void Board::buildRoad(Color color, int location){
+    if (location < 0 || location > 71){
+        throw InvalidLocationException();
+    }
     roads[location]->build(color);
 }
 
@@ -137,12 +143,12 @@ map<Color, map<Resource, int>> Board::getRollResources(int rollNumber) noexcept{
             }
         }
     }
-    for (const auto &color : returnMap) {
-        cout << color.first << endl;
-        for (const auto resource : color.second) {
-            cout << resource.first << ": " << resource.second << endl;
-        }
-    }
+    // for (const auto &color : returnMap) {
+    //     cout << color.first << endl;
+    //     for (const auto resource : color.second) {
+    //         cout << resource.first << ": " << resource.second << endl;
+    //     }
+    // }
     return returnMap;
 }
 

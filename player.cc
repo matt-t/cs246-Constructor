@@ -89,8 +89,11 @@ void Player::takeResource(Resource resource, int amount) {
 Resource Player::generateRandomResource() {
     int playerSeed = (int) rand() % totalResource();
     for (auto r : resources){
-        playerSeed -= r.second;
-        if (playerSeed <= 0){return r.first;}
+        if (r.second != 0){
+            playerSeed -= r.second;
+            if (playerSeed <= 0){return r.first;}
+        }
+        
     }
 }
 
@@ -103,9 +106,6 @@ int Player::totalResource() const {
 }
 
 void Player::buildResidence(int location, bool isFree) {
-    if (residences.count(location) != 0) {
-        throw PlayerResidenceTypeException();
-    }
     if (!isFree) {
         for (const auto resourceCost: BASEMENT_COST) {
             if (resources[resourceCost.first] < resourceCost.second) {
