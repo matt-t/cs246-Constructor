@@ -347,7 +347,7 @@ std::vector<std::string> Board::printChunk(std::vector<int> tileLocations, bool 
 std::ostream &operator<<(std::ostream &out, const Board &board) {
 
     std::vector<vector<int>> chunks{
-        {3, 1, 4, 2, 5}, {3, 6, 4, 7, 5}, {8, 6, 9, 7, 10}, {8, 11, 9, 12, 10}, {8, 11, 9, 12, 10}, {13, 16, 14, 17, 15}
+        {3, 1, 4, 2, 5}, {3, 6, 4, 7, 5}, {8, 6, 9, 7, 10}, {8, 11, 9, 12, 10}, {13, 11, 14, 12, 15}, {13, 16, 14, 17, 15}
     };
     std::vector<int> top{0};
     std::vector<int> top2{1, 0, 2};

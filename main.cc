@@ -123,14 +123,7 @@ int main(int argc, char* argv[]){
 					int resourceNum, rollNum;
 					Resource resource = Resource::Park; // need some better way to deal with resource if unitialized 
 					while(read >> resourceNum){
-						switch(resourceNum){
-							case 0: resource = Resource::Brick; break;
-							case 1: resource = Resource::Energy; break;
-							case 2: resource = Resource::Glass; break;
-							case 3: resource = Resource::Heat; break;
-							case 4: resource = Resource::Wifi; break;
-							case 5: resource = Resource::Park; break;
-						}
+						resource = INT_TO_RESOURCE.at(resourceNum);
 						read >> rollNum;
 						boardInfo.push_back(std::make_pair(resource, rollNum));
 					}
