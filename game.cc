@@ -381,14 +381,10 @@ void Game::playGame() {
     }
 } 
 
-//
-void Game::setBasements() {
+void Game::setBasement(Player &player, vector<int> &locations) {
     int vertex;
-    vector<int> locations;
-    cout << *board << endl;
-    for (auto iter = players.begin(); iter != players.end(); ++iter) {
-        while(true) {
-            cout << "Builder " << iter->first << " where do you want to build a basement?" << endl;
+    while(true) {
+            cout << "Builder " << player.getColor() << " where do you want to build a basement?" << endl;
             cin >> vertex;
             if (cin.fail()){
                     cin.clear();
@@ -396,11 +392,11 @@ void Game::setBasements() {
                     cout << "ERROR: Choose a valid integer." << endl; 
             } else {
                 try {
-                    unique_ptr<Player> tempSelf = make_unique<Player>(*iter->second);
+                    unique_ptr<Player> tempSelf = make_unique<Player>(player);
                     tempSelf->buildResidence(vertex, true);
-                    board->buildResidence(iter->first, vertex);
-                    std::swap(players[iter->first], tempSelf);
-                    cout << "Builder " << iter->first << " successfullly built a basement at " << vertex << "." << endl;
+                    board->buildResidence(player.getColor(), vertex, true);
+                    std::swap(players[player.getColor()], tempSelf);
+                    cout << "Builder " << player.getColor() << " successfullly built a basement at " << vertex << "." << endl;
                     locations.push_back(vertex);
                 } catch (BuildingExistsException& e) {
                     cout << "ERROR: A residence already exists here." << endl;
@@ -419,12 +415,15 @@ void Game::setBasements() {
                 }
             }
         }
+}
+
+//
+void Game::initBasements() {
+    vector<int> locations;
+    for (auto iter = players.begin(); iter != players.end(); ++iter) {
+        setBasement(*iter->second, locations);
     }
     for (auto iter = players.rbegin(); iter != players.rend(); ++iter) {
-        cout << "Builder " << iter->first << " where do you want to build a basement?" << endl;
-        cin >> vertex;
-
-        cout << vertex << endl;
-    }
+        setBasement(*iter->second, locations);
 }
 

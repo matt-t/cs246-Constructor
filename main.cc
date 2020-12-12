@@ -220,6 +220,7 @@ int main(int argc, char* argv[]){
 		cout << "The game constructor is run with loaded board." << endl;
 		//feed in boardInfo
 		Game game{seed, boardInfo};
+		game.initBasements();
 		game.playGame();
 	} else if (board_randomized){
 		//generate a random board by building boardInfo
@@ -249,6 +250,7 @@ int main(int argc, char* argv[]){
 		
 		cout << "random board!! generated with seed" << endl;
 		Game game{seed, boardInfo};
+		game.initBasements();
 		game.playGame();
 	} else {
 		//looks for layout.txt
@@ -278,7 +280,7 @@ int main(int argc, char* argv[]){
 			cerr << "ERROR: Cannot open file " << game_file << endl;
 			return 1;
 		} Game game{seed, boardInfo};
-		game.setBasements();
+		game.initBasements();
 		game.playGame();
 	}
 

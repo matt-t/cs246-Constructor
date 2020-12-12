@@ -38,6 +38,9 @@ class Game {
     //
     void handleActionMove(Player &player, std::string move, int &movePhase);
 
+    //
+    void setBasement(Player &player, std::vector<int> &locations);
+
 
     public:
     // Constructor
@@ -49,7 +52,7 @@ class Game {
     void playGame();   
 
     //
-    void setBasements();
+    void initBasements();
 
 };
 
