@@ -103,7 +103,8 @@ void Board::buildRoad(Color color, int location){
 void Board::changeGeese(int location){
     if (location == geese) {
         throw GeeseExistsHereException(); //geese cannot be placed on the same
-    } else if (location < 0 || location > 18) {
+    }
+    if (location < 0 || location > 18) {
         throw GeeseOutOfRange();
     }
     tiles[geese]->geese = false;
@@ -128,9 +129,11 @@ map<Color, map<Resource, int>> Board::getRollResources(int rollNumber) noexcept{
     
     for (const auto &tile : tiles) {
         if (tile->getRollNum() == rollNumber){
-            map<Color, int> playerResources = tile->produceResources();
-            for (const auto &playerResource : playerResources) {
-                returnMap[playerResource.first][tile->getResource()] += playerResource.second;
+            if (tile->getResource() != Resource::park) {
+                map<Color, int> playerResources = tile->produceResources();
+                for (const auto &playerResource : playerResources) {
+                    returnMap[playerResource.first][tile->getResource()] += playerResource.second;
+                }
             }
         }
     }
