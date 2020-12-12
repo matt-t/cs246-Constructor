@@ -385,37 +385,38 @@ void Game::playGame() {
 void Game::setBasement(Player &player, vector<int> &locations) {
     int vertex;
     while(true) {
-            cout << "Builder " << player.getColor() << " where do you want to build a basement?" << endl;
-            cin >> vertex;
-            if (cin.fail()){
-                    cin.clear();
-                    cin.ignore(256,'\n');
-                    cout << "ERROR: Choose a valid integer." << endl; 
-            } else {
-                try {
-                    unique_ptr<Player> tempSelf = make_unique<Player>(player);
-                    tempSelf->buildResidence(vertex, true);
-                    board->buildResidence(player.getColor(), vertex, true);
-                    std::swap(players[player.getColor()], tempSelf);
-                    cout << "Builder " << player.getColor() << " successfullly built a basement at " << vertex << "." << endl;
-                    locations.push_back(vertex);
-                } catch (BuildingExistsException& e) {
-                    cout << "ERROR: A residence already exists here." << endl;
-                    cout << "Basements already exist as locations: ";
-                    for (const auto& v: locations) {
-                        cout << v << " ";
-                    }
-                    cout << endl;
-                } catch (InvalidLocationException& e) {
-                    cout << "ERROR: You cannot build here." << endl;
-                    cout << "Basements already exist as locations: ";
-                    for (const auto& v: locations) {
-                        cout << v << " ";
-                    }
-                    cout << endl;
+        cout << "Builder " << player.getColor() << " where do you want to build a basement?" << endl;
+        cin >> vertex;
+        if (cin.fail()){
+                cin.clear();
+                cin.ignore(256,'\n');
+                cout << "ERROR: Choose a valid integer." << endl; 
+        } else {
+            try {
+                unique_ptr<Player> tempSelf = make_unique<Player>(player);
+                tempSelf->buildResidence(vertex, true);
+                board->buildResidence(player.getColor(), vertex, true);
+                std::swap(players[player.getColor()], tempSelf);
+                cout << "Builder " << player.getColor() << " successfullly built a basement at " << vertex << "." << endl;
+                locations.push_back(vertex);
+                break;
+            } catch (BuildingExistsException& e) {
+                cout << "ERROR: A residence already exists here." << endl;
+                cout << "Basements already exist as locations: ";
+                for (const auto& val: locations) {
+                    cout << val << " ";
                 }
+                cout << endl;
+            } catch (InvalidLocationException& e) {
+                cout << "ERROR: You cannot build here." << endl;
+                cout << "Basements already exist as locations: ";
+                for (const auto& val: locations) {
+                    cout << val << " ";
+                }
+                cout << endl;
             }
         }
+    }
 }
 
 //
@@ -426,5 +427,6 @@ void Game::initBasements() {
     }
     for (auto iter = players.rbegin(); iter != players.rend(); ++iter) {
         setBasement(*iter->second, locations);
+    }
 }
 
