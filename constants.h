@@ -65,6 +65,8 @@ const std::vector<std::vector<int>> TilesRoads = {
     {52, 55, 56, 63, 64, 67}, {53, 57, 58, 65, 66, 68}, {61, 64, 65, 69, 70, 71} //16-18
 };
 
+const int UNINITIALIZED_GEESE = -1;
+
 const int TOP_LEFT_VERTEX = 0;
 const int TOP_RIGHT_VERTEX = 1;
 const int MIDDLE_LEFT_VERTEX = 2;
@@ -184,4 +186,5 @@ const std::map<int, Resource> INT_TO_RESOURCE = {
     {4, Resource::Wifi},
     {5, Resource::Park},
 };
+
 #endif
