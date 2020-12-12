@@ -21,10 +21,6 @@ int Tile::getLocation() const noexcept {
 
 std::map<Color, int> Tile::produceResources() noexcept{
     std::map<Color, int> list;
-    list[Color::Blue] = 0;
-    list[Color::Orange] = 0;
-    list[Color::Red] = 0;
-    list[Color::Yellow] = 0;
     for (int i = 0; i < vertices.size(); ++i){
         auto getVertex = vertices[i].lock();
         if (getVertex->getOwner() != Color::None){

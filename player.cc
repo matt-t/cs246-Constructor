@@ -103,9 +103,6 @@ int Player::totalResource() const {
 }
 
 void Player::buildResidence(int location, bool isFree) {
-    if (residences.count(location) != 0) {
-        throw PlayerResidenceTypeException();
-    }
     if (!isFree) {
         for (const auto resourceCost: BASEMENT_COST) {
             if (resources[resourceCost.first] < resourceCost.second) {

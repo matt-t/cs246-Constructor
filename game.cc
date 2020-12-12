@@ -15,18 +15,6 @@ Game::Game(unsigned int seed, vector<pair<Resource, int>> tileInfo):
         // std::unique_ptr<Player> temp = std::make_unique<Player>(color);
         players[color] = std::make_unique<Player>(color);
     }
-    // auto b = make_unique<Player>(Color::Blue);
-    // players.push_back(move(b));
-    // auto r = make_unique<Player>(Color::Red);
-    // players.push_back(move(r));
-    // auto o = make_unique<Player>(Color::Orange);
-    // players.push_back(move(o));
-    // auto y = make_unique<Player>(Color::Yellow);
-    // players.push_back(move(y));
-    // for (int i = 0; i < 4; i++) {
-    //     std::unique_ptr<Player> plyr = make_unique<Player>();
-    //     players.emplace_back(std::move(plyr));
-    // }
 }
     
 
@@ -87,11 +75,7 @@ void Game::help(int movePhase) noexcept {
 
 void Game::next() noexcept {
     cout << *board;
-    if (turn == 3) {
-        turn = 0;
-    } else {
-        ++turn;
-    }
+    ++turn;
 }
 
 void Game::handleRollMove(Player &player, string move, int &movePhase) {
@@ -183,7 +167,13 @@ void Game::handleRollMove(Player &player, string move, int &movePhase) {
             }
             } else {
             //produce resource from the tiles rolled
-            
+            map<Color, map<Resource, int>> playersGet = board->getRollResources(getRoll);
+            for (const auto &color : playersGet) {
+                cout << "Builder "<<color.first << "got:"<< endl;
+                for (const auto resource : color.second) {
+                    cout << resource.second << " "<<  resource.first  << endl;
+                }
+            }
         }
         ++movePhase;
     } else if (move == "load") {
@@ -299,11 +289,11 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
         }
     } else if (move == "next") {
         if (player.getPoints() >= 10) {         // CHECK IF WINNER
-            winner = turn;
+            winner = turn % 4;
         }
         next();
         --movePhase;
-        cout << turn << " " << winner << endl;
+        cout << turn % 4 << " " << winner << endl;
     } else if (move == "save") {
         string save_file_name;
         cin >> save_file_name;
@@ -350,7 +340,7 @@ void Game::playGame() {
     cout << *board << endl;
     int movePhase = 0;
     string move;
-    cout << "Builder " << COLOR_ORDER.at(turn) << "'s turn." << endl;
+    cout << "Builder " << COLOR_ORDER.at(turn % 4) << "'s turn." << endl;
     while (winner == -1) {
         if (movePhase) {
             cout << "Enter a command:" << endl;
@@ -359,15 +349,15 @@ void Game::playGame() {
 
         if (cin >> move) {
             if (movePhase == 0) {
-                handleRollMove(*players[COLOR_ORDER.at(turn)], move, movePhase);
+                handleRollMove(*players[COLOR_ORDER.at(turn % 4)], move, movePhase);
             } else {
-                int temp = turn;
-                handleActionMove(*players[COLOR_ORDER.at(turn)], move, movePhase);
-                if (temp != turn && winner == -1) {
+                int temp = turn % 4;
+                handleActionMove(*players[COLOR_ORDER.at(turn % 4)], move, movePhase);
+                if (temp != turn % 4 && winner == -1) {
                     // PRINT BOARD
-                    cout << "Builder " << COLOR_ORDER.at(turn) << "'s turn." << endl;
+                    cout << "Builder " << COLOR_ORDER.at(turn % 4) << "'s turn." << endl;
                 } else if (winner != -1) {
-                    turn = temp;        // undo the next turn move cause we ending the game 
+                    --turn;        // undo the next turn move cause we ending the game 
                 }
             }
         } else {

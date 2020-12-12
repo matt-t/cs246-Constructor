@@ -134,12 +134,12 @@ map<Color, map<Resource, int>> Board::getRollResources(int rollNumber) noexcept{
             }
         }
     }
-    for (const auto &color : returnMap) {
-        cout << color.first << endl;
-        for (const auto resource : color.second) {
-            cout << resource.first << ": " << resource.second << endl;
-        }
-    }
+    // for (const auto &color : returnMap) {
+    //     cout << color.first << endl;
+    //     for (const auto resource : color.second) {
+    //         cout << resource.first << ": " << resource.second << endl;
+    //     }
+    // }
     return returnMap;
 
 
