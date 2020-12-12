@@ -99,6 +99,7 @@ void Game::handleRollMove(Player &player, string move, int &movePhase) {
         cout << "roll" << endl;
         int getRoll = player.rollDice();
         cout << getRoll << endl;
+        board->getRollResources(getRoll);
 
         if (getRoll == 7) {
             //players with 10 or more resource lose half resources
