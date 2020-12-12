@@ -154,15 +154,15 @@ void Game::handleRollMove(Player &player, string move, int &movePhase) {
             }
             //cout who roller can steal from
             set<Color> stealAvailable = board->getLocationPlayers(newGeeseTile);
-            for (auto p : stealAvailable) { //check if have resources, if not removed from the set
-                if (players[p]->totalResource() == 0 || p == player.getColor()){
-                    stealAvailable.erase(p);
+            for (const Color &color : COLOR_ORDER) { //check if have resources, if not removed from the set
+                if (players[color]->totalResource() == 0 || color == player.getColor()){
+                    stealAvailable.erase(color);
                 }
             }
             if (stealAvailable.size() != 0){
                 cout << "Builder " << player.getColor() << " can choose to steal from ";
-                for (auto p : stealAvailable){
-                    cout << COLOR_TO_STRING.at(p) << " ";
+                for (const Color &color : stealAvailable){
+                    cout << COLOR_TO_STRING.at(color) << " ";
                 } cout << endl;
                 //choose who to steal from
                 string stealFrom;

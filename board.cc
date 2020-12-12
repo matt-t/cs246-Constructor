@@ -129,7 +129,7 @@ map<Color, map<Resource, int>> Board::getRollResources(int rollNumber) noexcept{
     
     for (const auto &tile : tiles) {
         if (tile->getRollNum() == rollNumber){
-            if (tile->getResource() != Resource::park) {
+            if (tile->getResource() != Resource::Park) {
                 map<Color, int> playerResources = tile->produceResources();
                 for (const auto &playerResource : playerResources) {
                     returnMap[playerResource.first][tile->getResource()] += playerResource.second;
@@ -144,22 +144,6 @@ map<Color, map<Resource, int>> Board::getRollResources(int rollNumber) noexcept{
         }
     }
     return returnMap;
-
-
-    // for (auto p : tiles) {
-    //     if (p->getRollNum() == rollNumber){
-    //         map<Color, int> getPlayersHere = p->produceResources();
-    //         for (auto q : getPlayersHere) {
-    //             if (returnMap.count(q.first) == 0){
-    //                 returnMap.insert(pair<Color, map<Resource, int>>(q.first, {{p->getResource, q.second}}));
-    //             } else if (returnMap[q.first].count(p->getResource) == 0) {
-    //                 returnMap[q.first].insert(pair<Resource, int>(p->getResource, q.second));
-    //             } else {
-    //                 returnMap[q.first][p->getResource] += q.second;
-    //             }
-    //         }
-    //     }
-    // }
 }
 
 std::set<Color> Board::getLocationPlayers(int location){
