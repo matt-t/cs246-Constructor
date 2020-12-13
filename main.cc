@@ -208,7 +208,7 @@ int main(int argc, char* argv[]){
 							cerr << "ERROR: Unsupported board format in file " << board_file <<". Tile number must be between 0 and 18."<< endl;
 							return 1;
 						}
-						if (read.fail() || read.eof()){
+						if (read.fail()){
 							cerr << "ERROR: Unsupported board format in file " << board_file <<". File must contain 19 pairs of integers."<< endl;
 							return 1;
 						}
