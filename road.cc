@@ -32,11 +32,13 @@ void Road::build(Color player) {
 			validBuild = true;
 			break;
 		} 
-		for (int j = 0; j < getVertex->roads.size(); ++j) {
-			auto getRoad = getVertex->roads[j].lock();
-			if(getRoad->owner == player) {
-				validBuild = true;
-				break;
+		if (getVertex->getOwner() == Color::None) {
+			for (int j = 0; j < getVertex->roads.size(); ++j) {
+				auto getRoad = getVertex->roads[j].lock();
+				if(getRoad->owner == player) {
+					validBuild = true;
+					break;
+				}
 			}
 		}
 	}
