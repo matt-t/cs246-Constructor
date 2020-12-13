@@ -1,6 +1,5 @@
- huh -1
-The game from testBackUp2is loaded.
-the seed is: 1141190797
+The game from testBackUpis loaded.
+the seed is: 1090942242
 The game constructor is run with loaded game.
                           | 0|-- 0--| 1|
                             |         | 
@@ -198,6 +197,7 @@ Builder Blue's turn.
 7 is rolled.
 Choose where to place the GOOSE.
 Enter a command:
-> Saving to testBackUp2...
+> Saving to testBackUp...
 Enter a command:
 > Saving to backup.sv...
+Would you like to play again?
