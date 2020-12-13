@@ -296,7 +296,7 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
                 tempSelf->buildResidence(vertex);
                 board->buildResidence(player.getColor(), vertex);
                 std::swap(players[player.getColor()], tempSelf);
-                cout << "Builder " << player.getColor() << " successfully built a basement at " << vertex << "." << endl; // for testing
+                cout << "Builder " << player.getColor() << " successfully built a " << player.getResidences().at(vertex) << " at " << vertex << "." << endl;
             } catch (BuildingExistsException& e){
                 cout << "ERROR: A residence already exists here." << endl;
             } catch (InvalidLocationException& e){
@@ -325,7 +325,7 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
                 tempSelf->upgradeResidence(vertex);
                 board->upgradeResidence(player.getColor(), vertex);
                 std::swap(players[player.getColor()], tempSelf);
-                cout << "Builder " << player.getColor() << " successfully upgraded residence at " << vertex << "." << endl;     //for testing
+                cout << "Builder " << player.getColor() << " successfully built a " << player.getResidences().at(vertex) << " at " << vertex << "." << endl;
             } catch(BuidingNotOwnedException& e){
                 cout << "ERROR: You do not own this residence." << endl;
             } catch(InvalidLocationException& e){
