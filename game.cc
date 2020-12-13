@@ -209,6 +209,7 @@ void Game::handleRollMove(Player &player, string move, int &movePhase) {
                 cout << "Builder "<<color.first << " got:"<< endl;
                 for (const auto resource : color.second) {
                     cout << resource.second << " "<<  resource.first  << endl;
+                    players[color.first]->addResource(resource.first, resource.second);
                 }
             }
         }
@@ -466,6 +467,7 @@ void Game::setBasement(Player &player, vector<int> &locations) {
 
 //
 void Game::initBasements() {
+    cout << *board << endl;
     vector<int> locations;
     try {
         for (auto iter = players.begin(); iter != players.end(); ++iter) {
