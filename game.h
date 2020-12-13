@@ -14,7 +14,7 @@ class Game {
     std::map<Color, std::unique_ptr<Player>> players;
     std::unique_ptr<Board> board;
     int turn;
-    int winner;
+    bool winner;
 
     /* Private Methods */
     //
@@ -33,6 +33,9 @@ class Game {
     
     //
     void next() noexcept;
+
+    //
+    void checkWinner() noexcept;
 
     //
     void handleRollMove(Player &player, std::string move, int &movePhase);
