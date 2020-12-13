@@ -9,7 +9,7 @@
 using namespace std;
 
 Game::Game(unsigned int seed, vector<pair<Resource, int>> tileInfo): 
-    seed{ seed }, board{make_unique<Board>(tileInfo)}, turn{0}, winner{-1} 
+    seed{ seed }, board{make_unique<Board>(tileInfo)}, turn{0}, winner{false} 
 {
     for (const Color &color: COLOR_ORDER) {
         // std::unique_ptr<Player> temp = std::make_unique<Player>(color);
@@ -20,7 +20,7 @@ Game::Game(unsigned int seed, vector<pair<Resource, int>> tileInfo):
 
 Game::Game(unsigned int seed, vector<pair<Resource, int>> tileInfo, int turn, int geese, vector<Color> roadInfo, vector<pair<Color, Residence>> buildInfo, 
             std::map<Color, int> playerPoints, map<Color, map<Resource, int>> playerResources, map<Color, map<int, Residence>> playerResidences, map<Color, vector<int>> playerRoads):
-    seed{ seed }, board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{-1}
+    seed{ seed }, board{make_unique<Board>(tileInfo, roadInfo, buildInfo, geese)}, turn{turn}, winner{false}
 {
     for (const Color &color: COLOR_ORDER) {
         players[color] = std::make_unique<Player>(color, playerPoints[color], playerResources[color], playerResidences[color], playerRoads[color]);
@@ -118,6 +118,15 @@ void Game::help(int movePhase) noexcept {
 void Game::next() noexcept {
     cout << *board;
     ++turn;
+}
+
+void Game::checkWinner() noexcept {
+    for (const Color &color: COLOR_ORDER) {
+        if (players[color]->getPoints() >= 10) {
+            winner = true;
+            cout << "Congratulations!! " << players[color]->getColor() << " wins!!" << endl;
+        }
+    }
 }
 
 void Game::handleGoose(Player &player){
@@ -287,7 +296,7 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
                 tempSelf->buildResidence(vertex);
                 board->buildResidence(player.getColor(), vertex);
                 std::swap(players[player.getColor()], tempSelf);
-                cout << "build-res at " << vertex << " for " << player.getColor() << endl; // for testing
+                cout << "Builder " << player.getColor() << " successfully built a basement at " << vertex << "." << endl; // for testing
             } catch (BuildingExistsException& e){
                 cout << "ERROR: A residence already exists here." << endl;
             } catch (InvalidLocationException& e){
@@ -316,7 +325,7 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
                 tempSelf->upgradeResidence(vertex);
                 board->upgradeResidence(player.getColor(), vertex);
                 std::swap(players[player.getColor()], tempSelf);
-                cout << "upgrading residence at " << vertex << " for " << player.getColor() << endl; // for testing
+                cout << "Builder " << player.getColor() << " successfully upgraded residence at " << vertex << "." << endl;     //for testing
             } catch(BuidingNotOwnedException& e){
                 cout << "ERROR: You do not own this residence." << endl;
             } catch(InvalidLocationException& e){
@@ -370,9 +379,7 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             cout << "You do not have enough resources." << endl;
         }
     } else if (move == "next") {
-        if (player.getPoints() >= 10) {         // CHECK IF WINNER
-            winner = turn % 4;
-        }
+        checkWinner();
         next();
         --movePhase;
         cout << turn % 4 << " " << winner << endl;
@@ -387,10 +394,14 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
 
 void Game::playGame() {
     cout << *board << endl;
+    checkWinner();
+    if (winner) {
+        return;
+    }
     int movePhase = 0;
     string move;
     cout << "Builder " << COLOR_ORDER.at(turn % 4) << "'s turn." << endl;
-    while (winner == -1) {
+    while (!winner) {
         if (movePhase) {
             cout << "Enter a command:" << endl;
         }
@@ -402,11 +413,8 @@ void Game::playGame() {
                 } else {
                     int temp = turn % 4;
                     handleActionMove(*players[COLOR_ORDER.at(turn % 4)], move, movePhase);
-                    if (temp != turn % 4 && winner == -1) {
-                        // PRINT BOARD
+                    if (temp != turn % 4 && !winner) {
                         cout << "Builder " << COLOR_ORDER.at(turn % 4) << "'s turn." << endl;
-                    } else if (winner != -1) {
-                        --turn;        // undo the next turn move cause we ending the game 
                     }
                 }
             } else {
@@ -418,10 +426,8 @@ void Game::playGame() {
         }
     }
 
-    if (winner == -1) {         // if while loop ended cause EOF auto save game
+    if (!winner) {         // if while loop ended cause EOF auto save game
         save(true);
-    } else {                    // if while loop ended cause player won 
-        cout << "Congratulations!! " << COLOR_ORDER.at(turn % 4) << " wins!!" << endl;
     }
 } 
 
