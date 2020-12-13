@@ -147,14 +147,13 @@ int main(int argc, char* argv[]){
 							cerr << "ERROR: Unsupported board format in file " << game_file <<". Tile number must be between 0 and 18."<< endl;
 							return 1;
 						}
-						if (read.fail() || read.eof()){
+						if (read.fail()){
 							cerr << "ERROR: Unsupported board format in file " << game_file <<". Board information must contain 19 pairs of integers."<< endl;
 							return 1;
 						}
 						boardInfo.push_back(std::make_pair(resource, rollNum));
 					}
 					if (boardInfo.size() != 19) {
-						cout << boardInfo.size()<< endl;
 						cerr << "ERROR: Unsupported board format in file " << game_file <<". There must be a total of 19 tiles."<< endl;
 						return 1;
 					}
