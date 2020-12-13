@@ -209,6 +209,7 @@ void Game::handleRollMove(Player &player, string move, int &movePhase) {
                 cout << "Builder "<<color.first << " got:"<< endl;
                 for (const auto resource : color.second) {
                     cout << resource.second << " "<<  resource.first  << endl;
+                    players[color.first]->addResource(resource.first, resource.second);
                 }
             }
         }

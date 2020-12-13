@@ -112,7 +112,6 @@ void Board::changeGeese(int location){
     }
     if (geese != UNINITIALIZED_GEESE) {
         tiles[geese]->geese = false;
-        
     }
     tiles[location]->geese = true;
     geese = location;

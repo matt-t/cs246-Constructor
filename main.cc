@@ -31,7 +31,8 @@ int main(int argc, char* argv[]){
 	int v = 54;
 	vector<Color> roadInfo(r, Color::None);
 	vector<pair<Color, Residence>> buildInfo(v, {Color::None, Residence::None});
-	int geese, turn;
+	int geese = UNINITIALIZED_GEESE;
+	int turn = 0;
 	map<Color, int> playerPoints;
 	map<Color, map<Resource, int>> playerResources;
 	map<Color, map<int, Residence>> playerResidences;
@@ -85,6 +86,10 @@ int main(int argc, char* argv[]){
 					getline(f, line);
 					istringstream read(line);
 					read >> turn;
+					if (read.fail()){
+							cerr << "ERROR: Unsupported game format in file " << game_file <<". There must be a turn integer."<< endl;
+							return 1;
+						}
 					for (const Color &color: COLOR_ORDER) {
 						playerPoints[color] = 0;
 						getline(f, line);
@@ -101,6 +106,10 @@ int main(int argc, char* argv[]){
 						playerResources[color].emplace(Resource::Heat, num);
 						read >> num;
 						playerResources[color].emplace(Resource::Wifi, num);
+						if (read.fail() || read.eof()){
+							cerr << "ERROR: Unsupported game format in file " << game_file <<". There must be sufficient player information."<< endl;
+							return 1;
+						}
 						string type;
 						read >> type;
 						while(read >> num) {
@@ -112,6 +121,10 @@ int main(int argc, char* argv[]){
 						char residenceType;
 						while (read >> num){ // im not sure if we need to reset failbit here
 							read >> residenceType;
+							if (read.fail() || read.eof() || !(residenceType == 'B'||residenceType == 'T'||residenceType == 'H')){
+								cerr << "ERROR: Unsupported game format in file " << board_file <<". Building information must be a pair of integer and B/H/T."<< endl;
+								return 1;
+							}
 							playerResidences[color].emplace(num, CHAR_TO_RESIDENCE.at(residenceType));
 							playerPoints[color] += RESIDENCE_TO_POINTS.at(CHAR_TO_RESIDENCE.at(residenceType));
 							buildInfo[num] = make_pair(color, CHAR_TO_RESIDENCE.at(residenceType));
@@ -123,19 +136,33 @@ int main(int argc, char* argv[]){
 					read.str(line); // sus about how this syntax works
 					int resourceNum, rollNum;
 					Resource resource = Resource::Park; // need some better way to deal with resource if unitialized 
-					for (i = 0; i < NUM_TILES; i++) {
-						read >> resourceNum;
+					while(read >> resourceNum){
+						if (resourceNum < 0 || resourceNum > 5){
+							cerr << "ERROR: Unsupported board format in file " << game_file <<". Tile resource must be between 0 and 5."<< endl;
+							return 1;
+						}
 						resource = INT_TO_RESOURCE.at(resourceNum);
 						read >> rollNum;
+						if (rollNum < 2 || rollNum > 12){
+							cerr << "ERROR: Unsupported board format in file " << game_file <<". Tile number must be between 0 and 18."<< endl;
+							return 1;
+						}
+						if (read.fail() || read.eof()){
+							cerr << "ERROR: Unsupported board format in file " << game_file <<". Board information must contain 19 pairs of integers."<< endl;
+							return 1;
+						}
 						boardInfo.push_back(std::make_pair(resource, rollNum));
+					}
+					if (boardInfo.size() != 19) {
+						cout << boardInfo.size()<< endl;
+						cerr << "ERROR: Unsupported board format in file " << game_file <<". There must be a total of 19 tiles."<< endl;
+						return 1;
 					}
 					getline(f, line);
 					read.clear();
+					read.ignore(256,'\n');
 					read.str(line);
-					if (!(read >> geese)) {
-						geese = UNINITIALIZED_GEESE;
-					}
-					cout << line << " huh " << geese << endl;
+					read >> geese; // geese can also be omitted and the program still runs
 				} else {
 					cerr << "ERROR: Cannot open file " << game_file << endl;
 					return 1;
@@ -162,7 +189,7 @@ int main(int argc, char* argv[]){
 				ss >> board_file;
 				ifstream f(board_file);
 				if (f.fail()) {
-						cerr << "ERROR: Invalid file " << game_file << endl;
+						cerr << "ERROR: Invalid file " << board_file << endl;
 						return 1;
 				}
 				if (f.is_open()){
@@ -172,16 +199,32 @@ int main(int argc, char* argv[]){
 					int resourceNum, rollNum;
 					Resource resource = Resource::Park; // need some better way to deal with resource if unitialized 
 					while(read >> resourceNum){
+						if (resourceNum < 0 || resourceNum > 5){
+							cerr << "ERROR: Unsupported board format in file " << board_file <<". Tile resource must be between 0 and 5."<< endl;
+							return 1;
+						}
 						resource = INT_TO_RESOURCE.at(resourceNum);
 						read >> rollNum;
+						if (rollNum < 2 || rollNum > 12){
+							cerr << "ERROR: Unsupported board format in file " << board_file <<". Tile number must be between 0 and 18."<< endl;
+							return 1;
+						}
+						if (read.fail() || read.eof()){
+							cerr << "ERROR: Unsupported board format in file " << board_file <<". File must contain 19 pairs of integers."<< endl;
+							return 1;
+						}
 						boardInfo.push_back(std::make_pair(resource, rollNum));
 					}
+					if (boardInfo.size() != 19) {
+						cerr << "ERROR: Unsupported board format in file " << board_file <<". There must be a total of 19 tiles."<< endl;
+						return 1;
+					}
 				} else {
-					cerr << "ERROR: Cannot open file " << game_file << endl;
+					cerr << "ERROR: Cannot open file " << board_file << endl;
 					return 1;
 				}
 				board_loaded = true;
-				cout << "The board from " << board_file << "is loaded." << endl;
+				cout << "The board from " << board_file << " is loaded." << endl;
 			}
 		} else if (s == "-random-board"){
 			if (board_loaded != true && game_loaded != true){
