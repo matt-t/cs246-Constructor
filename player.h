@@ -47,7 +47,6 @@ class Player {
         std::unique_ptr<Dice> playerDice;
 };
 
-class InsufficientResourceException{};
 class PlayerResidenceTypeException{};
 
 #endif

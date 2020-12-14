@@ -5,6 +5,7 @@
 #include "enums.h"
 #include "constants.h"
 #include "eofException.h"
+#include "insufficientResourceException.h"
 
 using namespace std;
 
@@ -342,7 +343,7 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
         }
     } else if (move == "trade") {
         try {
-            string color, resourceGive, resourceTake;
+            string color, resourceGive, resourceTake, acceptance;
             while(cin >> color) {
                 std::transform(color.begin(), color.end(), color.begin(), ::toupper);
                 if (STRING_TO_COLOR.count(color) == 0 || STRING_TO_COLOR.at(color) == player.getColor()) {
@@ -376,13 +377,33 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             tempOther->addResource(STRING_TO_RESOURCE.at(resourceGive), 1);
             tempSelf->takeResource(STRING_TO_RESOURCE.at(resourceGive), 1);
             tempSelf->addResource(STRING_TO_RESOURCE.at(resourceTake), 1);
-            std::swap(players[STRING_TO_COLOR.at(color)], tempOther);
-            std::swap(players[player.getColor()], tempSelf);
-            cout << "Builder " << player.getColor() << " successfully traded " << "." << endl;
 
+            while(true) {
+                cout << "Does " << color << " accept the trade?" << endl;
+                cin >> acceptance;
+                if (cin.eof()) {
+                    throw EOFException();
+                }       
+                std::transform(acceptance.begin(), acceptance.end(), acceptance.begin(), ::toupper);
+                if (acceptance == "YES") {
+                    std::swap(players[STRING_TO_COLOR.at(color)], tempOther);
+                    std::swap(players[player.getColor()], tempSelf);
+                    cout << "Builder " << player.getColor() << " successfully traded " << resourceGive << " for " << resourceTake << "." << endl;
+                    break;
+                } else if (acceptance == "NO") {
+                    cout << color << " has declined the trade." << endl;
+                    break;
+                } else {
+                    cerr << "Enter a VALID response." << endl;
+                }
+            }
             
         } catch (InsufficientResourceException & e) {
-            cerr << "You do not have enough resources." << endl;
+            if (e.getColor() == player.getColor()) {
+                cerr << "You don't have enough " << e.getResource() << "." << endl;
+            } else {
+                cerr << e.getColor() << " doesn't have enough " << e.getResource() << "." << endl;
+            }
         }
     } else if (move == "market-trade") {
         try {
@@ -418,7 +439,7 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
         }
     } else if (move == "multi-trade") {
         try {
-            string color, resourceGive, resourceTake;
+            string color, resourceGive, resourceTake, acceptance;
             int resourceGiveNum, resourceTakeNum;
             while(cin >> color) {
                 std::transform(color.begin(), color.end(), color.begin(), ::toupper);
@@ -467,11 +488,32 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             tempOther->addResource(STRING_TO_RESOURCE.at(resourceGive), resourceGiveNum);
             tempSelf->takeResource(STRING_TO_RESOURCE.at(resourceGive), resourceGiveNum);
             tempSelf->addResource(STRING_TO_RESOURCE.at(resourceTake), resourceTakeNum);
-            std::swap(players[STRING_TO_COLOR.at(color)], tempOther);
-            std::swap(players[player.getColor()], tempSelf);
-            cout << "Builder " << player.getColor() << " successfully traded " << resourceGiveNum << " " << resourceGive << " for " << resourceTakeNum << " " << resourceTake << "." << endl;
+
+            while(true) {
+                cout << "Does " << color << " accept the trade?" << endl;
+                cin >> acceptance;
+                if (cin.eof()) {
+                    throw EOFException();
+                }       
+                std::transform(acceptance.begin(), acceptance.end(), acceptance.begin(), ::toupper);
+                if (acceptance == "YES") {
+                    std::swap(players[STRING_TO_COLOR.at(color)], tempOther);
+                    std::swap(players[player.getColor()], tempSelf);
+                    cout << "Builder " << player.getColor() << " successfully traded " << resourceGiveNum << " " << resourceGive << " for " << resourceTakeNum << " " << resourceTake << "." << endl;
+                    break;
+                } else if (acceptance == "NO") {
+                    cout << color << " has declined the trade." << endl;
+                    break;
+                } else {
+                    cerr << "Enter a VALID response." << endl;
+                }
+            }
         } catch (InsufficientResourceException & e) {
-            cerr << "You do not have enough resources." << endl;
+            if (e.getColor() == player.getColor()) {
+                cerr << "You don't have enough " << e.getResource() << "." << endl;
+            } else {
+                cerr << e.getColor() << " doesn't have enough " << e.getResource() << "." << endl;
+            }
         }
     } else if (move == "next") {
         checkWinner();

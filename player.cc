@@ -3,6 +3,7 @@
 #include "fairDice.h"
 #include "constants.h"
 #include <cstdlib>
+#include "insufficientResourceException.h"
 using namespace std;
 
 //Ctor
@@ -81,7 +82,7 @@ void Player::addResource(Resource resource, int amount) {
 
 void Player::takeResource(Resource resource, int amount) {
     if (resources[resource] < amount) {
-        throw InsufficientResourceException();
+        throw InsufficientResourceException{color, resource};
     }
     resources[resource] -= amount;
 }
@@ -109,7 +110,7 @@ void Player::buildResidence(int location, bool isFree) {
     if (!isFree) {
         for (const auto resourceCost: BASEMENT_COST) {
             if (resources[resourceCost.first] < resourceCost.second) {
-                throw InsufficientResourceException();
+                throw InsufficientResourceException{color, resourceCost.first};
             }
         }
         for (const auto resourceCost: BASEMENT_COST) {
@@ -137,7 +138,7 @@ void Player::upgradeResidence(int location) {
 
     for (const auto resourceCost: resourcesRequired) {
         if (resources[resourceCost.first] < resourceCost.second) {
-            throw InsufficientResourceException();
+            throw InsufficientResourceException{color, resourceCost.first};
         }
     }
 
@@ -154,7 +155,7 @@ void Player::buildRoad(int location, bool isFree) {
     if (!isFree) {
         for (const auto resourceCost: ROAD_COST) {
             if (resources[resourceCost.first] < resourceCost.second) {
-                throw InsufficientResourceException();
+                throw InsufficientResourceException{color, resourceCost.first};
             }
         }
         for (const auto resourceCost: ROAD_COST) {
