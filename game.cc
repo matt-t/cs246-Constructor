@@ -176,11 +176,11 @@ void Game::handleGoose(Player &player){
     //cout who roller can steal from
     set<Color> stealAvailable = board->getLocationPlayers(newGeeseTile);
     for (const auto &color : COLOR_ORDER) { //check if have resources, if not removed from the set
-        if (players[color]->totalResource() == 0 || color == player.getColor()){
+        if (players[color]->totalResource() == 0 || color == player.getColor()) {
             stealAvailable.erase(color);
         }
     }
-    if (stealAvailable.size() != 0){
+    if (stealAvailable.size() != 0) {
         cout << "Builder " << player.getColor() << " can choose to steal from ";
         for (auto p : stealAvailable){
             cout << COLOR_TO_STRING.at(p) << " ";
@@ -189,8 +189,8 @@ void Game::handleGoose(Player &player){
         string stealFrom;
         while (cin >> stealFrom) {
             transform(stealFrom.begin(), stealFrom.end(), stealFrom.begin(), ::toupper);
-            if (STRING_TO_COLOR.count(stealFrom) == 0){
-                cerr << "ERROR: Choose a valid player." << endl;
+            if (stealAvailable.count(STRING_TO_COLOR.at(stealFrom)) == 0) {
+                cerr << "ERROR: Choose a valid player that you can steal from." << endl;
             } else {
                 break;
             }
