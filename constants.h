@@ -8,9 +8,12 @@
 
 const std::vector<Color> COLOR_ORDER{Color::Blue, Color::Red, Color::Orange, Color::Yellow};
 
+const int WINNING_POINTS = 10;
+
 const int NUM_TILES = 19;
 const int NUM_ROADS = 72;
 const int NUM_VERTICES = 54;
+const int NUM_PLAYERS = 4;
 
 const std::string RESIDENCE_BASEMENT_STRING = "Basement";
 const std::string RESIDENCE_HOUSE_STRING = "House";
@@ -32,6 +35,9 @@ const std::string COLOR_YELLOW_STRING = "Yellow";
 const std::string COLOR_NONE_STRING = "None";
 
 const std::string GOOSE_STRING = "GOOSE";
+
+const std::vector<int> ROLL_NUMBER_LIST = {2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, 12};
+const std::vector<int> RESOURCE_LIST = {0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5};
 
 const std::vector<std::vector<int>> VerticesRoads = { 
     {0, 1}, {0, 2}, {3, 5}, {1, 3, 6}, {2, 4, 7}, {4, 8}, //vertices 0 - 5
@@ -72,6 +78,9 @@ const int MIN_DICE_ROLL = 1;
 
 const int UNINITIALIZED_GEESE = -1;
 const int GEESE_ROLL = 7;
+const int GEESE_STEAL_FROM = 10;
+
+const int MARKET_TRADE_RATE = 4;
 
 const int TOP_LEFT_VERTEX = 0;
 const int TOP_RIGHT_VERTEX = 1;

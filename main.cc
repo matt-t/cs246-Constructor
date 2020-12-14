@@ -142,7 +142,7 @@ int main(int argc, char* argv[]){
 						resource = INT_TO_RESOURCE.at(resourceNum);
 						read >> rollNum;
 						if (rollNum < (MIN_DICE_ROLL*2) || rollNum > (MAX_DICE_ROLL*2)) {
-							cerr << "ERROR: Unsupported board format in file " << board_file << ". Tile number must be between 0 and 18."<< endl;
+							cerr << "ERROR: Unsupported board format in file " << board_file << ". Tile number must be between 0 and " << NUM_TILES - 1<< "."<< endl;
 							return 1;
 						}
 						if (resource == Resource::Park && rollNum != GEESE_ROLL) {
@@ -154,13 +154,13 @@ int main(int argc, char* argv[]){
 							return 1;
 						}
 						if (read.fail()){
-							cerr << "ERROR: Unsupported board format in file " << board_file <<". File must contain 19 pairs of integers."<< endl;
+							cerr << "ERROR: Unsupported board format in file " << board_file <<". File must contain "<< NUM_TILES <<" pairs of integers."<< endl;
 							return 1;
 						}
 						boardInfo.push_back(std::make_pair(resource, rollNum));
 					}
-					if (boardInfo.size() != 19) {
-						cerr << "ERROR: Unsupported board format in file " << game_file << ". There must be a total of 19 tiles."<< endl;
+					if (boardInfo.size() != NUM_TILES) {
+						cerr << "ERROR: Unsupported board format in file " << game_file << ". There must be a total of " << NUM_TILES << " tiles."<< endl;
 						return 1;
 					}
 					getline(f, line);
@@ -194,7 +194,7 @@ int main(int argc, char* argv[]){
 				ss >> board_file;
 				ifstream f(board_file);
 				if (f.fail()) {
-						cerr << "ERROR: Invalid file " << board_file << endl;
+						cerr << "ERROR: Invalid file" << board_file << endl;
 						return 1;
 				}
 				if (f.is_open()){
@@ -211,7 +211,7 @@ int main(int argc, char* argv[]){
 						resource = INT_TO_RESOURCE.at(resourceNum);
 						read >> rollNum;
 						if (rollNum < (MIN_DICE_ROLL*2) || rollNum > (MAX_DICE_ROLL*2)) {
-							cerr << "ERROR: Unsupported board format in file " << board_file <<". Tile number must be between 0 and 18."<< endl;
+							cerr << "ERROR: Unsupported board format in file " << board_file <<". Tile number must be between 0 and "<< NUM_TILES - 1 <<"."<< endl;
 							return 1;
 						}
 						if (resource == Resource::Park && rollNum != GEESE_ROLL) {
@@ -223,13 +223,13 @@ int main(int argc, char* argv[]){
 							return 1;
 						}
 						if (read.fail()){
-							cerr << "ERROR: Unsupported board format in file " << board_file <<". File must contain 19 pairs of integers."<< endl;
+							cerr << "ERROR: Unsupported board format in file " << board_file <<". File must contain " << NUM_TILES << " pairs of integers."<< endl;
 							return 1;
 						}
 						boardInfo.push_back(std::make_pair(resource, rollNum));
 					}
-					if (boardInfo.size() != 19) {
-						cerr << "ERROR: Unsupported board format in file " << board_file <<". There must be a total of 19 tiles."<< endl;
+					if (boardInfo.size() != NUM_TILES) {
+						cerr << "ERROR: Unsupported board format in file " << board_file <<". There must be a total of " << NUM_TILES << " tiles."<< endl;
 						return 1;
 					}
 				} else {
@@ -273,15 +273,15 @@ int main(int argc, char* argv[]){
 		//generate a random board by building boardInfo
 		int rollNum;
 		Resource resource;
-		vector<int> rollNumList = {2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, 12};
-		vector<int> resourceList = {0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5};
-		for(int i = 18; i > 0; --i){
+		vector<int> rollNumList = ROLL_NUMBER_LIST;
+		vector<int> resourceList = RESOURCE_LIST;
+		for(int i = NUM_TILES-1; i > 0; --i){
 			int randomNum = rand() % (i);
 			int randomResource = rand() % (i + 1);
 			resource = INT_TO_RESOURCE.at(resourceList[randomResource]);
 			resourceList.erase(resourceList.begin() + randomResource);
 			if (resource == Resource::Park) {
-				rollNum = 7;
+				rollNum = GEESE_ROLL;
 			} else {
 				rollNum = rollNumList[randomNum];
 				rollNumList.erase(rollNumList.begin() + randomNum);
@@ -290,7 +290,7 @@ int main(int argc, char* argv[]){
 		} 
 		resource = INT_TO_RESOURCE.at(resourceList[0]);
 		if (resource == Resource::Park) {
-			rollNum = 7;
+			rollNum = GEESE_ROLL;
 		} else {
 			rollNum = rollNumList[0];
 		} boardInfo.push_back(std::make_pair(resource, rollNum));

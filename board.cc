@@ -10,23 +10,23 @@
 using namespace std;
 
 Board::Board(vector<pair<Resource, int>> boardInfo): geese{-1} {
-    for  (int i = 0; i <= 53; ++i){
+    for  (int i = 0; i < NUM_VERTICES; ++i){
         auto p = std::make_shared<Vertex>(i);
         vertices.push_back(p);
     }
-    for (int i = 0; i <= 71; ++i){
+    for (int i = 0; i < NUM_ROADS; ++i){
         auto p = std::make_shared<Road>(i);
         for (int j =0; j < RoadsVertices[i].size(); ++j){
             p->addVertex(vertices[RoadsVertices[i][j]]);
         }
         roads.push_back(p);
     }
-    for (int i = 0; i <= 53; ++i){
+    for (int i = 0; i < NUM_VERTICES; ++i){
         for (int j = 0; j < VerticesRoads[i].size(); ++j){
             vertices[i]->addRoad(roads[VerticesRoads[i][j]]);
         }
     }
-    for (int i = 0; i <= 18; ++i){
+    for (int i = 0; i < NUM_TILES; ++i){
         std::vector<std::weak_ptr<Vertex>>tileVertices;
         std::vector<std::weak_ptr<Road>> tileRoads;
         for (int j = 0; j < TilesVertices[i].size(); ++j){
@@ -45,23 +45,23 @@ Board::Board(vector<pair<Resource, int>> boardInfo): geese{-1} {
 Board::Board(std::vector<std::pair<Resource, int>> tileInfo, std::vector<Color> roadInfo, std::vector<std::pair<Color, Residence>> buildInfo, int geese):
     geese{ geese }
 {
-    for  (int i = 0; i <= 53; ++i){
+    for  (int i = 0; i < NUM_VERTICES; ++i){
         auto p = std::make_shared<Vertex>(i, buildInfo[i].first, buildInfo[i].second);
         vertices.push_back(p);
     }
-    for (int i = 0; i <= 71; ++i){
+    for (int i = 0; i < NUM_ROADS; ++i){
         auto p = std::make_shared<Road>(i, roadInfo[i]);
         for (int j =0; j < RoadsVertices[i].size(); ++j){
             p->addVertex(vertices[RoadsVertices[i][j]]);
         }
         roads.push_back(p);
     }
-    for (int i = 0; i <= 53; ++i){
+    for (int i = 0; i < NUM_VERTICES; ++i){
         for (int j = 0; j < VerticesRoads[i].size(); ++j){
             vertices[i]->addRoad(roads[VerticesRoads[i][j]]);
         }
     }
-    for (int i = 0; i <= 18; ++i){
+    for (int i = 0; i < NUM_TILES; ++i){
         std::vector<std::weak_ptr<Vertex>>tileVertices;
         std::vector<std::weak_ptr<Road>> tileRoads;
         for (int j = 0; j < TilesVertices[i].size(); ++j){
@@ -82,14 +82,14 @@ Board::Board(std::vector<std::pair<Resource, int>> tileInfo, std::vector<Color> 
     
 
 void Board::buildResidence(Color color, int location, bool gameStart){
-    if (location > 53 || location < 0) {
+    if (location >= NUM_VERTICES || location < 0) {
         throw InvalidLocationException();
     }
     vertices[location]->build(color, gameStart);
 }
 
 void Board::upgradeResidence(Color color, int location){
-    if (location > 53 || location < 0) {
+    if (location >= NUM_VERTICES || location < 0) {
         throw InvalidLocationException();
     }
     vertices[location]->upgrade(color);
@@ -97,7 +97,7 @@ void Board::upgradeResidence(Color color, int location){
 
 
 void Board::buildRoad(Color color, int location){
-    if (location < 0 || location > 71){
+    if (location < 0 || location >= NUM_ROADS){
         throw InvalidLocationException();
     }
     roads[location]->build(color);
@@ -107,7 +107,7 @@ void Board::changeGeese(int location){
     if (location == geese) {
         throw GeeseExistsHereException(); //geese cannot be placed on the same
     }
-    if (location < 0 || location > 18) {
+    if (location < 0 || location >= NUM_TILES) {
         throw GeeseOutOfRange();
     }
     if (geese != UNINITIALIZED_GEESE) {
