@@ -134,23 +134,27 @@ int main(int argc, char* argv[]){
 					read.str(line); // sus about how this syntax works
 					int resourceNum, rollNum;
 					Resource resource = Resource::Park; // need some better way to deal with resource if unitialized 
-					while(read >> resourceNum) {
-						if (resourceNum < 0 || resourceNum > 5){
-							cerr << "ERROR: Unsupported board format in file " << game_file << ". Tile resource must be between 0 and 5."<< endl;
+					while(read >> resourceNum){
+						if (INT_TO_RESOURCE.count(resourceNum) == 0){
+							cerr << "ERROR: Unsupported board format in file " << board_file << ". Tile resource must be between 0 and 5."<< endl;
 							return 1;
 						}
 						resource = INT_TO_RESOURCE.at(resourceNum);
 						read >> rollNum;
-						if (rollNum < 2 || rollNum > 12){
-							cerr << "ERROR: Unsupported board format in file " << game_file << ". Tile number must be between 0 and 18."<< endl;
+						if (rollNum < (MIN_DICE_ROLL*2) || rollNum > (MAX_DICE_ROLL*2)) {
+							cerr << "ERROR: Unsupported board format in file " << board_file << ". Tile number must be between 0 and 18."<< endl;
 							return 1;
 						}
-						if (resource == Resource::Park && rollNum != 7) {
-							cerr << "ERROR: Unsupported board format in file " << game_file << ". Parks must be followed by the arbitrary value 7." << endl;
+						if (resource == Resource::Park && rollNum != GEESE_ROLL) {
+							cerr << "ERROR: Unsupported board format in file " << game_file << ". Parks must be followed by the geese number of " << GEESE_ROLL << "." << endl;
 							return 1;
 						}
-						if (read.fail()) {
-							cerr << "ERROR: Unsupported board format in file " << game_file << ". Board information must contain 19 pairs of integers."<< endl;
+						if (resource != Resource::Park && rollNum == GEESE_ROLL) {
+							cerr << "ERROR: Unsupported board format in file " << game_file << ". The resource of a tile with roll number " << GEESE_ROLL << " must be park." << endl;
+							return 1;
+						}
+						if (read.fail()){
+							cerr << "ERROR: Unsupported board format in file " << board_file <<". File must contain 19 pairs of integers."<< endl;
 							return 1;
 						}
 						boardInfo.push_back(std::make_pair(resource, rollNum));
@@ -200,18 +204,22 @@ int main(int argc, char* argv[]){
 					int resourceNum, rollNum;
 					Resource resource = Resource::Park; // need some better way to deal with resource if unitialized 
 					while(read >> resourceNum){
-						if (resourceNum < 0 || resourceNum > 5){
+						if (INT_TO_RESOURCE.count(resourceNum) == 0){
 							cerr << "ERROR: Unsupported board format in file " << board_file <<". Tile resource must be between 0 and 5."<< endl;
 							return 1;
 						}
 						resource = INT_TO_RESOURCE.at(resourceNum);
 						read >> rollNum;
-						if (rollNum < 2 || rollNum > 12){
+						if (rollNum < (MIN_DICE_ROLL*2) || rollNum > (MAX_DICE_ROLL*2)) {
 							cerr << "ERROR: Unsupported board format in file " << board_file <<". Tile number must be between 0 and 18."<< endl;
 							return 1;
 						}
-						if (resource == Resource::Park && rollNum != 7) {
-							cerr << "ERROR: Unsupported board format in file " << game_file << ". Parks must be followed by the arbitrary value 7." << endl;
+						if (resource == Resource::Park && rollNum != GEESE_ROLL) {
+							cerr << "ERROR: Unsupported board format in file " << game_file << ". Parks must be followed by the geese number of " << GEESE_ROLL << "." << endl;
+							return 1;
+						}
+						if (resource != Resource::Park && rollNum == GEESE_ROLL) {
+							cerr << "ERROR: Unsupported board format in file " << game_file << ". The resource of a tile with roll number " << GEESE_ROLL << " must be park." << endl;
 							return 1;
 						}
 						if (read.fail()){
