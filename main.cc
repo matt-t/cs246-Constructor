@@ -147,7 +147,7 @@ int main(int argc, char* argv[]){
 							cerr << "ERROR: Unsupported board format in file " << game_file << ". Tile number must be between 0 and 18."<< endl;
 							return 1;
 						}
-						if (resource == Resource::Park && resourceNum != 7) {
+						if (resource == Resource::Park && rollNum != 7) {
 							cerr << "ERROR: Unsupported board format in file " << game_file << ". Parks must be followed by the arbitrary value 7." << endl;
 							return 1;
 						}
@@ -212,7 +212,7 @@ int main(int argc, char* argv[]){
 							cerr << "ERROR: Unsupported board format in file " << board_file <<". Tile number must be between 0 and 18."<< endl;
 							return 1;
 						}
-						if (resource == Resource::Park && resourceNum != 7) {
+						if (resource == Resource::Park && rollNum != 7) {
 							cerr << "ERROR: Unsupported board format in file " << game_file << ". Parks must be followed by the arbitrary value 7." << endl;
 							return 1;
 						}
@@ -250,7 +250,6 @@ int main(int argc, char* argv[]){
 	if (!seed_set){	
 		seed = std::chrono::system_clock::now().time_since_epoch().count();
 	}
-	cout << "the seed is: "<<seed << endl;
 	srand(seed);
 	//process initializing game
 	if (game_loaded) {
@@ -289,8 +288,6 @@ int main(int argc, char* argv[]){
 		} else {
 			rollNum = rollNumList[0];
 		} boardInfo.push_back(std::make_pair(resource, rollNum));
-		
-		cout << "random board!! generated with seed" << endl;
 		Game game{seed, boardInfo};
 		game.initBasements();
 		game.playGame();
