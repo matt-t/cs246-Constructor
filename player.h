@@ -21,7 +21,6 @@ class Player {
         void upgradeResidence(int location);
         void buildRoad(int location, bool isFree = false);
         int rollDice() const;
-        int handleGooseRoll(); //is this ever used?
         int getPoints() const;
         std::map<Resource, int> getResources() const;
         std::map<int, Residence> getResidences() const;
