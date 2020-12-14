@@ -165,9 +165,10 @@ int main(int argc, char* argv[]){
 					}
 					getline(f, line);
 					read.clear();
-					read.ignore(256,'\n');
 					read.str(line);
-					read >> geese; // geese can also be omitted and the program still runs
+					if (!(read >> geese)) {
+						geese = UNINITIALIZED_GEESE;
+					}  // geese can also be omitted and the program still runs
 				} else {
 					cerr << "ERROR: Cannot open file " << game_file << endl;
 					return 1;
