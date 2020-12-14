@@ -98,7 +98,7 @@ void Game::residences(Player &player) {
 void Game::help(int movePhase) noexcept {
     cout << "Valid Commands:" << endl;
     if (movePhase) {
-        cout << "~ board" << endl;
+        cout << "~ board : prints the current board" << endl;
         cout << "~ status : prints the current status of all builders in order from builder 0 to 3." << endl;
         cout << "~ residences" << endl;
         cout << "~ build-road <road#> : attempts to builds the road at <road#>." << endl;
@@ -247,7 +247,6 @@ void Game::handleRollMove(Player &player, string move, int &movePhase) {
 void Game::handleActionMove(Player &player, string move, int &movePhase) {
     if (move == "board") {
         cout << *board << endl;
-        cout << "board" << endl;
     } else if (move == "status") {
         status();
     } else if (move == "residences") {
