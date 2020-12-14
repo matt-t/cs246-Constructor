@@ -123,7 +123,7 @@ void Player::buildResidence(int location, bool isFree) {
 
 void Player::upgradeResidence(int location) {
     if (residences.count(location) == 0) {
-        throw PlayerResidenceTypeException();
+        throw PlayerOwnershipException();
     }
     if (residences[location] == Residence::Tower) {
         throw PlayerResidenceTypeException();

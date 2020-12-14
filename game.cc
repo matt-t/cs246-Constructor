@@ -252,93 +252,100 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
     } else if (move == "residences") {
         residences(player);
     } else if (move == "build-road") {
-        bool roadChosen = false;
         int edge;
-        while (roadChosen == false){
-            cin >> edge;
-            if (cin.eof()) {
-                throw EOFException();
+        try {
+            while (true) {
+                cin >> edge;
+                if (cin.eof()) {
+                    throw EOFException();
+                }
+                if (cin.fail()){
+                    cin.clear();
+                    cin.ignore(256,'\n');
+                    cerr << "ERROR: Choose a valid location." << endl; 
+                } else {
+                    break;
+                }
             }
-            if (cin.fail()){
-                cin.clear();
-                cin.ignore(256,'\n');
-                cerr << "ERROR: Choose a valid location." << endl; 
-                continue;
-            } else {roadChosen = true;}
-            try {
-                unique_ptr<Player> tempSelf = make_unique<Player>(player);
-                tempSelf->buildRoad(edge);
-                board->buildRoad(player.getColor(), edge);
-                std::swap(players[player.getColor()], tempSelf);
-                cout << "Builder " << player.getColor() << " successfully built a road at " << edge << "." << endl;
-            } catch (RoadExistsException& e){
-                cerr << "ERROR: Someone has already built a road here." << endl;
-            } catch(InvalidRoadLocationException& e) {
-                cerr << "ERROR: Cannot build road here. None of your road or residence connect to here." << endl;
-            } catch (InsufficientResourceException &e) {
-                cerr << "ERROR: You do not have enough resources." << endl;
-            } catch (InvalidLocationException& e){
-                cerr << "ERROR: Enter a valid location." << endl;
-            }
+
+            unique_ptr<Player> tempSelf = make_unique<Player>(player);
+            tempSelf->buildRoad(edge);
+            board->buildRoad(player.getColor(), edge);
+            std::swap(players[player.getColor()], tempSelf);
+            cout << "Builder " << player.getColor() << " successfully built a road at " << edge << "." << endl;
+
+        } catch (RoadExistsException& e){
+            cerr << "ERROR: Someone has already built a road here." << endl;
+        } catch(InvalidRoadLocationException& e) {
+            cerr << "ERROR: Cannot build road here. None of your road or residence connect to here." << endl;
+        } catch (InsufficientResourceException &e) {
+            cerr << "ERROR: You do not have enough resources." << endl;
+        } catch (InvalidLocationException& e){
+            cerr << "ERROR: Enter a valid location." << endl;
         }
     } else if (move == "build-res") {
         int vertex;
-        bool vertexChosen = false;
-        while (vertexChosen == false){
-            cin >> vertex;
-            if (cin.eof()) {
-                throw EOFException();
+        try {
+            while (true){
+                cin >> vertex;
+                if (cin.eof()) {
+                    throw EOFException();
+                }
+                if (cin.fail()){
+                    cin.clear();
+                    cin.ignore(256,'\n');
+                    cerr << "ERROR: Choose a valid location." << endl; 
+                    continue;
+                } else {
+                    break;
+                }
             }
-            if (cin.fail()){
-                cin.clear();
-                cin.ignore(256,'\n');
-                cerr << "ERROR: Choose a valid location." << endl; 
-                continue;
-            } else {vertexChosen = true;}
-            try {
-                unique_ptr<Player> tempSelf = make_unique<Player>(player);
-                tempSelf->buildResidence(vertex);
-                board->buildResidence(player.getColor(), vertex);
-                std::swap(players[player.getColor()], tempSelf);
-                cout << "Builder " << player.getColor() << " successfully built a " << player.getResidences().at(vertex) << " at " << vertex << "." << endl;
-            } catch (BuildingExistsException& e){
-                cerr << "ERROR: A residence already exists here." << endl;
-            } catch (InvalidLocationException& e){
-                cerr << "ERROR: You cannot build here." << endl;
-            } catch (InsufficientResourceException & e) {
-                cerr << "You do not have enough resources." << endl;
-            }
+            unique_ptr<Player> tempSelf = make_unique<Player>(player);
+            tempSelf->buildResidence(vertex);
+            board->buildResidence(player.getColor(), vertex);
+            std::swap(players[player.getColor()], tempSelf);
+            cout << "Builder " << player.getColor() << " successfully built a " << players[player.getColor()]->getResidences().at(vertex) << " at " << vertex << "." << endl;
+        
+        } catch (BuildingExistsException& e){
+            cerr << "ERROR: A residence already exists here." << endl;
+        } catch (InvalidLocationException& e){
+            cerr << "ERROR: You cannot build here." << endl;
+        } catch (InsufficientResourceException & e) {
+            cerr << "You do not have enough resources." << endl;
         }
     } else if (move == "improve-res") {
         int vertex;
-        bool vertexChosen = false;
-        while (vertexChosen == false){
-            cin >> vertex;
-            if (cin.eof()) {
-                throw EOFException();
-            }
-            if (cin.fail()){
-                cin.clear();
-                cin.ignore(256,'\n');
-                cerr << "ERROR: Choose a valid location." << endl; 
-                continue;
-            } else {vertexChosen = true;}
-            try {
-                int vertex;
+        try {
+            while (true) {
+                cin >> vertex;
+                if (cin.eof()) {
+                    throw EOFException();
+                }
+                if (cin.fail()){
+                    cin.clear();
+                    cin.ignore(256,'\n');
+                    cerr << "ERROR: Choose a valid location." << endl; 
+                    continue;
+                }
                 unique_ptr<Player> tempSelf = make_unique<Player>(player);
                 tempSelf->upgradeResidence(vertex);
                 board->upgradeResidence(player.getColor(), vertex);
                 std::swap(players[player.getColor()], tempSelf);
-                cout << "Builder " << player.getColor() << " successfully built a " << player.getResidences().at(vertex) << " at " << vertex << "." << endl;
-            } catch(BuidingNotOwnedException& e){
-                cerr << "ERROR: You do not own this residence." << endl;
-            } catch(InvalidLocationException& e){
-                cerr << "ERROR: Enter a valid location." << endl;
-            } catch (AlreadyTowerException& e){
-                cerr << "ERROR: Your residence is already a Tower." << endl;
-            } catch (InsufficientResourceException & e) {
-                cerr << "You do not have enough resources." << endl;
+                cout << "Builder " << player.getColor() << " successfully built a " << players[player.getColor()]->getResidences().at(vertex) << " at " << vertex << "." << endl;
+                break;
             }
+        } catch(BuidingNotOwnedException& e){
+            cerr << "ERROR: You do not own this residence." << endl;
+        } catch(InvalidLocationException& e){
+            cerr << "ERROR: Enter a valid location." << endl;
+        } catch (AlreadyTowerException& e){
+            cerr << "ERROR: Your residence is already a Tower." << endl;
+        } catch (InsufficientResourceException & e) {
+            cerr << "You do not have enough resources." << endl;
+        } catch (PlayerResidenceTypeException& e) {
+            cerr << "ERROR: This residence is already a tower." << endl;
+        } catch (PlayerOwnershipException& e) {
+            cerr << "ERROR: You do not own this residence." << endl;
         }
     } else if (move == "trade") {
         try {

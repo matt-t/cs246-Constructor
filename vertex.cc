@@ -48,6 +48,7 @@ void Vertex::build(Color player, bool gameStart ) {
 			}
 		}
 	}
+	std::cout << "what happened" << std::endl;
 	//is not connected by a road
 	bool validBuild = false;
 	if (!gameStart){

@@ -48,5 +48,6 @@ class Player {
 };
 
 class PlayerResidenceTypeException{};
+class PlayerOwnershipException{};
 
 #endif
