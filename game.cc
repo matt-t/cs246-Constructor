@@ -5,6 +5,7 @@
 #include "enums.h"
 #include "constants.h"
 #include "eofException.h"
+#include "insufficientResourceException.h"
 
 using namespace std;
 
@@ -124,7 +125,7 @@ void Game::next() noexcept {
 
 void Game::checkWinner() noexcept {
     for (const Color &color: COLOR_ORDER) {
-        if (players[color]->getPoints() >= 10) {
+        if (players[color]->getPoints() >= WINNING_POINTS) {
             winner = true;
             cout << "Congratulations!! " << players[color]->getColor() << " wins!!" << endl;
         }
@@ -134,7 +135,7 @@ void Game::checkWinner() noexcept {
 void Game::handleGoose(Player &player){
 //players with 10 or more resource lose half resources
     for (const Color &color : COLOR_ORDER) {//check if more than 10 resource
-        if (players[color]->totalResource() >= 10){
+        if (players[color]->totalResource() >= GEESE_STEAL_FROM){
             map<Resource, int> coutStolen;
             int half = players[color]->totalResource() / 2;
             cout << "Builder " << COLOR_TO_STRING.at(color) << " loses " << half << " resources to the goose. They lose:" << endl;
@@ -175,11 +176,11 @@ void Game::handleGoose(Player &player){
     //cout who roller can steal from
     set<Color> stealAvailable = board->getLocationPlayers(newGeeseTile);
     for (const auto &color : COLOR_ORDER) { //check if have resources, if not removed from the set
-        if (players[color]->totalResource() == 0 || color == player.getColor()){
+        if (players[color]->totalResource() == 0 || color == player.getColor()) {
             stealAvailable.erase(color);
         }
     }
-    if (stealAvailable.size() != 0){
+    if (stealAvailable.size() != 0) {
         cout << "Builder " << player.getColor() << " can choose to steal from ";
         for (auto p : stealAvailable){
             cout << COLOR_TO_STRING.at(p) << " ";
@@ -188,8 +189,8 @@ void Game::handleGoose(Player &player){
         string stealFrom;
         while (cin >> stealFrom) {
             transform(stealFrom.begin(), stealFrom.end(), stealFrom.begin(), ::toupper);
-            if (STRING_TO_COLOR.count(stealFrom) == 0){
-                cerr << "ERROR: Choose a valid player." << endl;
+            if (stealAvailable.count(STRING_TO_COLOR.at(stealFrom)) == 0) {
+                cerr << "ERROR: Choose a valid player that you can steal from." << endl;
             } else {
                 break;
             }
@@ -213,7 +214,7 @@ void Game::handleRollMove(Player &player, string move, int &movePhase) {
         //cout << "roll" << endl;
         int getRoll = player.rollDice();
         cout << getRoll << " is rolled."<< endl;
-        if (getRoll == 7) {
+        if (getRoll == GEESE_ROLL) {
             handleGoose(player);
         } else {
             //produce resource from the tiles rolled
@@ -342,7 +343,7 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
         }
     } else if (move == "trade") {
         try {
-            string color, resourceGive, resourceTake;
+            string color, resourceGive, resourceTake, acceptance;
             while(cin >> color) {
                 std::transform(color.begin(), color.end(), color.begin(), ::toupper);
                 if (STRING_TO_COLOR.count(color) == 0 || STRING_TO_COLOR.at(color) == player.getColor()) {
@@ -376,13 +377,33 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             tempOther->addResource(STRING_TO_RESOURCE.at(resourceGive), 1);
             tempSelf->takeResource(STRING_TO_RESOURCE.at(resourceGive), 1);
             tempSelf->addResource(STRING_TO_RESOURCE.at(resourceTake), 1);
-            std::swap(players[STRING_TO_COLOR.at(color)], tempOther);
-            std::swap(players[player.getColor()], tempSelf);
-            cout << "Builder " << player.getColor() << " successfully traded " << "." << endl;
 
+            while(true) {
+                cout << "Does " << color << " accept the trade?" << endl;
+                cin >> acceptance;
+                if (cin.eof()) {
+                    throw EOFException();
+                }       
+                std::transform(acceptance.begin(), acceptance.end(), acceptance.begin(), ::toupper);
+                if (acceptance == "YES") {
+                    std::swap(players[STRING_TO_COLOR.at(color)], tempOther);
+                    std::swap(players[player.getColor()], tempSelf);
+                    cout << "Builder " << player.getColor() << " successfully traded " << resourceGive << " for " << resourceTake << "." << endl;
+                    break;
+                } else if (acceptance == "NO") {
+                    cout << color << " has declined the trade." << endl;
+                    break;
+                } else {
+                    cerr << "Enter a VALID response." << endl;
+                }
+            }
             
         } catch (InsufficientResourceException & e) {
-            cerr << "You do not have enough resources." << endl;
+            if (e.getColor() == player.getColor()) {
+                cerr << "You don't have enough " << e.getResource() << "." << endl;
+            } else {
+                cerr << e.getColor() << " doesn't have enough " << e.getResource() << "." << endl;
+            }
         }
     } else if (move == "market-trade") {
         try {
@@ -407,10 +428,10 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
                 throw EOFException();
             }            
             unique_ptr<Player> tempSelf = make_unique<Player>(player);
-            tempSelf->takeResource(STRING_TO_RESOURCE.at(resourceGive), 4);
+            tempSelf->takeResource(STRING_TO_RESOURCE.at(resourceGive), MARKET_TRADE_RATE);
             tempSelf->addResource(STRING_TO_RESOURCE.at(resourceTake), 1);
             std::swap(players[player.getColor()], tempSelf);
-            cout << "Builder " << player.getColor() << " successfully traded " << "4" << " " << resourceGive << " for " << "1" << " " << resourceTake << "." << endl;
+            cout << "Builder " << player.getColor() << " successfully traded " << MARKET_TRADE_RATE << " " << resourceGive << " for " << "1" << " " << resourceTake << "." << endl;
 
             
         } catch (InsufficientResourceException & e) {
@@ -418,7 +439,7 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
         }
     } else if (move == "multi-trade") {
         try {
-            string color, resourceGive, resourceTake;
+            string color, resourceGive, resourceTake, acceptance;
             int resourceGiveNum, resourceTakeNum;
             while(cin >> color) {
                 std::transform(color.begin(), color.end(), color.begin(), ::toupper);
@@ -467,17 +488,38 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             tempOther->addResource(STRING_TO_RESOURCE.at(resourceGive), resourceGiveNum);
             tempSelf->takeResource(STRING_TO_RESOURCE.at(resourceGive), resourceGiveNum);
             tempSelf->addResource(STRING_TO_RESOURCE.at(resourceTake), resourceTakeNum);
-            std::swap(players[STRING_TO_COLOR.at(color)], tempOther);
-            std::swap(players[player.getColor()], tempSelf);
-            cout << "Builder " << player.getColor() << " successfully traded " << resourceGiveNum << " " << resourceGive << " for " << resourceTakeNum << " " << resourceTake << "." << endl;
+
+            while(true) {
+                cout << "Does " << color << " accept the trade?" << endl;
+                cin >> acceptance;
+                if (cin.eof()) {
+                    throw EOFException();
+                }       
+                std::transform(acceptance.begin(), acceptance.end(), acceptance.begin(), ::toupper);
+                if (acceptance == "YES") {
+                    std::swap(players[STRING_TO_COLOR.at(color)], tempOther);
+                    std::swap(players[player.getColor()], tempSelf);
+                    cout << "Builder " << player.getColor() << " successfully traded " << resourceGiveNum << " " << resourceGive << " for " << resourceTakeNum << " " << resourceTake << "." << endl;
+                    break;
+                } else if (acceptance == "NO") {
+                    cout << color << " has declined the trade." << endl;
+                    break;
+                } else {
+                    cerr << "Enter a VALID response." << endl;
+                }
+            }
         } catch (InsufficientResourceException & e) {
-            cerr << "You do not have enough resources." << endl;
+            if (e.getColor() == player.getColor()) {
+                cerr << "You don't have enough " << e.getResource() << "." << endl;
+            } else {
+                cerr << e.getColor() << " doesn't have enough " << e.getResource() << "." << endl;
+            }
         }
     } else if (move == "next") {
         checkWinner();
         next();
         --movePhase;
-        cout << turn % 4 << " " << winner << endl;
+        //cout << turn % NUM_PLAYERS << " " << winner << endl;
     } else if (move == "save") {
         save();
     } else if (move == "help") {
@@ -495,7 +537,7 @@ void Game::playGame() {
     }
     int movePhase = 0;
     string move;
-    cout << "Builder " << COLOR_ORDER.at(turn % 4) << "'s turn." << endl;
+    cout << "Builder " << COLOR_ORDER.at(turn % NUM_PLAYERS) << "'s turn." << endl;
     while (!winner) {
         if (movePhase) {
             cout << "Enter a command:" << endl;
@@ -504,12 +546,12 @@ void Game::playGame() {
         try {
             if (cin >> move) {
                 if (movePhase == 0) {
-                    handleRollMove(*players[COLOR_ORDER.at(turn % 4)], move, movePhase);
+                    handleRollMove(*players[COLOR_ORDER.at(turn % NUM_PLAYERS)], move, movePhase);
                 } else {
-                    int temp = turn % 4;
-                    handleActionMove(*players[COLOR_ORDER.at(turn % 4)], move, movePhase);
-                    if (temp != turn % 4 && !winner) {
-                        cout << "Builder " << COLOR_ORDER.at(turn % 4) << "'s turn." << endl;
+                    int temp = turn % NUM_PLAYERS;
+                    handleActionMove(*players[COLOR_ORDER.at(turn % NUM_PLAYERS)], move, movePhase);
+                    if (temp != turn % NUM_PLAYERS && !winner) {
+                        cout << "Builder " << COLOR_ORDER.at(turn % NUM_PLAYERS) << "'s turn." << endl;
                     }
                 }
             } else {
