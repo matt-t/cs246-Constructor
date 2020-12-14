@@ -373,10 +373,11 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             }            
             unique_ptr<Player> tempOther = make_unique<Player>(*players[STRING_TO_COLOR.at(color)]);
             unique_ptr<Player> tempSelf = make_unique<Player>(player);
-            tempOther->takeResource(STRING_TO_RESOURCE.at(resourceTake), 1);
-            tempOther->addResource(STRING_TO_RESOURCE.at(resourceGive), 1);
             tempSelf->takeResource(STRING_TO_RESOURCE.at(resourceGive), 1);
             tempSelf->addResource(STRING_TO_RESOURCE.at(resourceTake), 1);
+            tempOther->takeResource(STRING_TO_RESOURCE.at(resourceTake), 1);
+            tempOther->addResource(STRING_TO_RESOURCE.at(resourceGive), 1);
+            
 
             while(true) {
                 cout << "Does " << color << " accept the trade?" << endl;
@@ -484,10 +485,11 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             }            
             unique_ptr<Player> tempOther = make_unique<Player>(*players[STRING_TO_COLOR.at(color)]);
             unique_ptr<Player> tempSelf = make_unique<Player>(player);
-            tempOther->takeResource(STRING_TO_RESOURCE.at(resourceTake), resourceTakeNum);
-            tempOther->addResource(STRING_TO_RESOURCE.at(resourceGive), resourceGiveNum);
             tempSelf->takeResource(STRING_TO_RESOURCE.at(resourceGive), resourceGiveNum);
             tempSelf->addResource(STRING_TO_RESOURCE.at(resourceTake), resourceTakeNum);
+            tempOther->takeResource(STRING_TO_RESOURCE.at(resourceTake), resourceTakeNum);
+            tempOther->addResource(STRING_TO_RESOURCE.at(resourceGive), resourceGiveNum);
+            
 
             while(true) {
                 cout << "Does " << color << " accept the trade?" << endl;
