@@ -104,6 +104,8 @@ void Game::help(int movePhase) noexcept {
         cout << "~ build-res <housing#> : attempts to builds a basement at <housing#>." << endl;
         cout << "~ improve-res <housing#> : attempts to improve the residence at <housing#>." << endl;
         cout << "~ trade <colour> <give> <take> : attempts to trade with builder <colour>, giving one resource of type <give> and receiving one resource of type <take>." << endl;
+        cout << "~ multi-trade <colour> <give> <#given> <take> <#taken> : attempts to trade with builder <colour>, giving <#given> resources of type <give> and taking <#taken> resources of type <take>." << endl;
+        cout << "~ market-trade <give> <take> : attempts to trade with the market, giving four resources of type <give> and receiving one resource of type <take>." << endl;
         cout << "~ next : passes control onto the next builder in the game." << endl;
         cout << "~ save <file> : saves the current game state to <file>." << endl;
     } else {
@@ -371,12 +373,103 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             unique_ptr<Player> tempOther = make_unique<Player>(*players[STRING_TO_COLOR.at(color)]);
             unique_ptr<Player> tempSelf = make_unique<Player>(player);
             tempOther->takeResource(STRING_TO_RESOURCE.at(resourceTake), 1);
-            tempSelf->addResource(STRING_TO_RESOURCE.at(resourceGive), 1);
+            tempOther->addResource(STRING_TO_RESOURCE.at(resourceGive), 1);
+            tempSelf->takeResource(STRING_TO_RESOURCE.at(resourceGive), 1);
+            tempSelf->addResource(STRING_TO_RESOURCE.at(resourceTake), 1);
             std::swap(players[STRING_TO_COLOR.at(color)], tempOther);
             std::swap(players[player.getColor()], tempSelf);
             cout << "Builder " << player.getColor() << " successfully traded " << "." << endl;
 
             
+        } catch (InsufficientResourceException & e) {
+            cerr << "You do not have enough resources." << endl;
+        }
+    } else if (move == "market-trade") {
+        try {
+            string resourceGive, resourceTake;
+            while(cin >> resourceGive) {
+                std::transform(resourceGive.begin(), resourceGive.end(), resourceGive.begin(), ::toupper);
+                if (STRING_TO_RESOURCE.count(resourceGive) == 0) {
+                    cerr << "Enter a VALID resource you want to trade with." << endl;
+                } else {
+                    break;
+                }
+            } 
+            while(cin >> resourceTake) {
+                std::transform(resourceTake.begin(), resourceTake.end(), resourceTake.begin(), ::toupper);
+                if (STRING_TO_RESOURCE.count(resourceTake) == 0) {
+                    cerr << "Enter a VALID resource you want to trade for." << endl;
+                } else {
+                    break;
+                }
+            }
+            if (cin.eof()) {
+                throw EOFException();
+            }            
+            unique_ptr<Player> tempSelf = make_unique<Player>(player);
+            tempSelf->takeResource(STRING_TO_RESOURCE.at(resourceGive), 4);
+            tempSelf->addResource(STRING_TO_RESOURCE.at(resourceTake), 1);
+            std::swap(players[player.getColor()], tempSelf);
+            cout << "Builder " << player.getColor() << " successfully traded " << "4" << " " << resourceGive << " for " << "1" << " " << resourceTake << "." << endl;
+
+            
+        } catch (InsufficientResourceException & e) {
+            cerr << "You do not have enough resources." << endl;
+        }
+    } else if (move == "multi-trade") {
+        try {
+            string color, resourceGive, resourceTake;
+            int resourceGiveNum, resourceTakeNum;
+            while(cin >> color) {
+                std::transform(color.begin(), color.end(), color.begin(), ::toupper);
+                if (STRING_TO_COLOR.count(color) == 0 || STRING_TO_COLOR.at(color) == player.getColor()) {
+                    cerr << "Enter a VALID player color to trade with." << endl;
+                } else {
+                    break;
+                }
+            }
+            while(cin >> resourceGive) {
+                std::transform(resourceGive.begin(), resourceGive.end(), resourceGive.begin(), ::toupper);
+                if (STRING_TO_RESOURCE.count(resourceGive) == 0) {
+                    cerr << "Enter a VALID resource you want to trade with." << endl;
+                } else {
+                    break;
+                }
+            } 
+            while(cin >> resourceGiveNum) {
+                if (resourceGiveNum < 1) {
+                    cerr << "Enter a VALID number of resources you want to trade with." << endl;
+                } else {
+                    break;
+                }
+            }
+            while(cin >> resourceTake) {
+                std::transform(resourceTake.begin(), resourceTake.end(), resourceTake.begin(), ::toupper);
+                if (STRING_TO_RESOURCE.count(resourceTake) == 0) {
+                    cerr << "Enter a VALID resource you want to trade for." << endl;
+                } else {
+                    break;
+                }
+            }
+            while(cin >> resourceTakeNum) {
+                if (resourceGiveNum < 1) {
+                    cerr << "Enter a VALID number of resources you want to trade for." << endl;
+                } else {
+                    break;
+                }
+            }
+            if (cin.eof()) {
+                throw EOFException();
+            }            
+            unique_ptr<Player> tempOther = make_unique<Player>(*players[STRING_TO_COLOR.at(color)]);
+            unique_ptr<Player> tempSelf = make_unique<Player>(player);
+            tempOther->takeResource(STRING_TO_RESOURCE.at(resourceTake), resourceTakeNum);
+            tempOther->addResource(STRING_TO_RESOURCE.at(resourceGive), resourceGiveNum);
+            tempSelf->takeResource(STRING_TO_RESOURCE.at(resourceGive), resourceGiveNum);
+            tempSelf->addResource(STRING_TO_RESOURCE.at(resourceTake), resourceTakeNum);
+            std::swap(players[STRING_TO_COLOR.at(color)], tempOther);
+            std::swap(players[player.getColor()], tempSelf);
+            cout << "Builder " << player.getColor() << " successfully traded " << resourceGiveNum << " " << resourceGive << " for " << resourceTakeNum << " " << resourceTake << "." << endl;
         } catch (InsufficientResourceException & e) {
             cerr << "You do not have enough resources." << endl;
         }

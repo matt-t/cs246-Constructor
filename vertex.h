@@ -7,7 +7,7 @@
 class Road;
 
 class Vertex {
-	friend class Road;
+	// friend class Road;
 	int location;
 	Residence typeOfBuilding;
 	Color owner;
@@ -19,6 +19,7 @@ class Vertex {
 	Color getOwner() const noexcept;
 	Residence getResidence() const noexcept;
 	int getLocation() const noexcept;
+	std::vector<std::shared_ptr<Road>> getRoads() const noexcept;
 	void build(Color player, bool gameStart = false); //if true is passed in, player can build anywhere without adjacent buiding (beginning of a turn). elsee, by default regular rules of building apply
 	void upgrade(Color player);
 	void addRoad(std::shared_ptr<Road> road) noexcept;

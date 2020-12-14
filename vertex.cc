@@ -23,6 +23,15 @@ int Vertex::getLocation() const noexcept {
 	return location;
 }
 
+std::vector<std::shared_ptr<Road>> Vertex::getRoads() const noexcept {
+	std::vector<std::shared_ptr<Road>> connected_roads;
+	for (const auto &road: roads) {
+		connected_roads.emplace_back(std::move(road.lock()));
+	}
+	return connected_roads;
+}
+
+
 //builds residence
 void Vertex::build(Color player, bool gameStart ) {
 	//is already built
@@ -30,11 +39,11 @@ void Vertex::build(Color player, bool gameStart ) {
 		throw BuildingExistsException(); //already a building here
 	}
 	//has adjacent building connected to it
-	for (int adjacentRoad = 0; adjacentRoad < roads.size(); ++adjacentRoad) {
-		auto getRoad = roads[adjacentRoad].lock();
-		for (int adjacentVertex = 0; adjacentVertex < getRoad->vertices.size(); ++adjacentVertex) {
-			auto getVertex = getRoad->vertices[adjacentVertex].lock();
-			if (getVertex->location != location && getVertex->owner != Color::None) {
+	for (const std::weak_ptr<Road> &road : roads) {
+		std::shared_ptr<Road> road_ptr = road.lock();
+		std::vector<std::shared_ptr<Vertex>> adjacentVertices = road_ptr->getVertices();
+		for (const auto &adjacentVertex : adjacentVertices) {
+			if (adjacentVertex->getLocation() != location && adjacentVertex->getOwner() != Color::None) {
 				throw InvalidLocationException();//there's a building adjacent to it
 			}
 		}
@@ -42,9 +51,9 @@ void Vertex::build(Color player, bool gameStart ) {
 	//is not connected by a road
 	bool validBuild = false;
 	if (!gameStart){
-		for (int i = 0; i < roads.size(); ++i) {
-			auto getRoad = roads[i].lock();
-			if (getRoad->getOwner() == player) {
+		for (const std::weak_ptr<Road> &road : roads) {
+			std::shared_ptr<Road> road_ptr = road.lock();
+			if (road_ptr->getOwner() == player) {
 				validBuild = true;
 				break;
 			}

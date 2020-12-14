@@ -9,7 +9,8 @@
 const std::vector<Color> COLOR_ORDER{Color::Blue, Color::Red, Color::Orange, Color::Yellow};
 
 const int NUM_TILES = 19;
-const int NUM_ROADS = 71;
+const int NUM_ROADS = 72;
+const int NUM_VERTICES = 54;
 
 const std::string RESIDENCE_BASEMENT_STRING = "Basement";
 const std::string RESIDENCE_HOUSE_STRING = "House";

@@ -27,10 +27,8 @@ int main(int argc, char* argv[]){
 	bool board_randomized = false;
 	bool seed_set = false;
 	vector<pair<Resource, int>> boardInfo;
-	int r = 72;
-	int v = 54;
-	vector<Color> roadInfo(r, Color::None);
-	vector<pair<Color, Residence>> buildInfo(v, {Color::None, Residence::None});
+	vector<Color> roadInfo(NUM_ROADS, Color::None);
+	vector<pair<Color, Residence>> buildInfo(NUM_VERTICES, {Color::None, Residence::None});
 	int geese = UNINITIALIZED_GEESE;
 	int turn = 0;
 	map<Color, int> playerPoints;

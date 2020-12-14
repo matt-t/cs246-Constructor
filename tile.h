@@ -19,8 +19,8 @@ class Tile {
 	public:
 	bool geese = false; //this is made public because we would need to check the geese/change th geese
 
-	Vertex* getVertex(int index) const noexcept;
-	Road* getRoad(int index) const noexcept;
+	std::shared_ptr<Vertex> getVertex(int tileCorner) const noexcept;
+	std::shared_ptr<Road> getRoad(int tileEdge) const noexcept;
 	Tile(int locationNum, Resource resource, int rollNum, std::vector<std::weak_ptr<Vertex>> vertices, std::vector<std::weak_ptr<Road>> roads);
 	std::map<Color, int> produceResources() noexcept;
 	Resource getResource() const noexcept;//this gets the resource type produced at this tile

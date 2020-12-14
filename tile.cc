@@ -6,12 +6,12 @@ std::vector<std::weak_ptr<Vertex>> vertices, std::vector<std::weak_ptr<Road>> ro
     locationNum{ locationNum }, resource{ resource }, rollNum{ rollNum }, geese{ false }, vertices{ vertices }, roads{ roads }
 {}
 
-Vertex* Tile::getVertex(int index) const noexcept {
-    return vertices[index].lock().get();
+std::shared_ptr<Vertex> Tile::getVertex(int tileCorner) const noexcept {
+    return vertices[tileCorner].lock();
 }
 
-Road* Tile::getRoad(int index) const noexcept {
-    return roads[index].lock().get();
+std::shared_ptr<Road> Tile::getRoad(int tileEdge) const noexcept {
+    return roads[tileEdge].lock();
 }
 
 int Tile::getLocation() const noexcept {
