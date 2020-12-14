@@ -295,6 +295,7 @@ int main(int argc, char* argv[]){
 			rollNum = rollNumList[0];
 		} boardInfo.push_back(std::make_pair(resource, rollNum));
 		Game game{seed, boardInfo};
+		cout << "Loading game from randomized board..." << endl;
 		game.initBasements();
 		game.playGame();
 	} else {
