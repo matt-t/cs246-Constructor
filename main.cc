@@ -55,7 +55,7 @@ int main(int argc, char* argv[]){
 					return 1;
 				}
 				seed_set = true;
-				cout << "The seed is set to: " << seed << endl;
+				//cout << "The seed is set to: " << seed << endl;
 			}
 		} else if (s == "-load") {
 			if (board_randomized == true){
@@ -169,7 +169,7 @@ int main(int argc, char* argv[]){
 					return 1;
 				}
 				game_loaded = true;
-				cout << "The game from " << game_file << "is loaded." << endl;
+				//cout << "The game from " << game_file << "is loaded." << endl;
 			}		
 		} else if (s == "-board") {
 			if (board_randomized == true){
@@ -229,7 +229,7 @@ int main(int argc, char* argv[]){
 					return 1;
 				}
 				board_loaded = true;
-				cout << "The board from " << board_file << " is loaded." << endl;
+				//cout << "The board from " << board_file << " is loaded." << endl;
 			}
 		} else if (s == "-random-board"){
 			if (board_loaded != true && game_loaded != true){
@@ -238,7 +238,7 @@ int main(int argc, char* argv[]){
 			// 	cerr << "ERROR: already specified -random-board once before" << endl;
 			// 	return 1;
 			// }
-			cout << "The board is randomized" << endl;
+			//cout << "The board is randomized" << endl;
 		} else {
 			cerr << "ERROR: unrecognized argument" << endl;
 			return 1;
@@ -251,12 +251,12 @@ int main(int argc, char* argv[]){
 	srand(seed);
 	//process initializing game
 	if (game_loaded) {
-		cout << "The game constructor is run with loaded game." << endl;
+		cout << "Loading game from previously saved game file..." << endl;
 		//feed in boardInfo AND gameInfo;
 		Game game{seed, boardInfo, turn, geese, roadInfo, buildInfo, playerPoints, playerResources, playerResidences, playerRoads};
 		game.playGame();
 	} else if (board_loaded) {
-		cout << "The game constructor is run with loaded board." << endl;
+		cout << "Loading game from specific board layout..." << endl;
 		//feed in boardInfo
 		Game game{seed, boardInfo};
 		game.initBasements();
@@ -310,6 +310,7 @@ int main(int argc, char* argv[]){
 			cerr << "ERROR: Cannot open file " << game_file << endl;
 			return 1;
 		} Game game{seed, boardInfo};
+		cout << "Loading game from default board layout..." << endl;
 		try {
 			game.initBasements();
 		} catch (EOFException &e) {
