@@ -277,7 +277,6 @@ std::string Board::printLine(Tile &tile, int line, bool includeLeft = false) con
             if (includeLeft) {
                 s += getVertexString(*tile.getVertex(MIDDLE_LEFT_VERTEX));
             }
-            // if (tile.getResource() == Re)
             s += getTileString(std::to_string(tile.getRollNum()));
             s += getVertexString(*tile.getVertex(MIDDLE_RIGHT_VERTEX));
             break;
