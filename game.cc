@@ -201,6 +201,8 @@ void Game::handleGoose(Player &player){
         players[stealing]->takeResource(stolen, 1);
         player.addResource(stolen, 1);
         cout << "Builder " << COLOR_TO_STRING.at(player.getColor()) << " steals " << RESOURCE_TO_STRING.at(stolen) << " from builder " << COLOR_TO_STRING.at(stealing) << endl;
+    } else {
+        cout << "There are no players to steal from. " << endl;
     }
 }
 

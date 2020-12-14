@@ -316,7 +316,7 @@ int main(int argc, char* argv[]){
 	}
 
 	string playAgain;
-	cout << "Would you like to play again?" << endl;				// Currently only loads layout.txt
+	cout << "Would you like to play again? (yes/y to play again)" << endl;				// Currently only loads layout.txt
 	cin >> playAgain;
 	transform(playAgain.begin(), playAgain.end(), playAgain.begin(), ::toupper);
 	while (playAgain == "YES" || playAgain == "Y") {
