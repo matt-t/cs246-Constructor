@@ -190,7 +190,7 @@ int main(int argc, char* argv[]){
 				ss >> board_file;
 				ifstream f(board_file);
 				if (f.fail()) {
-						cerr << "ERROR: Invalid file " << board_file << endl;
+						cerr << "ERROR: Invalid file" << board_file << endl;
 						return 1;
 				}
 				if (f.is_open()){
