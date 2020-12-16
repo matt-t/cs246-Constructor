@@ -633,3 +633,6 @@ void Game::initBasements() {
     }
 }
 
+bool Game::getWinner() {
+    return winner;
+}

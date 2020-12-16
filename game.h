@@ -54,6 +54,9 @@ class Game {
             std::map<Color, int> playerPoints, std::map<Color, std::map<Resource, int>> playerResources, std::map<Color, std::map<int, Residence>> playerResidences, std::map<Color, std::vector<int>> playerRoads);
 
     //
+    bool getWinner();
+
+    //
     void playGame();   
 
     //
