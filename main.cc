@@ -22,6 +22,7 @@ int main(int argc, char* argv[]){
 	unsigned int seed = 0;
 	string game_file;
 	string board_file;
+	bool end_game = true;
 	bool game_loaded = false;
 	bool board_loaded = false;
 	bool board_randomized = false;
@@ -264,12 +265,14 @@ int main(int argc, char* argv[]){
 		//feed in boardInfo AND gameInfo;
 		Game game{seed, boardInfo, turn, geese, roadInfo, buildInfo, playerPoints, playerResources, playerResidences, playerRoads};
 		game.playGame();
+		if (game.getWinner()) end_game = false;
 	} else if (board_loaded) {
 		cout << "Loading game from specific board layout..." << endl;
 		//feed in boardInfo
 		Game game{seed, boardInfo};
 		game.initBasements();
 		game.playGame();
+		if (game.getWinner()) end_game = false;
 	} else if (board_randomized){
 		//generate a random board by building boardInfo
 		int rollNum;
@@ -299,6 +302,7 @@ int main(int argc, char* argv[]){
 		cout << "Loading game from randomized board..." << endl;
 		game.initBasements();
 		game.playGame();
+		if (game.getWinner()) end_game = false;
 	} else {
 		//looks for layout.txt
 		ifstream f("layout.txt");
@@ -327,49 +331,55 @@ int main(int argc, char* argv[]){
 			return 1;
 		}
 		game.playGame();
+		if (game.getWinner()) end_game = false;
 	}
 
-	string playAgain;
-	cout << "Would you like to play again? (yes/y to play again)" << endl;				// Currently only loads layout.txt
-	cin >> playAgain;
-	transform(playAgain.begin(), playAgain.end(), playAgain.begin(), ::toupper);
-	while (playAgain == "YES" || playAgain == "Y") {
-		ifstream f("layout.txt");
-		if (f.fail()) {
-				cerr << "ERROR: Unable to open file layout.txt for default board layout." << endl;
-				return 1;
-		} if (f.is_open()){
-			string line;
-			getline(f, line);
-			istringstream read(line);
-			int resourceNum, rollNum;
-			Resource resource = Resource::Park; // need some better way to deal with resource if unitialized 
-			while(read >> resourceNum){
-				switch(resourceNum){
-					case 0: resource = Resource::Brick; break;
-					case 1: resource = Resource::Energy; break;
-					case 2: resource = Resource::Glass; break;
-					case 3: resource = Resource::Heat; break;
-					case 4: resource = Resource::Wifi; break;
-					case 5: resource = Resource::Park; break;
-				}
-				read >> rollNum;
-				boardInfo.push_back(std::make_pair(resource, rollNum));
-			}
-		} else {
-			cerr << "ERROR: Cannot open file " << game_file << endl;
-			return 1;
-		} Game game{seed, boardInfo};
-		try {
-			game.initBasements();
-		} catch (EOFException &e) {
-			return 1;
-		}
-		game.playGame();
-
-		cout << "Would you like to play again?" << endl;
+	if (!end_game) {
+		string playAgain;
+		cout << "Would you like to play again? (yes/y to play again)" << endl;				// Currently only loads layout.txt
 		cin >> playAgain;
 		transform(playAgain.begin(), playAgain.end(), playAgain.begin(), ::toupper);
+		while (playAgain == "YES" || playAgain == "Y") {
+			ifstream f("layout.txt");
+			if (f.fail()) {
+					cerr << "ERROR: Unable to open file layout.txt for default board layout." << endl;
+					return 1;
+			} if (f.is_open()){
+				string line;
+				getline(f, line);
+				istringstream read(line);
+				int resourceNum, rollNum;
+				Resource resource = Resource::Park; // need some better way to deal with resource if unitialized 
+				while(read >> resourceNum){
+					switch(resourceNum){
+						case 0: resource = Resource::Brick; break;
+						case 1: resource = Resource::Energy; break;
+						case 2: resource = Resource::Glass; break;
+						case 3: resource = Resource::Heat; break;
+						case 4: resource = Resource::Wifi; break;
+						case 5: resource = Resource::Park; break;
+					}
+					read >> rollNum;
+					boardInfo.push_back(std::make_pair(resource, rollNum));
+				}
+			} else {
+				cerr << "ERROR: Cannot open file " << game_file << endl;
+				return 1;
+			} Game game{seed, boardInfo};
+			try {
+				game.initBasements();
+			} catch (EOFException &e) {
+				return 1;
+			}
+			game.playGame();
+			if (!game.getWinner()) {
+				break;
+			} else {
+				cout << "Would you like to play again?" << endl;
+				cin >> playAgain;
+				transform(playAgain.begin(), playAgain.end(), playAgain.begin(), ::toupper);
+			}
+		}
 	}
 			
 	return 0;
