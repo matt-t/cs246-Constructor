@@ -577,10 +577,10 @@ void Game::playGame() {
                     }
                 }
             } else {
+                cout << "End of file reached." << endl;
                 break;
             }
         } catch (EOFException &e) {
-            cout << "End of file reached." << endl;
             break;
         }
     }
