@@ -496,15 +496,13 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
                     cin.clear();
                     cin.ignore(256,'\n');
                     cerr << "Enter a VALID number of resources you want to trade with." << endl;
-                } else if (resourceGiveNum < 0) {
+                } else if (resourceTakeNum < 0) {
                     cerr << "Enter a VALID number of resources you want to trade with." << endl;
                 } else {
                     break;
                 }
             }
-                     
 
-            cout << "yikes" << endl;
             unique_ptr<Player> tempOther = make_unique<Player>(*players[STRING_TO_COLOR.at(color)]);
             unique_ptr<Player> tempSelf = make_unique<Player>(player);
             tempSelf->takeResource(STRING_TO_RESOURCE.at(resourceGive), resourceGiveNum);
