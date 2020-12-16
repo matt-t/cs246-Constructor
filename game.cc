@@ -466,6 +466,9 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             } 
             while(true) {
                 cin >> resourceGiveNum;
+                if (cin.eof()) {
+                    throw EOFException();
+                }   
                 if (cin.fail()) {
                     cin.clear();
                     cin.ignore(256,'\n');
@@ -486,6 +489,9 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             }
             while(true) {
                 cin >> resourceTakeNum;
+                if (cin.eof()) {
+                    throw EOFException();
+                }   
                 if (cin.fail()) {
                     cin.clear();
                     cin.ignore(256,'\n');
@@ -496,9 +502,7 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
                     break;
                 }
             }
-            if (cin.eof()) {
-                throw EOFException();
-            }            
+                     
 
             cout << "yikes" << endl;
             unique_ptr<Player> tempOther = make_unique<Player>(*players[STRING_TO_COLOR.at(color)]);
