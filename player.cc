@@ -77,10 +77,16 @@ void Player::changeDice(DiceType newDice) {
 }
 
 void Player::addResource(Resource resource, int amount) {
+    if (amount < 0) {
+        throw InvalidResourceAmount{};
+    }
     resources[resource] += amount;
 }
 
 void Player::takeResource(Resource resource, int amount) {
+    if (amount < 0) {
+        throw InvalidResourceAmount{};
+    }
     if (resources[resource] < amount) {
         throw InsufficientResourceException{color, resource};
     }

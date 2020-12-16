@@ -49,5 +49,6 @@ class Player {
 
 class PlayerResidenceTypeException{};
 class PlayerOwnershipException{};
+class InvalidResourceAmount{};
 
 #endif
