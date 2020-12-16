@@ -133,7 +133,7 @@ map<Color, map<Resource, int>> Board::getRollResources(int rollNumber) noexcept{
 
     
     for (const auto &tile : tiles) {
-        if (tile->getRollNum() == rollNumber){
+        if (tile->getRollNum() == rollNumber && tile->getLocation() != geese){
             if (tile->getResource() != Resource::Park) {
                 map<Color, int> playerResources = tile->produceResources();
                 for (const auto &playerResource : playerResources) {
