@@ -585,6 +585,7 @@ void Game::playGame() {
                 break;
             }
         } catch (EOFException &e) {
+            cout << "End of file reached." << endl;
             break;
         }
     }
