@@ -464,8 +464,13 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
                     break;
                 }
             } 
-            while(cin >> resourceGiveNum) {
-                if (resourceGiveNum < 1) {
+            while(true) {
+                cin >> resourceGiveNum;
+                if (cin.fail()) {
+                    cin.clear();
+                    cin.ignore(256,'\n');
+                    cerr << "Enter a VALID number of resources you want to trade with." << endl;
+                } else if (resourceGiveNum < 0) {
                     cerr << "Enter a VALID number of resources you want to trade with." << endl;
                 } else {
                     break;
@@ -479,9 +484,14 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
                     break;
                 }
             }
-            while(cin >> resourceTakeNum) {
-                if (resourceGiveNum < 1) {
-                    cerr << "Enter a VALID number of resources you want to trade for." << endl;
+            while(true) {
+                cin >> resourceTakeNum;
+                if (cin.fail()) {
+                    cin.clear();
+                    cin.ignore(256,'\n');
+                    cerr << "Enter a VALID number of resources you want to trade with." << endl;
+                } else if (resourceGiveNum < 0) {
+                    cerr << "Enter a VALID number of resources you want to trade with." << endl;
                 } else {
                     break;
                 }
@@ -489,6 +499,8 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             if (cin.eof()) {
                 throw EOFException();
             }            
+
+            cout << "yikes" << endl;
             unique_ptr<Player> tempOther = make_unique<Player>(*players[STRING_TO_COLOR.at(color)]);
             unique_ptr<Player> tempSelf = make_unique<Player>(player);
             tempSelf->takeResource(STRING_TO_RESOURCE.at(resourceGive), resourceGiveNum);
@@ -522,6 +534,8 @@ void Game::handleActionMove(Player &player, string move, int &movePhase) {
             } else {
                 cerr << e.getColor() << " doesn't have enough " << e.getResource() << "." << endl;
             }
+        } catch (InvalidResourceAmount & e) {
+            cerr << "Resource trade amounts must be non-negative." <<  endl;
         }
     } else if (move == "next") {
         checkWinner();
